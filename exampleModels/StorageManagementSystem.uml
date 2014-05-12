@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_-aWRfNktEeOo1dgjRue2fQ" name="StorageManagementSystem">
+  <packageImport xmi:id="_-aWRfdktEeOo1dgjRue2fQ">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:Class" xmi:id="_-aWRftktEeOo1dgjRue2fQ" name="RequestPreparationAgent">
+    <ownedOperation xmi:id="_-aWRf9ktEeOo1dgjRue2fQ" name="initialize"/>
+    <ownedOperation xmi:id="_-aWRgNktEeOo1dgjRue2fQ" name="execute"/>
+    <ownedOperation xmi:id="_-aWRgdktEeOo1dgjRue2fQ" name="prepareNewReplicas"/>
+    <ownedOperation xmi:id="_-aWRgtktEeOo1dgjRue2fQ" name="__getNewReplicas" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRg9ktEeOo1dgjRue2fQ" name="__getExistingFiles" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRhNktEeOo1dgjRue2fQ" name="__getFileSize" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRhdktEeOo1dgjRue2fQ" name="__getFileReplicas" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRhtktEeOo1dgjRue2fQ" name="__reportProblematicFiles" visibility="private"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_-aWRh9ktEeOo1dgjRue2fQ" name="StageRequestAgent">
+    <ownedOperation xmi:id="_-aWRiNktEeOo1dgjRue2fQ" name="initialize"/>
+    <ownedOperation xmi:id="_-aWRidktEeOo1dgjRue2fQ" name="execute"/>
+    <ownedOperation xmi:id="_-aWRitktEeOo1dgjRue2fQ" name="getStorageUsage"/>
+    <ownedOperation xmi:id="_-aWRi9ktEeOo1dgjRue2fQ" name="submitStageRequests"/>
+    <ownedOperation xmi:id="_-aWRjNktEeOo1dgjRue2fQ" name="_getMissingReplicas" visibility="protected"/>
+    <ownedOperation xmi:id="_-aWRjdktEeOo1dgjRue2fQ" name="_getOnlineReplicas" visibility="protected"/>
+    <ownedOperation xmi:id="_-aWRjtktEeOo1dgjRue2fQ" name="_getOfflineReplicas" visibility="protected"/>
+    <ownedOperation xmi:id="_-aWRj9ktEeOo1dgjRue2fQ" name="__usage" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRkNktEeOo1dgjRue2fQ" name="__cache" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRkdktEeOo1dgjRue2fQ" name="__add" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRktktEeOo1dgjRue2fQ" name="_issuePrestageRequests" visibility="protected"/>
+    <ownedOperation xmi:id="_-aWRk9ktEeOo1dgjRue2fQ" name="__sortBySE" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRlNktEeOo1dgjRue2fQ" name="__getStagedReplicas" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRldktEeOo1dgjRue2fQ" name="__getWaitingReplicas" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRltktEeOo1dgjRue2fQ" name="__getOfflineReplicas" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRl9ktEeOo1dgjRue2fQ" name="__addAssociatedReplicas" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRmNktEeOo1dgjRue2fQ" name="__checkIntegrity" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRmdktEeOo1dgjRue2fQ" name="__reportProblematicFiles" visibility="private"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_-aWRmtktEeOo1dgjRue2fQ" name="StageMonitorAgent">
+    <ownedOperation xmi:id="_-aWRm9ktEeOo1dgjRue2fQ" name="initialize"/>
+    <ownedOperation xmi:id="_-aWRnNktEeOo1dgjRue2fQ" name="monitorStageRequests"/>
+    <ownedOperation xmi:id="_-aWRndktEeOo1dgjRue2fQ" name="execute"/>
+    <ownedOperation xmi:id="_-aWRntktEeOo1dgjRue2fQ" name="__monitorStorageElementStageRequests" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRn9ktEeOo1dgjRue2fQ" name="__newAccountingDict" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRoNktEeOo1dgjRue2fQ" name="__getStageSubmittedReplicas" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRodktEeOo1dgjRue2fQ" name="__reportProblematicFiles" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRotktEeOo1dgjRue2fQ" name="__wakeupOldRequests" visibility="private"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_-aWRo9ktEeOo1dgjRue2fQ" name="StorageManagerHandler"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_-aWRpNktEeOo1dgjRue2fQ" name="StorageManagementDB">
+    <ownedOperation xmi:id="_-aWRpdktEeOo1dgjRue2fQ" name="aman"/>
+    <ownedOperation xmi:id="_-aWRptktEeOo1dgjRue2fQ" name="ajPak"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_-aWRp9ktEeOo1dgjRue2fQ" name="RequestFinalizationAgent">
+    <ownedOperation xmi:id="_-aWRqNktEeOo1dgjRue2fQ" name="initialize"/>
+    <ownedOperation xmi:id="_-aWRqdktEeOo1dgjRue2fQ" name="execute"/>
+    <ownedOperation xmi:id="_-aWRqtktEeOo1dgjRue2fQ" name="clearFailedTasks"/>
+    <ownedOperation xmi:id="_-aWRq9ktEeOo1dgjRue2fQ" name="callbackDoneTasks" visibility="public"/>
+    <ownedOperation xmi:id="_-aWRrNktEeOo1dgjRue2fQ" name="callbackStagedTasks"/>
+    <ownedOperation xmi:id="_-aWRrdktEeOo1dgjRue2fQ" name="__performCallback" visibility="private"/>
+    <ownedOperation xmi:id="_-aWRrtktEeOo1dgjRue2fQ" name="removeUnlinkedReplicas"/>
+    <ownedOperation xmi:id="_-aWRr9ktEeOo1dgjRue2fQ" name="clearReleasedTasks"/>
+    <ownedOperation xmi:id="_-aWRsNktEeOo1dgjRue2fQ" name="setOldTasksAsFailed"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Collaboration" xmi:id="_-aWRsdktEeOo1dgjRue2fQ" name="Collaboration1">
+    <ownedBehavior xmi:type="uml:Interaction" xmi:id="_-aWRstktEeOo1dgjRue2fQ" name="Interaction1">
+      <ownedConnector xmi:id="_-aWRs9ktEeOo1dgjRue2fQ">
+        <end xmi:id="_-aWRtNktEeOo1dgjRue2fQ" role="_-aWRx9ktEeOo1dgjRue2fQ"/>
+        <end xmi:id="_-aWRtdktEeOo1dgjRue2fQ" role="_-aWRxtktEeOo1dgjRue2fQ"/>
+      </ownedConnector>
+      <lifeline xmi:id="_-aWRttktEeOo1dgjRue2fQ" name="requestPreparationAgent" represents="_-aWRxtktEeOo1dgjRue2fQ" coveredBy="_-aWRuNktEeOo1dgjRue2fQ _-aWRvNktEeOo1dgjRue2fQ _-aWRvdktEeOo1dgjRue2fQ _-aWRwdktEeOo1dgjRue2fQ"/>
+      <lifeline xmi:id="_-aWRt9ktEeOo1dgjRue2fQ" name="storageManagementDB" represents="_-aWRx9ktEeOo1dgjRue2fQ" coveredBy="_-aWRudktEeOo1dgjRue2fQ _-aWRutktEeOo1dgjRue2fQ _-aWRu9ktEeOo1dgjRue2fQ _-aWRvtktEeOo1dgjRue2fQ _-aWRv9ktEeOo1dgjRue2fQ _-aWRwNktEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_-aWRuNktEeOo1dgjRue2fQ" covered="_-aWRttktEeOo1dgjRue2fQ" event="_-aWSCtktEeOo1dgjRue2fQ" message="_-aWRwtktEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_-aWRudktEeOo1dgjRue2fQ" covered="_-aWRt9ktEeOo1dgjRue2fQ" event="_-aWSC9ktEeOo1dgjRue2fQ" message="_-aWRwtktEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_-aWRutktEeOo1dgjRue2fQ" covered="_-aWRt9ktEeOo1dgjRue2fQ" start="_-aWRudktEeOo1dgjRue2fQ" finish="_-aWRu9ktEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_-aWRu9ktEeOo1dgjRue2fQ" covered="_-aWRt9ktEeOo1dgjRue2fQ" event="_-aWSCtktEeOo1dgjRue2fQ" message="_-aWRw9ktEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_-aWRvNktEeOo1dgjRue2fQ" covered="_-aWRttktEeOo1dgjRue2fQ" event="_-aWSC9ktEeOo1dgjRue2fQ" message="_-aWRw9ktEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_-aWRvdktEeOo1dgjRue2fQ" covered="_-aWRttktEeOo1dgjRue2fQ" event="_-aWSDNktEeOo1dgjRue2fQ" message="_-aWRxNktEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_-aWRvtktEeOo1dgjRue2fQ" covered="_-aWRt9ktEeOo1dgjRue2fQ" event="_-aWSDdktEeOo1dgjRue2fQ" message="_-aWRxNktEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_-aWRv9ktEeOo1dgjRue2fQ" covered="_-aWRt9ktEeOo1dgjRue2fQ" start="_-aWRvtktEeOo1dgjRue2fQ" finish="_-aWRwNktEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_-aWRwNktEeOo1dgjRue2fQ" covered="_-aWRt9ktEeOo1dgjRue2fQ" event="_-aWSDNktEeOo1dgjRue2fQ" message="_-aWRxdktEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_-aWRwdktEeOo1dgjRue2fQ" covered="_-aWRttktEeOo1dgjRue2fQ" event="_-aWSDdktEeOo1dgjRue2fQ" message="_-aWRxdktEeOo1dgjRue2fQ"/>
+      <message xmi:id="_-aWRwtktEeOo1dgjRue2fQ" name="aman" receiveEvent="_-aWRudktEeOo1dgjRue2fQ" sendEvent="_-aWRuNktEeOo1dgjRue2fQ" connector="_-aWRs9ktEeOo1dgjRue2fQ"/>
+      <message xmi:id="_-aWRw9ktEeOo1dgjRue2fQ" name="aman" messageSort="reply" receiveEvent="_-aWRvNktEeOo1dgjRue2fQ" sendEvent="_-aWRu9ktEeOo1dgjRue2fQ" connector="_-aWRs9ktEeOo1dgjRue2fQ"/>
+      <message xmi:id="_-aWRxNktEeOo1dgjRue2fQ" name="ajPak" receiveEvent="_-aWRvtktEeOo1dgjRue2fQ" sendEvent="_-aWRvdktEeOo1dgjRue2fQ" connector="_-aWRs9ktEeOo1dgjRue2fQ"/>
+      <message xmi:id="_-aWRxdktEeOo1dgjRue2fQ" name="ajPak" messageSort="reply" receiveEvent="_-aWRwdktEeOo1dgjRue2fQ" sendEvent="_-aWRwNktEeOo1dgjRue2fQ" connector="_-aWRs9ktEeOo1dgjRue2fQ"/>
+    </ownedBehavior>
+    <ownedAttribute xmi:id="_-aWRxtktEeOo1dgjRue2fQ" name="rpAgent" type="_-aWRftktEeOo1dgjRue2fQ"/>
+    <ownedAttribute xmi:id="_-aWRx9ktEeOo1dgjRue2fQ" name="smDB" type="_-aWRpNktEeOo1dgjRue2fQ"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_-aWRyNktEeOo1dgjRue2fQ" name="CacheReplicas">
+    <ownedAttribute xmi:id="_-aWRydktEeOo1dgjRue2fQ" name="ReplicaID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWRytktEeOo1dgjRue2fQ" name="Type" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWRy9ktEeOo1dgjRue2fQ" name="Status" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <defaultValue xmi:type="uml:LiteralString" xmi:id="_-aWRzNktEeOo1dgjRue2fQ" value="New">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </defaultValue>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWRzdktEeOo1dgjRue2fQ" name="SE" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWRztktEeOo1dgjRue2fQ" name="LFN" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWRz9ktEeOo1dgjRue2fQ" name="PFN" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR0NktEeOo1dgjRue2fQ" name="Size" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      <defaultValue xmi:type="uml:LiteralInteger" xmi:id="_-aWR0dktEeOo1dgjRue2fQ">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </defaultValue>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR0tktEeOo1dgjRue2fQ" name="FileChecksum" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR09ktEeOo1dgjRue2fQ" name="GUID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR1NktEeOo1dgjRue2fQ" name="SubmitTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_-aWSTtktEeOo1dgjRue2fQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR1dktEeOo1dgjRue2fQ" name="LastUpdate" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_-aWSTtktEeOo1dgjRue2fQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR1tktEeOo1dgjRue2fQ" name="Reason" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR19ktEeOo1dgjRue2fQ" name="Links" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      <defaultValue xmi:type="uml:LiteralInteger" xmi:id="_-aWR2NktEeOo1dgjRue2fQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR2dktEeOo1dgjRue2fQ" name="taskReplicas" visibility="private" type="_-aWR-NktEeOo1dgjRue2fQ" association="_-aWSAdktEeOo1dgjRue2fQ">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-aWR2tktEeOo1dgjRue2fQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-aWR29ktEeOo1dgjRue2fQ" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR3NktEeOo1dgjRue2fQ" name="stageRequests" visibility="private" type="_-aWR7NktEeOo1dgjRue2fQ" association="_-aWSA9ktEeOo1dgjRue2fQ">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-aWR3dktEeOo1dgjRue2fQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-aWR3tktEeOo1dgjRue2fQ" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_-aWR39ktEeOo1dgjRue2fQ" name="Tasks">
+    <ownedAttribute xmi:id="_-aWR4NktEeOo1dgjRue2fQ" name="TaskID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR4dktEeOo1dgjRue2fQ" name="Status" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <defaultValue xmi:type="uml:LiteralString" xmi:id="_-aWR4tktEeOo1dgjRue2fQ" value="New"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR49ktEeOo1dgjRue2fQ" name="Source" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR5NktEeOo1dgjRue2fQ" name="SubmitTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_-aWSTtktEeOo1dgjRue2fQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR5dktEeOo1dgjRue2fQ" name="LastUpdate" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_-aWSTtktEeOo1dgjRue2fQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR5tktEeOo1dgjRue2fQ" name="CompleteTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_-aWSTtktEeOo1dgjRue2fQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR59ktEeOo1dgjRue2fQ" name="CallBackMethod" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR6NktEeOo1dgjRue2fQ" name="SourceTaskID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR6dktEeOo1dgjRue2fQ" name="taskReplicas" visibility="private" type="_-aWR-NktEeOo1dgjRue2fQ" association="_-aWSAtktEeOo1dgjRue2fQ">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-aWR6tktEeOo1dgjRue2fQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-aWR69ktEeOo1dgjRue2fQ" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_-aWR7NktEeOo1dgjRue2fQ" name="StageRequests">
+    <ownedAttribute xmi:id="_-aWR7dktEeOo1dgjRue2fQ" name="ReplicaID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR7tktEeOo1dgjRue2fQ" name="StageStatus" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <defaultValue xmi:type="uml:LiteralString" xmi:id="_-aWR79ktEeOo1dgjRue2fQ" value="StageSubmitted"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR8NktEeOo1dgjRue2fQ" name="RequestID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR8dktEeOo1dgjRue2fQ" name="StageRequestSubmitTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_-aWSTtktEeOo1dgjRue2fQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR8tktEeOo1dgjRue2fQ" name="StageRequestCompletedTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_-aWSTtktEeOo1dgjRue2fQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR89ktEeOo1dgjRue2fQ" name="PinLength" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR9NktEeOo1dgjRue2fQ" name="PinExpiryTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_-aWSTtktEeOo1dgjRue2fQ"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR9dktEeOo1dgjRue2fQ" name="cacheReplicas" visibility="private" type="_-aWRyNktEeOo1dgjRue2fQ" association="_-aWSA9ktEeOo1dgjRue2fQ">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-aWR9tktEeOo1dgjRue2fQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-aWR99ktEeOo1dgjRue2fQ" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_-aWR-NktEeOo1dgjRue2fQ" name="TaskReplicas">
+    <ownedAttribute xmi:id="_-aWR-dktEeOo1dgjRue2fQ" name="TaskID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR-tktEeOo1dgjRue2fQ" name="ReplicaID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR-9ktEeOo1dgjRue2fQ" name="cacheReplicas" visibility="private" type="_-aWRyNktEeOo1dgjRue2fQ" association="_-aWSAdktEeOo1dgjRue2fQ">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-aWR_NktEeOo1dgjRue2fQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-aWR_dktEeOo1dgjRue2fQ" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_-aWR_tktEeOo1dgjRue2fQ" name="tasks" visibility="private" type="_-aWR39ktEeOo1dgjRue2fQ" association="_-aWSAtktEeOo1dgjRue2fQ">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_-aWR_9ktEeOo1dgjRue2fQ" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_-aWSANktEeOo1dgjRue2fQ" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_-aWSAdktEeOo1dgjRue2fQ" memberEnd="_-aWR2dktEeOo1dgjRue2fQ _-aWR-9ktEeOo1dgjRue2fQ"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_-aWSAtktEeOo1dgjRue2fQ" memberEnd="_-aWR6dktEeOo1dgjRue2fQ _-aWR_tktEeOo1dgjRue2fQ"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_-aWSA9ktEeOo1dgjRue2fQ" memberEnd="_-aWR9dktEeOo1dgjRue2fQ _-aWR3NktEeOo1dgjRue2fQ"/>
+  <packagedElement xmi:type="uml:Activity" xmi:id="_-aWSBNktEeOo1dgjRue2fQ" name="Activity1">
+    <node xmi:type="uml:InitialNode" xmi:id="_-aWSBdktEeOo1dgjRue2fQ" outgoing="_-aWSB9ktEeOo1dgjRue2fQ"/>
+    <node xmi:type="uml:CallBehaviorAction" xmi:id="_-aWSBtktEeOo1dgjRue2fQ" name="" incoming="_-aWSB9ktEeOo1dgjRue2fQ" behavior="_-aWRstktEeOo1dgjRue2fQ"/>
+    <edge xmi:type="uml:ControlFlow" xmi:id="_-aWSB9ktEeOo1dgjRue2fQ" source="_-aWSBdktEeOo1dgjRue2fQ" target="_-aWSBtktEeOo1dgjRue2fQ">
+      <guard xmi:type="uml:OpaqueExpression" xmi:id="_-aWSCNktEeOo1dgjRue2fQ">
+        <language></language>
+        <body></body>
+      </guard>
+      <weight xmi:type="uml:LiteralInteger" xmi:id="_-aWSCdktEeOo1dgjRue2fQ" value="1"/>
+    </edge>
+  </packagedElement>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_-aWSCtktEeOo1dgjRue2fQ" name="SendOperationEvent1" operation="_-aWRpdktEeOo1dgjRue2fQ"/>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_-aWSC9ktEeOo1dgjRue2fQ" name="ReceiveOperationEvent1" operation="_-aWRpdktEeOo1dgjRue2fQ"/>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_-aWSDNktEeOo1dgjRue2fQ" name="SendOperationEvent2" operation="_-aWRptktEeOo1dgjRue2fQ"/>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_-aWSDdktEeOo1dgjRue2fQ" name="ReceiveOperationEvent2" operation="_-aWRptktEeOo1dgjRue2fQ"/>
+  <profileApplication xmi:id="_-aWSDtktEeOo1dgjRue2fQ">
+    <eAnnotations xmi:id="_-aWSD9ktEeOo1dgjRue2fQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <references xmi:type="ecore:EPackage" href="pathmap://UML_PROFILES/Standard.profile.uml#_yzU58YinEdqtvbnfB2L_5w"/>
+    </eAnnotations>
+    <appliedProfile href="pathmap://UML_PROFILES/Standard.profile.uml#_0"/>
+  </profileApplication>
+</uml:Model>

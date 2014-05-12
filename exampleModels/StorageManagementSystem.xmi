@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://schema.omg.org/spec/UML/2.2" xsi:schemaLocation="http://schema.omg.org/spec/UML/2.2 http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_PMoMgK0gEeOWMfxlf8dqYA" name="StorageManagementSystem">
+  <packageImport xmi:type="uml:PackageImport" xmi:id="_PMoMg60gEeOWMfxlf8dqYA">
+    <importedPackage xmi:type="uml:Model" href="http://schema.omg.org/spec/UML/2.2/uml.xml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:Class" xmi:id="_TfAAoK0gEeOWMfxlf8dqYA" name="RequestPreparationAgent">
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_2ZAscK0gEeOWMfxlf8dqYA" name="initialize"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_6pTc8K0gEeOWMfxlf8dqYA" name="execute"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_7vzK8K0gEeOWMfxlf8dqYA" name="prepareNewReplicas"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_8RydsK0gEeOWMfxlf8dqYA" name="__getNewReplicas" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_-6-GcK0gEeOWMfxlf8dqYA" name="__getExistingFiles" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_A95AcK0hEeOWMfxlf8dqYA" name="__getFileSize" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_Ej_kcK0hEeOWMfxlf8dqYA" name="__getFileReplicas" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_Gx-e8K0hEeOWMfxlf8dqYA" name="__reportProblematicFiles" visibility="private"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_YbCc0K0gEeOWMfxlf8dqYA" name="StageRequestAgent">
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_LdWo8K0hEeOWMfxlf8dqYA" name="initialize"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_M27D8K0hEeOWMfxlf8dqYA" name="execute"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_N3OqYK0hEeOWMfxlf8dqYA" name="getStorageUsage"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_O562cK0hEeOWMfxlf8dqYA" name="submitStageRequests"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_RIFXIK0hEeOWMfxlf8dqYA" name="_getMissingReplicas" visibility="protected"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_TPKYYK0hEeOWMfxlf8dqYA" name="_getOnlineReplicas" visibility="protected"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_Xl3S4K0hEeOWMfxlf8dqYA" name="_getOfflineReplicas" visibility="protected"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_Z0dRYK0hEeOWMfxlf8dqYA" name="__usage" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_bRJ44K0hEeOWMfxlf8dqYA" name="__cache" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_dcd54K0hEeOWMfxlf8dqYA" name="__add" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_xwrZ8K0hEeOWMfxlf8dqYA" name="_issuePrestageRequests" visibility="protected"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_zpRTQK0hEeOWMfxlf8dqYA" name="__sortBySE" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_1TNskK0hEeOWMfxlf8dqYA" name="__getStagedReplicas" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_3RDSQK0hEeOWMfxlf8dqYA" name="__getWaitingReplicas" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_5HiSwK0hEeOWMfxlf8dqYA" name="__getOfflineReplicas" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_8qW5QK0hEeOWMfxlf8dqYA" name="__addAssociatedReplicas" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_-amH0K0hEeOWMfxlf8dqYA" name="__checkIntegrity" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_AYjCQK0iEeOWMfxlf8dqYA" name="__reportProblematicFiles" visibility="private"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_a5W5YK0gEeOWMfxlf8dqYA" name="StageMonitorAgent">
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_FwXbgK0iEeOWMfxlf8dqYA" name="initialize"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_O9X9oK0iEeOWMfxlf8dqYA" name="monitorStageRequests"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_HOUAMK0iEeOWMfxlf8dqYA" name="execute"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_QqauQK0iEeOWMfxlf8dqYA" name="__monitorStorageElementStageRequests" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_TD_NsK0iEeOWMfxlf8dqYA" name="__newAccountingDict" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_VkgpsK0iEeOWMfxlf8dqYA" name="__getStageSubmittedReplicas" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_YWMuMK0iEeOWMfxlf8dqYA" name="__reportProblematicFiles" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_aEIPoK0iEeOWMfxlf8dqYA" name="__wakeupOldRequests" visibility="private"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_j8cqgK0gEeOWMfxlf8dqYA" name="StorageManagerHandler"/>
+  <packagedElement xmi:type="uml:Class" xmi:id="_v9A5YK0gEeOWMfxlf8dqYA" name="StorageManagementDB">
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_ZmvuENkqEeOo1dgjRue2fQ" name="aman"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_bkqzUNkqEeOo1dgjRue2fQ" name="ajPak"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_f0YXAK0iEeOWMfxlf8dqYA" name="RequestFinalizationAgent">
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_g00gUK0iEeOWMfxlf8dqYA" name="initialize"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_jTBoIK0iEeOWMfxlf8dqYA" name="execute"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_kaC6kK0iEeOWMfxlf8dqYA" name="clearFailedTasks"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_mkagYK0iEeOWMfxlf8dqYA" name="callbackDoneTasks" visibility="public"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_oQxUgK0iEeOWMfxlf8dqYA" name="callbackStagedTasks"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_pmz6YK0iEeOWMfxlf8dqYA" name="__performCallback" visibility="private"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_q4QUIK0iEeOWMfxlf8dqYA" name="removeUnlinkedReplicas"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_tJv1oK0iEeOWMfxlf8dqYA" name="clearReleasedTasks"/>
+    <ownedOperation xmi:type="uml:Operation" xmi:id="_uijboK0iEeOWMfxlf8dqYA" name="setOldTasksAsFailed"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Collaboration" xmi:id="_F2sQgK0jEeOWMfxlf8dqYA" name="Collaboration1">
+    <ownedBehavior xmi:type="uml:Interaction" xmi:id="_F28vMK0jEeOWMfxlf8dqYA" name="Interaction1">
+      <ownedConnector xmi:type="uml:Connector" xmi:id="_Y7-SwNkqEeOo1dgjRue2fQ">
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_Y8AH8NkqEeOo1dgjRue2fQ" role="_t-OxIa0jEeOWMfxlf8dqYA"/>
+        <end xmi:type="uml:ConnectorEnd" xmi:id="_Y8AvANkqEeOo1dgjRue2fQ" role="_MwO7MK0jEeOWMfxlf8dqYA"/>
+      </ownedConnector>
+      <lifeline xmi:type="uml:Lifeline" xmi:id="_MwNGAK0jEeOWMfxlf8dqYA" name="requestPreparationAgent" represents="_MwO7MK0jEeOWMfxlf8dqYA" coveredBy="_Y7qwwNkqEeOo1dgjRue2fQ _Y74MIdkqEeOo1dgjRue2fQ _a7xnUNkqEeOo1dgjRue2fQ _a7zcgNkqEeOo1dgjRue2fQ"/>
+      <lifeline xmi:type="uml:Lifeline" xmi:id="_t-OxIK0jEeOWMfxlf8dqYA" name="storageManagementDB" represents="_t-OxIa0jEeOWMfxlf8dqYA" coveredBy="_Y7rX0NkqEeOo1dgjRue2fQ _Y73lENkqEeOo1dgjRue2fQ _Y73lEdkqEeOo1dgjRue2fQ _a7xnUdkqEeOo1dgjRue2fQ _a7yOYNkqEeOo1dgjRue2fQ _a7yOYdkqEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_Y7qwwNkqEeOo1dgjRue2fQ" covered="_MwNGAK0jEeOWMfxlf8dqYA" event="_Zm--oNkqEeOo1dgjRue2fQ" message="_Y7g_wNkqEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_Y7rX0NkqEeOo1dgjRue2fQ" covered="_t-OxIK0jEeOWMfxlf8dqYA" event="_ZnEeMNkqEeOo1dgjRue2fQ" message="_Y7g_wNkqEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_Y73lENkqEeOo1dgjRue2fQ" covered="_t-OxIK0jEeOWMfxlf8dqYA" start="_Y7rX0NkqEeOo1dgjRue2fQ" finish="_Y73lEdkqEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_Y73lEdkqEeOo1dgjRue2fQ" covered="_t-OxIK0jEeOWMfxlf8dqYA" event="_Zm--oNkqEeOo1dgjRue2fQ" message="_Y74MINkqEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_Y74MIdkqEeOo1dgjRue2fQ" covered="_MwNGAK0jEeOWMfxlf8dqYA" event="_ZnEeMNkqEeOo1dgjRue2fQ" message="_Y74MINkqEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_a7xnUNkqEeOo1dgjRue2fQ" covered="_MwNGAK0jEeOWMfxlf8dqYA" event="_bkraYNkqEeOo1dgjRue2fQ" message="_a7xAQNkqEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_a7xnUdkqEeOo1dgjRue2fQ" covered="_t-OxIK0jEeOWMfxlf8dqYA" event="_bksBcNkqEeOo1dgjRue2fQ" message="_a7xAQNkqEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_a7yOYNkqEeOo1dgjRue2fQ" covered="_t-OxIK0jEeOWMfxlf8dqYA" start="_a7xnUdkqEeOo1dgjRue2fQ" finish="_a7yOYdkqEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_a7yOYdkqEeOo1dgjRue2fQ" covered="_t-OxIK0jEeOWMfxlf8dqYA" event="_bkraYNkqEeOo1dgjRue2fQ" message="_a7y1cNkqEeOo1dgjRue2fQ"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_a7zcgNkqEeOo1dgjRue2fQ" covered="_MwNGAK0jEeOWMfxlf8dqYA" event="_bksBcNkqEeOo1dgjRue2fQ" message="_a7y1cNkqEeOo1dgjRue2fQ"/>
+      <message xmi:type="uml:Message" xmi:id="_Y7g_wNkqEeOo1dgjRue2fQ" name="aman" receiveEvent="_Y7rX0NkqEeOo1dgjRue2fQ" sendEvent="_Y7qwwNkqEeOo1dgjRue2fQ" connector="_Y7-SwNkqEeOo1dgjRue2fQ"/>
+      <message xmi:type="uml:Message" xmi:id="_Y74MINkqEeOo1dgjRue2fQ" name="aman" messageSort="reply" receiveEvent="_Y74MIdkqEeOo1dgjRue2fQ" sendEvent="_Y73lEdkqEeOo1dgjRue2fQ" connector="_Y7-SwNkqEeOo1dgjRue2fQ"/>
+      <message xmi:type="uml:Message" xmi:id="_a7xAQNkqEeOo1dgjRue2fQ" name="ajPak" receiveEvent="_a7xnUdkqEeOo1dgjRue2fQ" sendEvent="_a7xnUNkqEeOo1dgjRue2fQ" connector="_Y7-SwNkqEeOo1dgjRue2fQ"/>
+      <message xmi:type="uml:Message" xmi:id="_a7y1cNkqEeOo1dgjRue2fQ" name="ajPak" messageSort="reply" receiveEvent="_a7zcgNkqEeOo1dgjRue2fQ" sendEvent="_a7yOYdkqEeOo1dgjRue2fQ" connector="_Y7-SwNkqEeOo1dgjRue2fQ"/>
+    </ownedBehavior>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_MwO7MK0jEeOWMfxlf8dqYA" name="rpAgent" type="_TfAAoK0gEeOWMfxlf8dqYA"/>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_t-OxIa0jEeOWMfxlf8dqYA" name="smDB" type="_v9A5YK0gEeOWMfxlf8dqYA"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_ael1sK0wEeOWMfxlf8dqYA" name="CacheReplicas">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_MyE7AK0zEeOWMfxlf8dqYA" name="ReplicaID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Qt-v4K0zEeOWMfxlf8dqYA" name="Type" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Valo8K0zEeOWMfxlf8dqYA" name="Status" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+      <defaultValue xmi:type="uml:LiteralString" xmi:id="_KFoGYK00EeOWMfxlf8dqYA" value="New">
+        <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+      </defaultValue>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_YzF10K0zEeOWMfxlf8dqYA" name="SE" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_aKAlcK0zEeOWMfxlf8dqYA" name="LFN" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_a1pjcK0zEeOWMfxlf8dqYA" name="PFN" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_ebXs8K0zEeOWMfxlf8dqYA" name="Size" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#Integer"/>
+      <defaultValue xmi:type="uml:LiteralInteger" xmi:id="_O8l1UK00EeOWMfxlf8dqYA">
+        <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#Integer"/>
+      </defaultValue>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_iO-hcK0zEeOWMfxlf8dqYA" name="FileChecksum" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_lZQsIK0zEeOWMfxlf8dqYA" name="GUID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_pC8voK0zEeOWMfxlf8dqYA" name="SubmitTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.xmi#_7yKF7ykGEdmDdasWev0kGA"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_s3mtAK0zEeOWMfxlf8dqYA" name="LastUpdate" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.xmi#_7yKF7ykGEdmDdasWev0kGA"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_9F45gK0zEeOWMfxlf8dqYA" name="Reason" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_RGEqUK00EeOWMfxlf8dqYA" name="Links" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#Integer"/>
+      <defaultValue xmi:type="uml:LiteralInteger" xmi:id="_S2dC0K00EeOWMfxlf8dqYA"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_6H_vkK00EeOWMfxlf8dqYA" name="taskReplicas" visibility="private" type="_FFH2YK0zEeOWMfxlf8dqYA" association="_6HeLIK00EeOWMfxlf8dqYA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_6ISqgK00EeOWMfxlf8dqYA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_6IBkwK00EeOWMfxlf8dqYA" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_UtA_AK04EeOWMfxlf8dqYA" name="stageRequests" visibility="private" type="_hkbP8K0wEeOWMfxlf8dqYA" association="_Us_J0K04EeOWMfxlf8dqYA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_UtC0MK04EeOWMfxlf8dqYA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_UtCNIK04EeOWMfxlf8dqYA" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_eVq08K0wEeOWMfxlf8dqYA" name="Tasks">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_hwziQK00EeOWMfxlf8dqYA" name="TaskID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_jiGgwK00EeOWMfxlf8dqYA" name="Status" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+      <defaultValue xmi:type="uml:LiteralString" xmi:id="_lt3NsK00EeOWMfxlf8dqYA" value="New"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_mgI_MK00EeOWMfxlf8dqYA" name="Source" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_oFNfkK00EeOWMfxlf8dqYA" name="SubmitTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.xmi#_7yKF7ykGEdmDdasWev0kGA"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_p-i_wK00EeOWMfxlf8dqYA" name="LastUpdate" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.xmi#_7yKF7ykGEdmDdasWev0kGA"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_rg7_kK00EeOWMfxlf8dqYA" name="CompleteTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.xmi#_7yKF7ykGEdmDdasWev0kGA"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_uOubgK00EeOWMfxlf8dqYA" name="CallBackMethod" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_wjIuIK00EeOWMfxlf8dqYA" name="SourceTaskID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_AR4CcK02EeOWMfxlf8dqYA" name="taskReplicas" visibility="private" type="_FFH2YK0zEeOWMfxlf8dqYA" association="_AR1mMK02EeOWMfxlf8dqYA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_AR6esK02EeOWMfxlf8dqYA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_AR53oK02EeOWMfxlf8dqYA" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_hkbP8K0wEeOWMfxlf8dqYA" name="StageRequests">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_JQrwgK02EeOWMfxlf8dqYA" name="ReplicaID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_AtnRUK04EeOWMfxlf8dqYA" name="StageStatus" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+      <defaultValue xmi:type="uml:LiteralString" xmi:id="_CuNQEK04EeOWMfxlf8dqYA" value="StageSubmitted"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_D6CxEK04EeOWMfxlf8dqYA" name="RequestID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_GPpWgK04EeOWMfxlf8dqYA" name="StageRequestSubmitTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.xmi#_7yKF7ykGEdmDdasWev0kGA"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Mt5MUK04EeOWMfxlf8dqYA" name="StageRequestCompletedTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.xmi#_7yKF7ykGEdmDdasWev0kGA"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_OSGxEK04EeOWMfxlf8dqYA" name="PinLength" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_QjI_kK04EeOWMfxlf8dqYA" name="PinExpiryTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.xmi#_7yKF7ykGEdmDdasWev0kGA"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_Us_w4K04EeOWMfxlf8dqYA" name="cacheReplicas" visibility="private" type="_ael1sK0wEeOWMfxlf8dqYA" association="_Us_J0K04EeOWMfxlf8dqYA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_UtAX8a04EeOWMfxlf8dqYA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_UtAX8K04EeOWMfxlf8dqYA" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_FFH2YK0zEeOWMfxlf8dqYA" name="TaskReplicas">
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_zGs3EK00EeOWMfxlf8dqYA" name="TaskID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_39nisK00EeOWMfxlf8dqYA" name="ReplicaID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="http://schema.omg.org/spec/UML/2.2/uml.xml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_6ITRkK00EeOWMfxlf8dqYA" name="cacheReplicas" visibility="private" type="_ael1sK0wEeOWMfxlf8dqYA" association="_6HeLIK00EeOWMfxlf8dqYA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_6IT4oa00EeOWMfxlf8dqYA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_6IT4oK00EeOWMfxlf8dqYA" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:type="uml:Property" xmi:id="_AR8T4K02EeOWMfxlf8dqYA" name="tasks" visibility="private" type="_eVq08K0wEeOWMfxlf8dqYA" association="_AR1mMK02EeOWMfxlf8dqYA">
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_AR868K02EeOWMfxlf8dqYA" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_AR8T4a02EeOWMfxlf8dqYA" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Association" xmi:id="_6HeLIK00EeOWMfxlf8dqYA" memberEnd="_6H_vkK00EeOWMfxlf8dqYA _6ITRkK00EeOWMfxlf8dqYA"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_AR1mMK02EeOWMfxlf8dqYA" memberEnd="_AR4CcK02EeOWMfxlf8dqYA _AR8T4K02EeOWMfxlf8dqYA"/>
+  <packagedElement xmi:type="uml:Association" xmi:id="_Us_J0K04EeOWMfxlf8dqYA" memberEnd="_Us_w4K04EeOWMfxlf8dqYA _UtA_AK04EeOWMfxlf8dqYA"/>
+  <packagedElement xmi:type="uml:Activity" xmi:id="_gBTeENknEeOo1dgjRue2fQ" name="Activity1">
+    <node xmi:type="uml:InitialNode" xmi:id="_7Qbh0NknEeOo1dgjRue2fQ" outgoing="_HoVAsNkqEeOo1dgjRue2fQ"/>
+    <node xmi:type="uml:CallBehaviorAction" xmi:id="_FMU4UNkqEeOo1dgjRue2fQ" name="" incoming="_HoVAsNkqEeOo1dgjRue2fQ" behavior="_F28vMK0jEeOWMfxlf8dqYA"/>
+    <edge xmi:type="uml:ControlFlow" xmi:id="_HoVAsNkqEeOo1dgjRue2fQ" source="_7Qbh0NknEeOo1dgjRue2fQ" target="_FMU4UNkqEeOo1dgjRue2fQ">
+      <guard xmi:type="uml:OpaqueExpression" xmi:id="_HokRQNkqEeOo1dgjRue2fQ">
+        <language></language>
+        <body></body>
+      </guard>
+      <weight xmi:type="uml:LiteralInteger" xmi:id="_HsoR4NkqEeOo1dgjRue2fQ" value="1"/>
+    </edge>
+  </packagedElement>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_Zm--oNkqEeOo1dgjRue2fQ" name="SendOperationEvent1" operation="_ZmvuENkqEeOo1dgjRue2fQ"/>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_ZnEeMNkqEeOo1dgjRue2fQ" name="ReceiveOperationEvent1" operation="_ZmvuENkqEeOo1dgjRue2fQ"/>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_bkraYNkqEeOo1dgjRue2fQ" name="SendOperationEvent2" operation="_bkqzUNkqEeOo1dgjRue2fQ"/>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_bksBcNkqEeOo1dgjRue2fQ" name="ReceiveOperationEvent2" operation="_bkqzUNkqEeOo1dgjRue2fQ"/>
+  <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_PMoMhK0gEeOWMfxlf8dqYA">
+    <xmi:Extension extender="http://www.eclipse.org/emf/2002/Ecore">
+      <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_PMoMha0gEeOWMfxlf8dqYA" source="http://www.eclipse.org/uml2/2.0.0/UML">
+        <references xmi:type="ecore:EPackage" href="http://schema.omg.org/spec/UML/2.2/StandardProfileL2.xmi#_yzU58YinEdqtvbnfB2L_5w"/>
+      </eAnnotations>
+    </xmi:Extension>
+    <appliedProfile xmi:type="uml:Profile" href="http://schema.omg.org/spec/UML/2.2/StandardProfileL2.xmi#_0"/>
+  </profileApplication>
+</uml:Model>
