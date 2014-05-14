@@ -1,0 +1,795 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_VhFI3dtAEeOBr-ZtRbdM3Q" name="StepByStepMigration">
+  <packageImport xmi:id="_VhFI3ttAEeOBr-ZtRbdM3Q">
+    <importedPackage xmi:type="uml:Model" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#_0"/>
+  </packageImport>
+  <packagedElement xmi:type="uml:Class" xmi:id="_VhFI39tAEeOBr-ZtRbdM3Q" name="RequestPreparationAgent">
+    <ownedOperation xmi:id="_VhFI4NtAEeOBr-ZtRbdM3Q" name="initialize"/>
+    <ownedOperation xmi:id="_VhFI4dtAEeOBr-ZtRbdM3Q" name="execute"/>
+    <ownedOperation xmi:id="_VhFI4ttAEeOBr-ZtRbdM3Q" name="prepareNewReplicas"/>
+    <ownedOperation xmi:id="_VhFI49tAEeOBr-ZtRbdM3Q" name="__getNewReplicas" visibility="private">
+      <ownedParameter xmi:id="_VhFI5NtAEeOBr-ZtRbdM3Q" name="replicas" type="_VhIL89tAEeOBr-ZtRbdM3Q" direction="return">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFI5dtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFI5ttAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFI59tAEeOBr-ZtRbdM3Q" name="__getExistingFiles" visibility="private">
+      <ownedParameter xmi:id="_VhFI6NtAEeOBr-ZtRbdM3Q" name="exist" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFI6dtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFI6ttAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFI69tAEeOBr-ZtRbdM3Q" name="lfns">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFI7NtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFI7dtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFI7ttAEeOBr-ZtRbdM3Q" name="terminal" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFI79tAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFI8NtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFI8dtAEeOBr-ZtRbdM3Q" name="failed" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFI8ttAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFI89tAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFI9NtAEeOBr-ZtRbdM3Q" name="__getFileReplicas" visibility="private">
+      <ownedParameter xmi:id="_VhFI9dtAEeOBr-ZtRbdM3Q" name="fileReplicas" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFI9ttAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFI99tAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFI-NtAEeOBr-ZtRbdM3Q" name="lfns">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFI-dtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFI-ttAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFI-9tAEeOBr-ZtRbdM3Q" name="terminal" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFI_NtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFI_dtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFI_ttAEeOBr-ZtRbdM3Q" name="failed" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFI_9tAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJANtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFJAdtAEeOBr-ZtRbdM3Q" name="__reportProblematicFiles" visibility="private">
+      <ownedParameter xmi:id="_VhFJAttAEeOBr-ZtRbdM3Q" name="lfns">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJA9tAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJBNtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFJBdtAEeOBr-ZtRbdM3Q" name="reason">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFJBttAEeOBr-ZtRbdM3Q" name="__getFileSize" visibility="private">
+      <ownedParameter xmi:id="_VhFJB9tAEeOBr-ZtRbdM3Q" name="lfns">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJCNtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJCdtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFJCttAEeOBr-ZtRbdM3Q" name="fileSizes" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJC9tAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJDNtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFJDdtAEeOBr-ZtRbdM3Q" name="terminal" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJDttAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJD9tAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFJENtAEeOBr-ZtRbdM3Q" name="failed" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+    </ownedOperation>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_VhFJEdtAEeOBr-ZtRbdM3Q" name="StorageManagementDB">
+    <ownedOperation xmi:id="_VhFJEttAEeOBr-ZtRbdM3Q" name="getCacheReplicas">
+      <ownedParameter xmi:id="_VhFJE9tAEeOBr-ZtRbdM3Q" name="replicas" type="_VhIL89tAEeOBr-ZtRbdM3Q" direction="return">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJFNtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJFdtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFJFttAEeOBr-ZtRbdM3Q" name="Status">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFJF9tAEeOBr-ZtRbdM3Q" name="updateReplicaFailure">
+      <ownedParameter xmi:id="_VhFJGNtAEeOBr-ZtRbdM3Q" name="terminalReplicaIDs">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJGdtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJGttAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFJG9tAEeOBr-ZtRbdM3Q" name="updateReplicaInformation">
+      <ownedParameter xmi:id="_VhFJHNtAEeOBr-ZtRbdM3Q" name="replicaInformation" type="_VhIL89tAEeOBr-ZtRbdM3Q">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJHdtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJHttAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFJH9tAEeOBr-ZtRbdM3Q" name="getSubmittedStagePins">
+      <ownedParameter xmi:id="_VhFJINtAEeOBr-ZtRbdM3Q" name="submittedReplicas" type="_VhIL89tAEeOBr-ZtRbdM3Q" direction="return">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJIdtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJIttAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFJI9tAEeOBr-ZtRbdM3Q" name="getWaitingReplicas">
+      <ownedParameter xmi:id="_VhFJJNtAEeOBr-ZtRbdM3Q" name="replicas" type="_VhIL89tAEeOBr-ZtRbdM3Q" direction="return">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJJdtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJJttAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFJJ9tAEeOBr-ZtRbdM3Q" name="updateReplicaStatus">
+      <ownedParameter xmi:id="_VhFJKNtAEeOBr-ZtRbdM3Q" name="newReplicaStatus">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFJKdtAEeOBr-ZtRbdM3Q" name="replicaIDs">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJKttAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJK9tAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFJLNtAEeOBr-ZtRbdM3Q" name="getAssociatedReplicas">
+      <ownedParameter xmi:id="_VhFJLdtAEeOBr-ZtRbdM3Q" name="replicaIDs">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJLttAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJL9tAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFJMNtAEeOBr-ZtRbdM3Q" name="offlineReplicas" type="_VhIL89tAEeOBr-ZtRbdM3Q" direction="return">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJMdtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJMttAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFJM9tAEeOBr-ZtRbdM3Q" name="waitingReplicas" type="_VhIL89tAEeOBr-ZtRbdM3Q" direction="return">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJNNtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJNdtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFJNttAEeOBr-ZtRbdM3Q" name="getOfflineReplicas">
+      <ownedParameter xmi:id="_VhFJN9tAEeOBr-ZtRbdM3Q" name="replicas" type="_VhIL89tAEeOBr-ZtRbdM3Q" direction="return">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJONtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJOdtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFJOttAEeOBr-ZtRbdM3Q" name="insertStageRequest">
+      <ownedParameter xmi:id="_VhFJO9tAEeOBr-ZtRbdM3Q" name="stageRequests" type="_VhIMJdtAEeOBr-ZtRbdM3Q">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJPNtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJPdtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFJPttAEeOBr-ZtRbdM3Q" name="getStageRequests">
+      <ownedParameter xmi:id="_VhFJP9tAEeOBr-ZtRbdM3Q" name="stageRequests" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJQNtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJQdtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFJQttAEeOBr-ZtRbdM3Q" name="replicaIDs">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJQ9tAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJRNtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFJRdtAEeOBr-ZtRbdM3Q" name="setStageComplete">
+      <ownedParameter xmi:id="_VhFJRttAEeOBr-ZtRbdM3Q" name="replicaIDs">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJR9tAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJSNtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFJSdtAEeOBr-ZtRbdM3Q" name="wakeupOldRequests">
+      <ownedParameter xmi:id="_VhFJSttAEeOBr-ZtRbdM3Q" name="replicaIDs">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFJS9tAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFJTNtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFJTdtAEeOBr-ZtRbdM3Q" name="retryInterval">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFJTttAEeOBr-ZtRbdM3Q" name="getTasksWithStatus">
+      <ownedParameter xmi:id="_VhFJT9tAEeOBr-ZtRbdM3Q" name="Status">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFvoNtAEeOBr-ZtRbdM3Q" name="tasks" type="_VhIMCttAEeOBr-ZtRbdM3Q" direction="return">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFvodtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFvottAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFvo9tAEeOBr-ZtRbdM3Q" name="removeTasks">
+      <ownedParameter xmi:id="_VhFvpNtAEeOBr-ZtRbdM3Q" name="taskIDs">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFvpdtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFvpttAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFvp9tAEeOBr-ZtRbdM3Q" name="removeUnlinkedReplicas"/>
+    <ownedOperation xmi:id="_VhFvqNtAEeOBr-ZtRbdM3Q" name="setOldTasksAsFailed">
+      <ownedParameter xmi:id="_VhFvqdtAEeOBr-ZtRbdM3Q" name="daysOld">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFvqttAEeOBr-ZtRbdM3Q" name="getStagedReplicas"/>
+    <ownedOperation xmi:id="_VhFvq9tAEeOBr-ZtRbdM3Q" name="setRequest">
+      <ownedParameter xmi:id="_VhFvrNtAEeOBr-ZtRbdM3Q" name="lfnDict">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFvrdtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFvrttAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFvr9tAEeOBr-ZtRbdM3Q" name="source">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFvsNtAEeOBr-ZtRbdM3Q" name="callbackMethod">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFvsdtAEeOBr-ZtRbdM3Q" name="sourceTaskID">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFvsttAEeOBr-ZtRbdM3Q" name="_createTask">
+      <ownedParameter xmi:id="_VhFvs9tAEeOBr-ZtRbdM3Q" name="source">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFvtNtAEeOBr-ZtRbdM3Q" name="callbackMethod">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFvtdtAEeOBr-ZtRbdM3Q" name="sourceTaskID">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFvtttAEeOBr-ZtRbdM3Q" name="taskID" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFvt9tAEeOBr-ZtRbdM3Q" name="_getExistingReplicas">
+      <ownedParameter xmi:id="_VhFvuNtAEeOBr-ZtRbdM3Q" name="se">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFvudtAEeOBr-ZtRbdM3Q" name="lfns">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFvuttAEeOBr-ZtRbdM3Q" name="existingReplicas" type="_VhIL89tAEeOBr-ZtRbdM3Q" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFvu9tAEeOBr-ZtRbdM3Q" name="__getTaskStateFromReplicaState">
+      <ownedParameter xmi:id="_VhFvvNtAEeOBr-ZtRbdM3Q" name="replicaState" type="_VhIL89tAEeOBr-ZtRbdM3Q"/>
+      <ownedParameter xmi:id="_VhFvvdtAEeOBr-ZtRbdM3Q" name="taskState" type="_VhIMCttAEeOBr-ZtRbdM3Q" direction="return"/>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFvvttAEeOBr-ZtRbdM3Q" name="_insertReplicaInformation">
+      <ownedParameter xmi:id="_VhFvv9tAEeOBr-ZtRbdM3Q" name="lfn">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFvwNtAEeOBr-ZtRbdM3Q" name="se">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFvwdtAEeOBr-ZtRbdM3Q" name="_insertTaskReplicaInformation">
+      <ownedParameter xmi:id="_VhFvwttAEeOBr-ZtRbdM3Q" name="taskID">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFvw9tAEeOBr-ZtRbdM3Q" name="replicaIDs">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFvxNtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFvxdtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFvxttAEeOBr-ZtRbdM3Q" name="__updateTaskStatus">
+      <ownedParameter xmi:id="_VhFvx9tAEeOBr-ZtRbdM3Q" name="taskIDs">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFvyNtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFvydtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFvyttAEeOBr-ZtRbdM3Q" name="newTaskStatus">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+    </ownedOperation>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_VhFvy9tAEeOBr-ZtRbdM3Q" name="FileCatalog">
+    <ownedOperation xmi:id="_VhFvzNtAEeOBr-ZtRbdM3Q" name="_exists">
+      <ownedParameter xmi:id="_VhFvzdtAEeOBr-ZtRbdM3Q" name="lfns">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFvzttAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFvz9tAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+    <ownedOperation xmi:id="_VhFv0NtAEeOBr-ZtRbdM3Q" name="getFileSize">
+      <ownedParameter xmi:id="_VhFv0dtAEeOBr-ZtRbdM3Q" name="lfns">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFv0ttAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFv09tAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFv1NtAEeOBr-ZtRbdM3Q" name="fileSizes" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFv1dtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFv1ttAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFv19tAEeOBr-ZtRbdM3Q" name="terminal" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFv2NtAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFv2dtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+      <ownedParameter xmi:id="_VhFv2ttAEeOBr-ZtRbdM3Q" name="failed" direction="return">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhFv29tAEeOBr-ZtRbdM3Q" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhFv3NtAEeOBr-ZtRbdM3Q"/>
+      </ownedParameter>
+    </ownedOperation>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Collaboration" xmi:id="_VhFv3dtAEeOBr-ZtRbdM3Q" name="Collaboration1">
+    <ownedBehavior xmi:type="uml:Interaction" xmi:id="_VhFv3ttAEeOBr-ZtRbdM3Q" name="RequestPreparationSD">
+      <ownedConnector xmi:id="_VhFv39tAEeOBr-ZtRbdM3Q">
+        <end xmi:id="_VhFv4NtAEeOBr-ZtRbdM3Q" role="_VhHlS9tAEeOBr-ZtRbdM3Q"/>
+        <end xmi:id="_VhFv4dtAEeOBr-ZtRbdM3Q" role="_VhHlS9tAEeOBr-ZtRbdM3Q"/>
+      </ownedConnector>
+      <ownedConnector xmi:id="_VhFv4ttAEeOBr-ZtRbdM3Q">
+        <end xmi:id="_VhFv49tAEeOBr-ZtRbdM3Q" role="_VhHlSdtAEeOBr-ZtRbdM3Q"/>
+        <end xmi:id="_VhFv5NtAEeOBr-ZtRbdM3Q" role="_VhHlS9tAEeOBr-ZtRbdM3Q"/>
+      </ownedConnector>
+      <ownedConnector xmi:id="_VhFv5dtAEeOBr-ZtRbdM3Q">
+        <end xmi:id="_VhHk0NtAEeOBr-ZtRbdM3Q" role="_VhHlSttAEeOBr-ZtRbdM3Q"/>
+        <end xmi:id="_VhHk0dtAEeOBr-ZtRbdM3Q" role="_VhHlS9tAEeOBr-ZtRbdM3Q"/>
+      </ownedConnector>
+      <lifeline xmi:id="_VhHk0ttAEeOBr-ZtRbdM3Q" name="requestPreparationAgent" represents="_VhHlS9tAEeOBr-ZtRbdM3Q" coveredBy="_VhHk1dtAEeOBr-ZtRbdM3Q _VhHk1ttAEeOBr-ZtRbdM3Q _VhHk19tAEeOBr-ZtRbdM3Q _VhHlEttAEeOBr-ZtRbdM3Q _VhHlE9tAEeOBr-ZtRbdM3Q _VhHk2NtAEeOBr-ZtRbdM3Q _VhHk2dtAEeOBr-ZtRbdM3Q _VhHk2ttAEeOBr-ZtRbdM3Q _VhHlENtAEeOBr-ZtRbdM3Q _VhHlEdtAEeOBr-ZtRbdM3Q _VhHk29tAEeOBr-ZtRbdM3Q _VhHk3NtAEeOBr-ZtRbdM3Q _VhHk3dtAEeOBr-ZtRbdM3Q _VhHk49tAEeOBr-ZtRbdM3Q _VhHk5NtAEeOBr-ZtRbdM3Q _VhHk3ttAEeOBr-ZtRbdM3Q _VhHk4ttAEeOBr-ZtRbdM3Q _VhHk5dtAEeOBr-ZtRbdM3Q _VhHk5ttAEeOBr-ZtRbdM3Q _VhHk59tAEeOBr-ZtRbdM3Q _VhHk7dtAEeOBr-ZtRbdM3Q _VhHk7ttAEeOBr-ZtRbdM3Q _VhHk-dtAEeOBr-ZtRbdM3Q _VhHk-ttAEeOBr-ZtRbdM3Q _VhHk-9tAEeOBr-ZtRbdM3Q _VhHk_NtAEeOBr-ZtRbdM3Q _VhHk_dtAEeOBr-ZtRbdM3Q _VhHk_ttAEeOBr-ZtRbdM3Q _VhHlAttAEeOBr-ZtRbdM3Q _VhHlBttAEeOBr-ZtRbdM3Q _VhHlB9tAEeOBr-ZtRbdM3Q _VhHlC9tAEeOBr-ZtRbdM3Q _VhHlD9tAEeOBr-ZtRbdM3Q _VhHk79tAEeOBr-ZtRbdM3Q _VhHk8NtAEeOBr-ZtRbdM3Q _VhHk8dtAEeOBr-ZtRbdM3Q _VhHk99tAEeOBr-ZtRbdM3Q _VhHk-NtAEeOBr-ZtRbdM3Q _VhHk8ttAEeOBr-ZtRbdM3Q _VhHk9ttAEeOBr-ZtRbdM3Q _VhHk6NtAEeOBr-ZtRbdM3Q _VhHk7NtAEeOBr-ZtRbdM3Q"/>
+      <lifeline xmi:id="_VhHk09tAEeOBr-ZtRbdM3Q" name="storageManagementDB" represents="_VhHlSdtAEeOBr-ZtRbdM3Q" coveredBy="_VhHk39tAEeOBr-ZtRbdM3Q _VhHk4NtAEeOBr-ZtRbdM3Q _VhHk4dtAEeOBr-ZtRbdM3Q _VhHk_ttAEeOBr-ZtRbdM3Q _VhHlA9tAEeOBr-ZtRbdM3Q _VhHlBNtAEeOBr-ZtRbdM3Q _VhHlBdtAEeOBr-ZtRbdM3Q _VhHlB9tAEeOBr-ZtRbdM3Q _VhHlDNtAEeOBr-ZtRbdM3Q _VhHlDdtAEeOBr-ZtRbdM3Q _VhHlDttAEeOBr-ZtRbdM3Q"/>
+      <lifeline xmi:id="_VhHk1NtAEeOBr-ZtRbdM3Q" name="fileCatalog" represents="_VhHlSttAEeOBr-ZtRbdM3Q" coveredBy="_VhHk89tAEeOBr-ZtRbdM3Q _VhHk9NtAEeOBr-ZtRbdM3Q _VhHk9dtAEeOBr-ZtRbdM3Q _VhHk6dtAEeOBr-ZtRbdM3Q _VhHk6ttAEeOBr-ZtRbdM3Q _VhHk69tAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk1dtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIL4ttAEeOBr-ZtRbdM3Q" message="_VhHlFNtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk1ttAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhHlTttAEeOBr-ZtRbdM3Q" message="_VhHlFNtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_VhHk19tAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" start="_VhHk1ttAEeOBr-ZtRbdM3Q" finish="_VhHlEttAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk2NtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhHlUdtAEeOBr-ZtRbdM3Q" message="_VhHlFttAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk2dtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIL7NtAEeOBr-ZtRbdM3Q" message="_VhHlFttAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_VhHk2ttAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" start="_VhHk2dtAEeOBr-ZtRbdM3Q" finish="_VhHlENtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk29tAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhHlU9tAEeOBr-ZtRbdM3Q" message="_VhHlGNtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk3NtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhHlUttAEeOBr-ZtRbdM3Q" message="_VhHlGNtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_VhHk3dtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" start="_VhHk3NtAEeOBr-ZtRbdM3Q" finish="_VhHk49tAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk3ttAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIL4dtAEeOBr-ZtRbdM3Q" message="_VhHlHNtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk39tAEeOBr-ZtRbdM3Q" covered="_VhHk09tAEeOBr-ZtRbdM3Q" event="_VhIL5NtAEeOBr-ZtRbdM3Q" message="_VhHlHNtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_VhHk4NtAEeOBr-ZtRbdM3Q" covered="_VhHk09tAEeOBr-ZtRbdM3Q" start="_VhHk39tAEeOBr-ZtRbdM3Q" finish="_VhHk4dtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk4dtAEeOBr-ZtRbdM3Q" covered="_VhHk09tAEeOBr-ZtRbdM3Q" event="_VhIL4dtAEeOBr-ZtRbdM3Q" message="_VhHlH9tAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk4ttAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIL5NtAEeOBr-ZtRbdM3Q" message="_VhHlH9tAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk49tAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhHlU9tAEeOBr-ZtRbdM3Q" message="_VhHlGdtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk5NtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhHlUttAEeOBr-ZtRbdM3Q" message="_VhHlGdtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk5dtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIL6NtAEeOBr-ZtRbdM3Q" message="_VhHlIttAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk5ttAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIL59tAEeOBr-ZtRbdM3Q" message="_VhHlIttAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_VhHk59tAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" start="_VhHk5ttAEeOBr-ZtRbdM3Q" finish="_VhHk7dtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk6NtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIMN9tAEeOBr-ZtRbdM3Q" message="_VhHlRdtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk6dtAEeOBr-ZtRbdM3Q" covered="_VhHk1NtAEeOBr-ZtRbdM3Q" event="_VhIMONtAEeOBr-ZtRbdM3Q" message="_VhHlRdtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_VhHk6ttAEeOBr-ZtRbdM3Q" covered="_VhHk1NtAEeOBr-ZtRbdM3Q" start="_VhHk6dtAEeOBr-ZtRbdM3Q" finish="_VhHk69tAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk69tAEeOBr-ZtRbdM3Q" covered="_VhHk1NtAEeOBr-ZtRbdM3Q" event="_VhIMN9tAEeOBr-ZtRbdM3Q" message="_VhHlSNtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk7NtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIMONtAEeOBr-ZtRbdM3Q" message="_VhHlSNtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk7dtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIL6NtAEeOBr-ZtRbdM3Q" message="_VhHlJdtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk7ttAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIL59tAEeOBr-ZtRbdM3Q" message="_VhHlJdtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk79tAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIMM9tAEeOBr-ZtRbdM3Q" message="_VhHlO9tAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk8NtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIMNNtAEeOBr-ZtRbdM3Q" message="_VhHlO9tAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_VhHk8dtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" start="_VhHk8NtAEeOBr-ZtRbdM3Q" finish="_VhHk99tAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk8ttAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIMNdtAEeOBr-ZtRbdM3Q" message="_VhHlP9tAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk89tAEeOBr-ZtRbdM3Q" covered="_VhHk1NtAEeOBr-ZtRbdM3Q" event="_VhIMNttAEeOBr-ZtRbdM3Q" message="_VhHlP9tAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_VhHk9NtAEeOBr-ZtRbdM3Q" covered="_VhHk1NtAEeOBr-ZtRbdM3Q" start="_VhHk89tAEeOBr-ZtRbdM3Q" finish="_VhHk9dtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk9dtAEeOBr-ZtRbdM3Q" covered="_VhHk1NtAEeOBr-ZtRbdM3Q" event="_VhIMNdtAEeOBr-ZtRbdM3Q" message="_VhHlQttAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk9ttAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIMNttAEeOBr-ZtRbdM3Q" message="_VhHlQttAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk99tAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIMM9tAEeOBr-ZtRbdM3Q" message="_VhHlPttAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk-NtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIMNNtAEeOBr-ZtRbdM3Q" message="_VhHlPttAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk-dtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIL4NtAEeOBr-ZtRbdM3Q" message="_VhHlKdtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk-ttAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhHlTNtAEeOBr-ZtRbdM3Q" message="_VhHlKdtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_VhHk-9tAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" start="_VhHk-ttAEeOBr-ZtRbdM3Q" finish="_VhHk_NtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk_NtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIL4NtAEeOBr-ZtRbdM3Q" message="_VhHlLNtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHk_dtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhHlTNtAEeOBr-ZtRbdM3Q" message="_VhHlLNtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:CombinedFragment" xmi:id="_VhHk_ttAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q _VhHk09tAEeOBr-ZtRbdM3Q" interactionOperator="opt">
+        <operand xmi:id="_VhHk_9tAEeOBr-ZtRbdM3Q">
+          <guard xmi:id="_VhHlANtAEeOBr-ZtRbdM3Q">
+            <specification xmi:type="uml:OpaqueExpression" xmi:id="_VhHlAdtAEeOBr-ZtRbdM3Q">
+              <language></language>
+              <body>terminalReplicaIDs</body>
+            </specification>
+          </guard>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHlAttAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIL5dtAEeOBr-ZtRbdM3Q" message="_VhHlM9tAEeOBr-ZtRbdM3Q"/>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHlA9tAEeOBr-ZtRbdM3Q" covered="_VhHk09tAEeOBr-ZtRbdM3Q" event="_VhIL6dtAEeOBr-ZtRbdM3Q" message="_VhHlM9tAEeOBr-ZtRbdM3Q"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_VhHlBNtAEeOBr-ZtRbdM3Q" covered="_VhHk09tAEeOBr-ZtRbdM3Q" start="_VhHlA9tAEeOBr-ZtRbdM3Q" finish="_VhHlBdtAEeOBr-ZtRbdM3Q"/>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHlBdtAEeOBr-ZtRbdM3Q" covered="_VhHk09tAEeOBr-ZtRbdM3Q" event="_VhIL5dtAEeOBr-ZtRbdM3Q" message="_VhHlNttAEeOBr-ZtRbdM3Q"/>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHlBttAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIL6dtAEeOBr-ZtRbdM3Q" message="_VhHlNttAEeOBr-ZtRbdM3Q"/>
+        </operand>
+      </fragment>
+      <fragment xmi:type="uml:CombinedFragment" xmi:id="_VhHlB9tAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q _VhHk09tAEeOBr-ZtRbdM3Q" interactionOperator="opt">
+        <operand xmi:id="_VhHlCNtAEeOBr-ZtRbdM3Q">
+          <guard xmi:id="_VhHlCdtAEeOBr-ZtRbdM3Q">
+            <specification xmi:type="uml:OpaqueExpression" xmi:id="_VhHlCttAEeOBr-ZtRbdM3Q">
+              <language></language>
+              <body>replicaMetadata</body>
+            </specification>
+          </guard>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHlC9tAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhHlT9tAEeOBr-ZtRbdM3Q" message="_VhHlN9tAEeOBr-ZtRbdM3Q"/>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHlDNtAEeOBr-ZtRbdM3Q" covered="_VhHk09tAEeOBr-ZtRbdM3Q" event="_VhHlTdtAEeOBr-ZtRbdM3Q" message="_VhHlN9tAEeOBr-ZtRbdM3Q"/>
+          <fragment xmi:type="uml:BehaviorExecutionSpecification" xmi:id="_VhHlDdtAEeOBr-ZtRbdM3Q" covered="_VhHk09tAEeOBr-ZtRbdM3Q" start="_VhHlDNtAEeOBr-ZtRbdM3Q" finish="_VhHlDttAEeOBr-ZtRbdM3Q"/>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHlDttAEeOBr-ZtRbdM3Q" covered="_VhHk09tAEeOBr-ZtRbdM3Q" event="_VhHlT9tAEeOBr-ZtRbdM3Q" message="_VhHlOttAEeOBr-ZtRbdM3Q"/>
+          <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHlD9tAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhHlTdtAEeOBr-ZtRbdM3Q" message="_VhHlOttAEeOBr-ZtRbdM3Q"/>
+        </operand>
+      </fragment>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHlENtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhHlUdtAEeOBr-ZtRbdM3Q" message="_VhHlF9tAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHlEdtAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIL7NtAEeOBr-ZtRbdM3Q" message="_VhHlF9tAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHlEttAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhIL4ttAEeOBr-ZtRbdM3Q" message="_VhHlFdtAEeOBr-ZtRbdM3Q"/>
+      <fragment xmi:type="uml:MessageOccurrenceSpecification" xmi:id="_VhHlE9tAEeOBr-ZtRbdM3Q" covered="_VhHk0ttAEeOBr-ZtRbdM3Q" event="_VhHlTttAEeOBr-ZtRbdM3Q" message="_VhHlFdtAEeOBr-ZtRbdM3Q"/>
+      <message xmi:id="_VhHlFNtAEeOBr-ZtRbdM3Q" name="execute" receiveEvent="_VhHk1ttAEeOBr-ZtRbdM3Q" sendEvent="_VhHk1dtAEeOBr-ZtRbdM3Q" connector="_VhFv39tAEeOBr-ZtRbdM3Q"/>
+      <message xmi:id="_VhHlFdtAEeOBr-ZtRbdM3Q" name="execute" messageSort="reply" receiveEvent="_VhHlE9tAEeOBr-ZtRbdM3Q" sendEvent="_VhHlEttAEeOBr-ZtRbdM3Q" connector="_VhFv39tAEeOBr-ZtRbdM3Q"/>
+      <message xmi:id="_VhHlFttAEeOBr-ZtRbdM3Q" name="prepareNewReplicas" receiveEvent="_VhHk2dtAEeOBr-ZtRbdM3Q" sendEvent="_VhHk2NtAEeOBr-ZtRbdM3Q" connector="_VhFv39tAEeOBr-ZtRbdM3Q"/>
+      <message xmi:id="_VhHlF9tAEeOBr-ZtRbdM3Q" name="prepareNewReplicas" messageSort="reply" receiveEvent="_VhHlEdtAEeOBr-ZtRbdM3Q" sendEvent="_VhHlENtAEeOBr-ZtRbdM3Q" connector="_VhFv39tAEeOBr-ZtRbdM3Q"/>
+      <message xmi:id="_VhHlGNtAEeOBr-ZtRbdM3Q" name="__getNewReplicas" receiveEvent="_VhHk3NtAEeOBr-ZtRbdM3Q" sendEvent="_VhHk29tAEeOBr-ZtRbdM3Q" connector="_VhFv39tAEeOBr-ZtRbdM3Q"/>
+      <message xmi:id="_VhHlGdtAEeOBr-ZtRbdM3Q" name="__getNewReplicas" messageSort="reply" receiveEvent="_VhHk5NtAEeOBr-ZtRbdM3Q" sendEvent="_VhHk49tAEeOBr-ZtRbdM3Q" connector="_VhFv39tAEeOBr-ZtRbdM3Q">
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlGttAEeOBr-ZtRbdM3Q">
+          <eAnnotations xmi:id="_VhHlG9tAEeOBr-ZtRbdM3Q" source="Parameter">
+            <references xmi:type="uml:Parameter" href="StorageManagementSystem.uml#_Vg-bTNtAEeOBr-ZtRbdM3Q"/>
+          </eAnnotations>
+          <language></language>
+          <body>res</body>
+        </argument>
+      </message>
+      <message xmi:id="_VhHlHNtAEeOBr-ZtRbdM3Q" name="getCacheReplicas" receiveEvent="_VhHk39tAEeOBr-ZtRbdM3Q" sendEvent="_VhHk3ttAEeOBr-ZtRbdM3Q" connector="_VhFv4ttAEeOBr-ZtRbdM3Q">
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlHdtAEeOBr-ZtRbdM3Q">
+          <eAnnotations xmi:id="_VhHlHttAEeOBr-ZtRbdM3Q" source="Parameter">
+            <references xmi:type="uml:Parameter" href="StorageManagementSystem.uml#_Vg_CLNtAEeOBr-ZtRbdM3Q"/>
+          </eAnnotations>
+          <language></language>
+          <body>&quot;New&quot;</body>
+        </argument>
+      </message>
+      <message xmi:id="_VhHlH9tAEeOBr-ZtRbdM3Q" name="getCacheReplicas" messageSort="reply" receiveEvent="_VhHk4ttAEeOBr-ZtRbdM3Q" sendEvent="_VhHk4dtAEeOBr-ZtRbdM3Q" connector="_VhFv4ttAEeOBr-ZtRbdM3Q">
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlINtAEeOBr-ZtRbdM3Q">
+          <eAnnotations xmi:id="_VhHlIdtAEeOBr-ZtRbdM3Q" source="Parameter">
+            <references xmi:type="uml:Parameter" href="StorageManagementSystem.uml#_Vg_CLNtAEeOBr-ZtRbdM3Q"/>
+          </eAnnotations>
+          <language></language>
+          <body>res</body>
+        </argument>
+      </message>
+      <message xmi:id="_VhHlIttAEeOBr-ZtRbdM3Q" name="__getExistingFiles" receiveEvent="_VhHk5ttAEeOBr-ZtRbdM3Q" sendEvent="_VhHk5dtAEeOBr-ZtRbdM3Q" connector="_VhFv39tAEeOBr-ZtRbdM3Q">
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlI9tAEeOBr-ZtRbdM3Q">
+          <eAnnotations xmi:id="_VhHlJNtAEeOBr-ZtRbdM3Q" source="Parameter">
+            <references xmi:type="uml:Parameter" href="StorageManagementSystem.uml#_Vg-bUNtAEeOBr-ZtRbdM3Q"/>
+          </eAnnotations>
+          <language></language>
+          <body>&quot;replicas.keys&quot;</body>
+        </argument>
+      </message>
+      <message xmi:id="_VhHlJdtAEeOBr-ZtRbdM3Q" name="__getExistingFiles" messageSort="reply" receiveEvent="_VhHk7ttAEeOBr-ZtRbdM3Q" sendEvent="_VhHk7dtAEeOBr-ZtRbdM3Q" connector="_VhFv39tAEeOBr-ZtRbdM3Q">
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlJttAEeOBr-ZtRbdM3Q">
+          <language></language>
+          <body>&quot;exist&quot;</body>
+        </argument>
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlJ9tAEeOBr-ZtRbdM3Q">
+          <language></language>
+          <body>&quot;terminal&quot;</body>
+        </argument>
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlKNtAEeOBr-ZtRbdM3Q">
+          <language></language>
+          <body>&quot;failed&quot;</body>
+        </argument>
+      </message>
+      <message xmi:id="_VhHlKdtAEeOBr-ZtRbdM3Q" name="__getFileReplicas" receiveEvent="_VhHk-ttAEeOBr-ZtRbdM3Q" sendEvent="_VhHk-dtAEeOBr-ZtRbdM3Q" connector="_VhFv39tAEeOBr-ZtRbdM3Q">
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlKttAEeOBr-ZtRbdM3Q">
+          <eAnnotations xmi:id="_VhHlK9tAEeOBr-ZtRbdM3Q" source="Parameter">
+            <references xmi:type="uml:Parameter" href="StorageManagementSystem.uml#_Vg-battAEeOBr-ZtRbdM3Q"/>
+          </eAnnotations>
+          <language></language>
+          <body>&quot;fileSizes.keys&quot;</body>
+        </argument>
+      </message>
+      <message xmi:id="_VhHlLNtAEeOBr-ZtRbdM3Q" name="__getFileReplicas" messageSort="reply" receiveEvent="_VhHk_dtAEeOBr-ZtRbdM3Q" sendEvent="_VhHk_NtAEeOBr-ZtRbdM3Q" connector="_VhFv39tAEeOBr-ZtRbdM3Q">
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlLdtAEeOBr-ZtRbdM3Q">
+          <eAnnotations xmi:id="_VhHlLttAEeOBr-ZtRbdM3Q" source="Parameter">
+            <references xmi:type="uml:Parameter" href="StorageManagementSystem.uml#_Vg-battAEeOBr-ZtRbdM3Q"/>
+          </eAnnotations>
+          <language></language>
+          <body>&quot;replicas&quot;</body>
+        </argument>
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlL9tAEeOBr-ZtRbdM3Q">
+          <eAnnotations xmi:id="_VhHlMNtAEeOBr-ZtRbdM3Q" source="Parameter">
+            <references xmi:type="uml:Parameter" href="StorageManagementSystem.uml#_Vg-bbdtAEeOBr-ZtRbdM3Q"/>
+          </eAnnotations>
+          <language></language>
+          <body>&quot;noReplicas&quot;</body>
+        </argument>
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlMdtAEeOBr-ZtRbdM3Q">
+          <eAnnotations xmi:id="_VhHlMttAEeOBr-ZtRbdM3Q" source="Parameter">
+            <references xmi:type="uml:Parameter" href="StorageManagementSystem.uml#_Vg-bcNtAEeOBr-ZtRbdM3Q"/>
+          </eAnnotations>
+          <language></language>
+          <body>&quot;failed&quot;</body>
+        </argument>
+      </message>
+      <message xmi:id="_VhHlM9tAEeOBr-ZtRbdM3Q" name="updateReplicaFailure" receiveEvent="_VhHlA9tAEeOBr-ZtRbdM3Q" sendEvent="_VhHlAttAEeOBr-ZtRbdM3Q" connector="_VhFv4ttAEeOBr-ZtRbdM3Q">
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlNNtAEeOBr-ZtRbdM3Q">
+          <eAnnotations xmi:id="_VhHlNdtAEeOBr-ZtRbdM3Q" source="Parameter">
+            <references xmi:type="uml:Parameter" href="StorageManagementSystem.uml#_Vg_CMdtAEeOBr-ZtRbdM3Q"/>
+          </eAnnotations>
+          <language></language>
+          <body>terminalReplicaIDs</body>
+        </argument>
+      </message>
+      <message xmi:id="_VhHlNttAEeOBr-ZtRbdM3Q" name="updateReplicaFailure" messageSort="reply" receiveEvent="_VhHlBttAEeOBr-ZtRbdM3Q" sendEvent="_VhHlBdtAEeOBr-ZtRbdM3Q" connector="_VhFv4ttAEeOBr-ZtRbdM3Q"/>
+      <message xmi:id="_VhHlN9tAEeOBr-ZtRbdM3Q" name="updateReplicaInformation" receiveEvent="_VhHlDNtAEeOBr-ZtRbdM3Q" sendEvent="_VhHlC9tAEeOBr-ZtRbdM3Q" connector="_VhFv4ttAEeOBr-ZtRbdM3Q">
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlONtAEeOBr-ZtRbdM3Q">
+          <eAnnotations xmi:id="_VhHlOdtAEeOBr-ZtRbdM3Q" source="Parameter">
+            <references xmi:type="uml:Parameter" href="StorageManagementSystem.uml#_Vg_CNdtAEeOBr-ZtRbdM3Q"/>
+          </eAnnotations>
+          <language></language>
+          <body>replicaMetadata</body>
+        </argument>
+      </message>
+      <message xmi:id="_VhHlOttAEeOBr-ZtRbdM3Q" name="updateReplicaInformation" messageSort="reply" receiveEvent="_VhHlD9tAEeOBr-ZtRbdM3Q" sendEvent="_VhHlDttAEeOBr-ZtRbdM3Q" connector="_VhFv4ttAEeOBr-ZtRbdM3Q"/>
+      <message xmi:id="_VhHlO9tAEeOBr-ZtRbdM3Q" name="__getFileSize" receiveEvent="_VhHk8NtAEeOBr-ZtRbdM3Q" sendEvent="_VhHk79tAEeOBr-ZtRbdM3Q" connector="_VhFv39tAEeOBr-ZtRbdM3Q">
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlPNtAEeOBr-ZtRbdM3Q">
+          <eAnnotations xmi:id="_VhHlPdtAEeOBr-ZtRbdM3Q" source="Parameter" references="_VhFJB9tAEeOBr-ZtRbdM3Q"/>
+          <language></language>
+          <body>&quot;exist&quot;</body>
+        </argument>
+      </message>
+      <message xmi:id="_VhHlPttAEeOBr-ZtRbdM3Q" name="__getFileSize" messageSort="reply" receiveEvent="_VhHk-NtAEeOBr-ZtRbdM3Q" sendEvent="_VhHk99tAEeOBr-ZtRbdM3Q" connector="_VhFv39tAEeOBr-ZtRbdM3Q"/>
+      <message xmi:id="_VhHlP9tAEeOBr-ZtRbdM3Q" name="getFileSize" receiveEvent="_VhHk89tAEeOBr-ZtRbdM3Q" sendEvent="_VhHk8ttAEeOBr-ZtRbdM3Q" connector="_VhFv5dtAEeOBr-ZtRbdM3Q">
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlQNtAEeOBr-ZtRbdM3Q">
+          <eAnnotations xmi:id="_VhHlQdtAEeOBr-ZtRbdM3Q" source="Parameter" references="_VhFv0dtAEeOBr-ZtRbdM3Q"/>
+          <language></language>
+          <body>&quot;lfns&quot;</body>
+        </argument>
+      </message>
+      <message xmi:id="_VhHlQttAEeOBr-ZtRbdM3Q" name="getFileSize" messageSort="reply" receiveEvent="_VhHk9ttAEeOBr-ZtRbdM3Q" sendEvent="_VhHk9dtAEeOBr-ZtRbdM3Q" connector="_VhFv5dtAEeOBr-ZtRbdM3Q">
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlQ9tAEeOBr-ZtRbdM3Q">
+          <eAnnotations xmi:id="_VhHlRNtAEeOBr-ZtRbdM3Q" source="Parameter" references="_VhFv0dtAEeOBr-ZtRbdM3Q"/>
+          <language></language>
+          <body>fileSizes</body>
+        </argument>
+      </message>
+      <message xmi:id="_VhHlRdtAEeOBr-ZtRbdM3Q" name="_exists" receiveEvent="_VhHk6dtAEeOBr-ZtRbdM3Q" sendEvent="_VhHk6NtAEeOBr-ZtRbdM3Q" connector="_VhFv5dtAEeOBr-ZtRbdM3Q">
+        <argument xmi:type="uml:OpaqueExpression" xmi:id="_VhHlRttAEeOBr-ZtRbdM3Q">
+          <eAnnotations xmi:id="_VhHlR9tAEeOBr-ZtRbdM3Q" source="Parameter" references="_VhFvzdtAEeOBr-ZtRbdM3Q"/>
+          <language></language>
+          <body>&quot;lfns&quot;</body>
+        </argument>
+      </message>
+      <message xmi:id="_VhHlSNtAEeOBr-ZtRbdM3Q" name="_exists" messageSort="reply" receiveEvent="_VhHk7NtAEeOBr-ZtRbdM3Q" sendEvent="_VhHk69tAEeOBr-ZtRbdM3Q" connector="_VhFv5dtAEeOBr-ZtRbdM3Q"/>
+    </ownedBehavior>
+    <ownedAttribute xmi:id="_VhHlSdtAEeOBr-ZtRbdM3Q" name="smDB" type="_VhFJEdtAEeOBr-ZtRbdM3Q"/>
+    <ownedAttribute xmi:id="_VhHlSttAEeOBr-ZtRbdM3Q" name="fileCatalog" type="_VhFvy9tAEeOBr-ZtRbdM3Q"/>
+    <ownedAttribute xmi:id="_VhHlS9tAEeOBr-ZtRbdM3Q" name="rpAgent" type="_VhFI39tAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhHlTNtAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent9">
+    <operation href="StorageManagementSystem.uml#_Vg-badtAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhHlTdtAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent11">
+    <operation href="StorageManagementSystem.uml#_Vg_CNNtAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhHlTttAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent1">
+    <operation href="StorageManagementSystem.uml#_Vg-bSdtAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhHlT9tAEeOBr-ZtRbdM3Q" name="SendOperationEvent11">
+    <operation href="StorageManagementSystem.uml#_Vg_CNNtAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhHlUNtAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent6">
+    <operation href="StorageManagementSystem.uml#_VhCs89tAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhHlUdtAEeOBr-ZtRbdM3Q" name="SendOperationEvent2">
+    <operation href="StorageManagementSystem.uml#_Vg-bSttAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhHlUttAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent3">
+    <operation href="StorageManagementSystem.uml#_Vg-bS9tAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhHlU9tAEeOBr-ZtRbdM3Q" name="SendOperationEvent3">
+    <operation href="StorageManagementSystem.uml#_Vg-bS9tAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhHlVNtAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent7">
+    <operation href="StorageManagementSystem.uml#_Vg-bXNtAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhIL4NtAEeOBr-ZtRbdM3Q" name="SendOperationEvent9">
+    <operation href="StorageManagementSystem.uml#_Vg-badtAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhIL4dtAEeOBr-ZtRbdM3Q" name="SendOperationEvent4">
+    <operation href="StorageManagementSystem.uml#_Vg_CK9tAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhIL4ttAEeOBr-ZtRbdM3Q" name="SendOperationEvent1">
+    <operation href="StorageManagementSystem.uml#_Vg-bSdtAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhIL49tAEeOBr-ZtRbdM3Q" name="SendOperationEvent8">
+    <operation href="StorageManagementSystem.uml#_VhCs99tAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhIL5NtAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent4">
+    <operation href="StorageManagementSystem.uml#_Vg_CK9tAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhIL5dtAEeOBr-ZtRbdM3Q" name="SendOperationEvent10">
+    <operation href="StorageManagementSystem.uml#_Vg_CMNtAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhIL5ttAEeOBr-ZtRbdM3Q" name="SendOperationEvent6">
+    <operation href="StorageManagementSystem.uml#_VhCs89tAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhIL59tAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent5">
+    <operation href="StorageManagementSystem.uml#_Vg-bT9tAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhIL6NtAEeOBr-ZtRbdM3Q" name="SendOperationEvent5">
+    <operation href="StorageManagementSystem.uml#_Vg-bT9tAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhIL6dtAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent10">
+    <operation href="StorageManagementSystem.uml#_Vg_CMNtAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhIL6ttAEeOBr-ZtRbdM3Q" name="SendOperationEvent7">
+    <operation href="StorageManagementSystem.uml#_Vg-bXNtAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhIL69tAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent8">
+    <operation href="StorageManagementSystem.uml#_VhCs99tAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhIL7NtAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent2">
+    <operation href="StorageManagementSystem.uml#_Vg-bSttAEeOBr-ZtRbdM3Q"/>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Activity" xmi:id="_VhIL7dtAEeOBr-ZtRbdM3Q" name="Activity1">
+    <node xmi:type="uml:InitialNode" xmi:id="_VhIL7ttAEeOBr-ZtRbdM3Q" outgoing="_VhIL8NtAEeOBr-ZtRbdM3Q"/>
+    <node xmi:type="uml:CallBehaviorAction" xmi:id="_VhIL79tAEeOBr-ZtRbdM3Q" name="" incoming="_VhIL8NtAEeOBr-ZtRbdM3Q">
+      <behavior xmi:type="uml:Interaction" href="StorageManagementSystem.uml#_Vg_pCttAEeOBr-ZtRbdM3Q"/>
+    </node>
+    <edge xmi:type="uml:ControlFlow" xmi:id="_VhIL8NtAEeOBr-ZtRbdM3Q" name="1" source="_VhIL7ttAEeOBr-ZtRbdM3Q" target="_VhIL79tAEeOBr-ZtRbdM3Q">
+      <guard xmi:type="uml:OpaqueExpression" xmi:id="_VhIL8dtAEeOBr-ZtRbdM3Q">
+        <language></language>
+        <body></body>
+      </guard>
+      <weight xmi:type="uml:LiteralInteger" xmi:id="_VhIL8ttAEeOBr-ZtRbdM3Q" value="1"/>
+    </edge>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_VhIL89tAEeOBr-ZtRbdM3Q" name="CacheReplicas">
+    <ownedAttribute xmi:id="_VhIL9NtAEeOBr-ZtRbdM3Q" name="ReplicaID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIL9dtAEeOBr-ZtRbdM3Q" name="Type" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIL9ttAEeOBr-ZtRbdM3Q" name="Status" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <defaultValue xmi:type="uml:LiteralString" xmi:id="_VhIL99tAEeOBr-ZtRbdM3Q" value="New">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </defaultValue>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIL-NtAEeOBr-ZtRbdM3Q" name="SE" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIL-dtAEeOBr-ZtRbdM3Q" name="LFN" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIL-ttAEeOBr-ZtRbdM3Q" name="PFN" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIL-9tAEeOBr-ZtRbdM3Q" name="Size" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      <defaultValue xmi:type="uml:LiteralInteger" xmi:id="_VhIL_NtAEeOBr-ZtRbdM3Q">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      </defaultValue>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIL_dtAEeOBr-ZtRbdM3Q" name="FileChecksum" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIL_ttAEeOBr-ZtRbdM3Q" name="GUID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIL_9tAEeOBr-ZtRbdM3Q" name="SubmitTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_VhD6hdtAEeOBr-ZtRbdM3Q"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMANtAEeOBr-ZtRbdM3Q" name="LastUpdate" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_VhD6hdtAEeOBr-ZtRbdM3Q"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMAdtAEeOBr-ZtRbdM3Q" name="Reason" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMAttAEeOBr-ZtRbdM3Q" name="Links" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+      <defaultValue xmi:type="uml:LiteralInteger" xmi:id="_VhIMA9tAEeOBr-ZtRbdM3Q"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMBNtAEeOBr-ZtRbdM3Q" name="taskReplicas" visibility="private">
+      <type xmi:type="uml:Class" href="StorageManagementSystem.uml#_VhCs3NtAEeOBr-ZtRbdM3Q"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhIMBdtAEeOBr-ZtRbdM3Q" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhIMBttAEeOBr-ZtRbdM3Q" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMB9tAEeOBr-ZtRbdM3Q" name="stageRequests" visibility="private">
+      <type xmi:type="uml:Class" href="StorageManagementSystem.uml#_VhCs0NtAEeOBr-ZtRbdM3Q"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhIMCNtAEeOBr-ZtRbdM3Q" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhIMCdtAEeOBr-ZtRbdM3Q" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_VhIMCttAEeOBr-ZtRbdM3Q" name="Tasks">
+    <ownedAttribute xmi:id="_VhIMC9tAEeOBr-ZtRbdM3Q" name="TaskID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMDNtAEeOBr-ZtRbdM3Q" name="Status" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <defaultValue xmi:type="uml:LiteralString" xmi:id="_VhIMDdtAEeOBr-ZtRbdM3Q" value="New"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMDttAEeOBr-ZtRbdM3Q" name="Source" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMD9tAEeOBr-ZtRbdM3Q" name="SubmitTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_VhD6hdtAEeOBr-ZtRbdM3Q"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMENtAEeOBr-ZtRbdM3Q" name="LastUpdate" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_VhD6hdtAEeOBr-ZtRbdM3Q"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMEdtAEeOBr-ZtRbdM3Q" name="CompleteTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_VhD6hdtAEeOBr-ZtRbdM3Q"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMEttAEeOBr-ZtRbdM3Q" name="CallBackMethod" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIME9tAEeOBr-ZtRbdM3Q" name="SourceTaskID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMFNtAEeOBr-ZtRbdM3Q" name="taskReplicas" visibility="private">
+      <type xmi:type="uml:Class" href="StorageManagementSystem.uml#_VhCs3NtAEeOBr-ZtRbdM3Q"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhIMFdtAEeOBr-ZtRbdM3Q" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhIMFttAEeOBr-ZtRbdM3Q" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_VhIMF9tAEeOBr-ZtRbdM3Q" name="TaskReplicas">
+    <ownedAttribute xmi:id="_VhIMGNtAEeOBr-ZtRbdM3Q" name="TaskID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMGdtAEeOBr-ZtRbdM3Q" name="ReplicaID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMGttAEeOBr-ZtRbdM3Q" name="cacheReplicas" visibility="private">
+      <type xmi:type="uml:Class" href="StorageManagementSystem.uml#_VhCsrNtAEeOBr-ZtRbdM3Q"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhIMG9tAEeOBr-ZtRbdM3Q" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhIMHNtAEeOBr-ZtRbdM3Q" value="1"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMHdtAEeOBr-ZtRbdM3Q" name="tasks" visibility="private">
+      <type xmi:type="uml:Class" href="StorageManagementSystem.uml#_VhCsw9tAEeOBr-ZtRbdM3Q"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhIMHttAEeOBr-ZtRbdM3Q" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhIMH9tAEeOBr-ZtRbdM3Q" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_VhIMINtAEeOBr-ZtRbdM3Q" name="Job">
+    <ownedAttribute xmi:id="_VhIMIdtAEeOBr-ZtRbdM3Q" name="jid" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMIttAEeOBr-ZtRbdM3Q" name="state" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedOperation xmi:id="_VhIMI9tAEeOBr-ZtRbdM3Q" name="setStatus">
+      <ownedParameter xmi:id="_VhIMJNtAEeOBr-ZtRbdM3Q" name="status">
+        <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      </ownedParameter>
+    </ownedOperation>
+  </packagedElement>
+  <packagedElement xmi:type="uml:Class" xmi:id="_VhIMJdtAEeOBr-ZtRbdM3Q" name="StageRequests">
+    <ownedAttribute xmi:id="_VhIMJttAEeOBr-ZtRbdM3Q" name="ReplicaID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMJ9tAEeOBr-ZtRbdM3Q" name="StageStatus" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+      <defaultValue xmi:type="uml:LiteralString" xmi:id="_VhIMKNtAEeOBr-ZtRbdM3Q" value="StageSubmitted"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMKdtAEeOBr-ZtRbdM3Q" name="RequestID" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#String"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMKttAEeOBr-ZtRbdM3Q" name="StageRequestSubmitTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_VhD6hdtAEeOBr-ZtRbdM3Q"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMK9tAEeOBr-ZtRbdM3Q" name="StageRequestCompletedTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_VhD6hdtAEeOBr-ZtRbdM3Q"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMLNtAEeOBr-ZtRbdM3Q" name="PinLength" visibility="private">
+      <type xmi:type="uml:PrimitiveType" href="pathmap://UML_LIBRARIES/UMLPrimitiveTypes.library.uml#Integer"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMLdtAEeOBr-ZtRbdM3Q" name="PinExpiryTime" visibility="private">
+      <type xmi:type="uml:Class" href="XSDDataTypes.library.uml#_VhD6hdtAEeOBr-ZtRbdM3Q"/>
+    </ownedAttribute>
+    <ownedAttribute xmi:id="_VhIMLttAEeOBr-ZtRbdM3Q" name="cacheReplicas" visibility="private">
+      <type xmi:type="uml:Class" href="StorageManagementSystem.uml#_VhCsrNtAEeOBr-ZtRbdM3Q"/>
+      <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VhIML9tAEeOBr-ZtRbdM3Q" value="1"/>
+      <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VhIMMNtAEeOBr-ZtRbdM3Q" value="1"/>
+    </ownedAttribute>
+  </packagedElement>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhIMMdtAEeOBr-ZtRbdM3Q" name="SendOperationEvent12"/>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhIMMttAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent12"/>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhIMM9tAEeOBr-ZtRbdM3Q" name="SendOperationEvent13" operation="_VhFJBttAEeOBr-ZtRbdM3Q"/>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhIMNNtAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent13" operation="_VhFJBttAEeOBr-ZtRbdM3Q"/>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhIMNdtAEeOBr-ZtRbdM3Q" name="SendOperationEvent14" operation="_VhFv0NtAEeOBr-ZtRbdM3Q"/>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhIMNttAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent14" operation="_VhFv0NtAEeOBr-ZtRbdM3Q"/>
+  <packagedElement xmi:type="uml:SendOperationEvent" xmi:id="_VhIMN9tAEeOBr-ZtRbdM3Q" name="SendOperationEvent15" operation="_VhFvzNtAEeOBr-ZtRbdM3Q"/>
+  <packagedElement xmi:type="uml:ReceiveOperationEvent" xmi:id="_VhIMONtAEeOBr-ZtRbdM3Q" name="ReceiveOperationEvent15" operation="_VhFvzNtAEeOBr-ZtRbdM3Q"/>
+  <profileApplication xmi:id="_VhIMOdtAEeOBr-ZtRbdM3Q">
+    <eAnnotations xmi:id="_VhIMOttAEeOBr-ZtRbdM3Q" source="http://www.eclipse.org/uml2/2.0.0/UML">
+      <references xmi:type="ecore:EPackage" href="pathmap://UML_PROFILES/Standard.profile.uml#_yzU58YinEdqtvbnfB2L_5w"/>
+    </eAnnotations>
+    <appliedProfile href="pathmap://UML_PROFILES/Standard.profile.uml#_0"/>
+  </profileApplication>
+</uml:Model>

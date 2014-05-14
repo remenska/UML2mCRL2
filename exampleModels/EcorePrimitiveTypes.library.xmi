@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:Standard="http://schema.omg.org/spec/UML/2.2/StandardProfileL2" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:uml="http://schema.omg.org/spec/UML/2.2" xsi:schemaLocation="http://schema.omg.org/spec/UML/2.2/StandardProfileL2 http://schema.omg.org/spec/UML/2.2/StandardProfileL2.xmi#_yzU58YinEdqtvbnfB2L_5w http://schema.omg.org/spec/UML/2.2 http://www.eclipse.org/uml2/3.0.0/UML">
+  <uml:Model xmi:id="_x45_RdqPEeOQIPGNWcrVnQ" name="EcorePrimitiveTypes">
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_RtqPEeOQIPGNWcrVnQ" name="EBigDecimal"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_R9qPEeOQIPGNWcrVnQ" name="EBigInteger"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_SNqPEeOQIPGNWcrVnQ" name="EBoolean"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_SdqPEeOQIPGNWcrVnQ" name="EBooleanObject"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_StqPEeOQIPGNWcrVnQ" name="EByte"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_S9qPEeOQIPGNWcrVnQ" name="EByteArray"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_TNqPEeOQIPGNWcrVnQ" name="EByteObject"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_TdqPEeOQIPGNWcrVnQ" name="EChar"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_TtqPEeOQIPGNWcrVnQ" name="ECharacterObject"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_T9qPEeOQIPGNWcrVnQ" name="EDate"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_UNqPEeOQIPGNWcrVnQ" name="EDiagnosticChain"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_UdqPEeOQIPGNWcrVnQ" name="EDouble"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_UtqPEeOQIPGNWcrVnQ" name="EDoubleObject"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_U9qPEeOQIPGNWcrVnQ" name="EEList">
+      <ownedTemplateSignature xmi:type="uml:RedefinableTemplateSignature" xmi:id="_x45_VNqPEeOQIPGNWcrVnQ" parameter="_x45_VdqPEeOQIPGNWcrVnQ">
+        <ownedParameter xmi:type="uml:ClassifierTemplateParameter" xmi:id="_x45_VdqPEeOQIPGNWcrVnQ" parameteredElement="_x45_VtqPEeOQIPGNWcrVnQ">
+          <ownedParameteredElement xmi:type="uml:Class" xmi:id="_x45_VtqPEeOQIPGNWcrVnQ" name="E" templateParameter="_x45_VdqPEeOQIPGNWcrVnQ"/>
+        </ownedParameter>
+      </ownedTemplateSignature>
+    </packagedElement>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_V9qPEeOQIPGNWcrVnQ" name="EEnumerator"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_WNqPEeOQIPGNWcrVnQ" name="EFeatureMap"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_WdqPEeOQIPGNWcrVnQ" name="EFeatureMapEntry"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_WtqPEeOQIPGNWcrVnQ" name="EFloat"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_W9qPEeOQIPGNWcrVnQ" name="EFloatObject"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_XNqPEeOQIPGNWcrVnQ" name="EInt"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_XdqPEeOQIPGNWcrVnQ" name="EIntegerObject"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_XtqPEeOQIPGNWcrVnQ" name="EJavaClass">
+      <ownedTemplateSignature xmi:type="uml:RedefinableTemplateSignature" xmi:id="_x45_X9qPEeOQIPGNWcrVnQ" parameter="_x45_YNqPEeOQIPGNWcrVnQ">
+        <ownedParameter xmi:type="uml:ClassifierTemplateParameter" xmi:id="_x45_YNqPEeOQIPGNWcrVnQ" parameteredElement="_x45_YdqPEeOQIPGNWcrVnQ">
+          <ownedParameteredElement xmi:type="uml:Class" xmi:id="_x45_YdqPEeOQIPGNWcrVnQ" name="T" templateParameter="_x45_YNqPEeOQIPGNWcrVnQ"/>
+        </ownedParameter>
+      </ownedTemplateSignature>
+    </packagedElement>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_YtqPEeOQIPGNWcrVnQ" name="EJavaObject"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_Y9qPEeOQIPGNWcrVnQ" name="ELong"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_ZNqPEeOQIPGNWcrVnQ" name="ELongObject"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_ZdqPEeOQIPGNWcrVnQ" name="EMap">
+      <ownedTemplateSignature xmi:type="uml:RedefinableTemplateSignature" xmi:id="_x45_ZtqPEeOQIPGNWcrVnQ" parameter="_x45_Z9qPEeOQIPGNWcrVnQ _x45_adqPEeOQIPGNWcrVnQ">
+        <ownedParameter xmi:type="uml:ClassifierTemplateParameter" xmi:id="_x45_Z9qPEeOQIPGNWcrVnQ" parameteredElement="_x45_aNqPEeOQIPGNWcrVnQ">
+          <ownedParameteredElement xmi:type="uml:Class" xmi:id="_x45_aNqPEeOQIPGNWcrVnQ" name="K" templateParameter="_x45_Z9qPEeOQIPGNWcrVnQ"/>
+        </ownedParameter>
+        <ownedParameter xmi:type="uml:ClassifierTemplateParameter" xmi:id="_x45_adqPEeOQIPGNWcrVnQ" parameteredElement="_x45_atqPEeOQIPGNWcrVnQ">
+          <ownedParameteredElement xmi:type="uml:Class" xmi:id="_x45_atqPEeOQIPGNWcrVnQ" name="V" templateParameter="_x45_adqPEeOQIPGNWcrVnQ"/>
+        </ownedParameter>
+      </ownedTemplateSignature>
+    </packagedElement>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_a9qPEeOQIPGNWcrVnQ" name="EResource"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_bNqPEeOQIPGNWcrVnQ" name="EResourceSet"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_bdqPEeOQIPGNWcrVnQ" name="EShort"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_btqPEeOQIPGNWcrVnQ" name="EShortObject"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_b9qPEeOQIPGNWcrVnQ" name="EString"/>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_cNqPEeOQIPGNWcrVnQ" name="ETreeIterator">
+      <ownedTemplateSignature xmi:type="uml:RedefinableTemplateSignature" xmi:id="_x45_cdqPEeOQIPGNWcrVnQ" parameter="_x45_ctqPEeOQIPGNWcrVnQ">
+        <ownedParameter xmi:type="uml:ClassifierTemplateParameter" xmi:id="_x45_ctqPEeOQIPGNWcrVnQ" parameteredElement="_x45_c9qPEeOQIPGNWcrVnQ">
+          <ownedParameteredElement xmi:type="uml:Class" xmi:id="_x45_c9qPEeOQIPGNWcrVnQ" name="E" templateParameter="_x45_ctqPEeOQIPGNWcrVnQ"/>
+        </ownedParameter>
+      </ownedTemplateSignature>
+    </packagedElement>
+    <packagedElement xmi:type="uml:PrimitiveType" xmi:id="_x45_dNqPEeOQIPGNWcrVnQ" name="EInvocationTargetException"/>
+    <profileApplication xmi:type="uml:ProfileApplication" xmi:id="_x45_ddqPEeOQIPGNWcrVnQ">
+      <xmi:Extension extender="http://www.eclipse.org/emf/2002/Ecore">
+        <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_x45_dtqPEeOQIPGNWcrVnQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+          <references xmi:type="ecore:EPackage" href="http://schema.omg.org/spec/UML/2.2/StandardProfileL2.xmi#_yzU58YinEdqtvbnfB2L_5w"/>
+        </eAnnotations>
+      </xmi:Extension>
+      <appliedProfile xmi:type="uml:Profile" href="http://schema.omg.org/spec/UML/2.2/StandardProfileL2.xmi#_0"/>
+    </profileApplication>
+  </uml:Model>
+  <Standard:ModelLibrary xmi:id="_x45_d9qPEeOQIPGNWcrVnQ" base_Package="_x45_RdqPEeOQIPGNWcrVnQ"/>
+</xmi:XMI>
