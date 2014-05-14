@@ -1646,6 +1646,7 @@ public class UML2mCRL2 {
 		catch (Exception e) {
 			System.err.println("Usage: UML2mCRL2 <exportedModel.uml>");
 			System.err.println("Error message: " + e.getMessage());
+			e.printStackTrace();
 			System.exit(1);
 		}
 
