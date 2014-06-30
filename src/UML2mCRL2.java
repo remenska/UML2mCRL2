@@ -520,6 +520,10 @@ public class UML2mCRL2 {
 		outfile.write("%comment \n");
 		outfile.write("% created:" + new Date() + "\n \n");
 		outfile.write("%-------sorts--------- \n");
+		// FIX: make the list of Method names unique.
+		LinkedList<String>	areTheyUnique = new LinkedList<String>(new HashSet<String>(OperationSignatures));
+		System.out.println("Are there duplicates? " + areTheyUnique.size() +  " vs " + OperationSignatures.size());
+		
 		if (ClassType.size() == 0) {
 			System.err
 					.println("Strange:there are no classes in the UML model.\nPlease check for possible problems.");
@@ -540,7 +544,8 @@ public class UML2mCRL2 {
 		} else {
 			outfile.write("sort Method = struct ");
 			outfile.newLine();
-			ListIterator<String> OperationSignatures_st = OperationSignatures
+			// FIX: was 			ListIterator<String> OperationSignatures_st = OperationSignatures.listIterator(0);
+			ListIterator<String> OperationSignatures_st = areTheyUnique
 					.listIterator(0);
 			while (OperationSignatures_st.hasNext()) {
 				outfile.write("\t\t\t" + OperationSignatures_st.next());
@@ -551,6 +556,8 @@ public class UML2mCRL2 {
 				}
 			}
 		}
+		
+
 	}
 
 	public static void createClassObjectSort(
