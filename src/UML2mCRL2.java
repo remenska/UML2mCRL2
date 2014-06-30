@@ -346,6 +346,19 @@ class Process {
 			}
 		}
 
+		//add recursion Proc P = ... .P;
+		if (classImpl == null && operationImpl == null) // FIXME for now we
+			// consider a starter
+			// process to have the
+			// name of the enclosing
+			// interaction
+			buffer.append(". " + this.getEnclosingInteraction().getName()
+					+ "(id)");
+		else {
+			buffer.append(". " + this.classImpl.getName() + "_"
+					+ this.operationImpl.getName() + "(id)");
+		}
+		//END_add recursion
 		buffer.append(";\n\n");
 		return buffer;
 	}
@@ -1314,7 +1327,7 @@ public class UML2mCRL2 {
 			if (countThem == operands.size())
 				lastOperand = true;
 			getFragmentsInsideOperand(operand, operator, firstOperand,
-					lastOperand, opaqueExpression.getBodies().get(0).toString());
+					lastOperand, opaqueExpression.getBodies().get(0).toString()); // TODO: what if there is no body??
 			firstOperand = false;
 		}
 		return operands;
@@ -1517,7 +1530,7 @@ public class UML2mCRL2 {
 		Collection<ActivityEdge> edges = node.getIncomings();
 		if (edges.size() != 1) {
 			System.err
-					.println("More than one incoming edge for CallBehaviorAction.\nNot sure which one to take...Please correct this");
+					.println("None, or more than one outgoing edge for CallBehaviorAction.\nNot sure which one to take...Please correct this");
 			System.exit(1);
 		}
 
@@ -1646,6 +1659,7 @@ public class UML2mCRL2 {
 		catch (Exception e) {
 			System.err.println("Usage: UML2mCRL2 <exportedModel.uml>");
 			System.err.println("Error message: " + e.getMessage());
+			e.printStackTrace();
 			System.exit(1);
 		}
 
