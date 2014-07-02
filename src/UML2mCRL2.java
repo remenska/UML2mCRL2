@@ -163,7 +163,8 @@ class Process {
 
 				else {
 					this.opParametersReturn.put(
-							parameterFromCollection.getName(), "ClassObject");
+							parameterFromCollection.getName(), parameterFromCollection.getType().getName());
+							
 				}
 
 			}
@@ -182,7 +183,7 @@ class Process {
 
 				else {
 					this.opParametersIn.put(parameterFromCollection.getName(),
-							"ClassObject");
+							parameterFromCollection.getType().getName());
 				}
 
 			}
@@ -436,7 +437,7 @@ public class UML2mCRL2 {
 										.append(determinePrimitiveType((PrimitiveTypeImpl) parameterFromCollection
 												.getType()) + ",");
 							else
-								operationParametersReturn.append("ClassObject"
+								operationParametersReturn.append(parameterFromCollection.getType().getName()
 										+ ",");
 						}
 
@@ -451,7 +452,7 @@ public class UML2mCRL2 {
 										.append(determinePrimitiveType((PrimitiveTypeImpl) parameterFromCollection
 												.getType()) + ",");
 							else
-								operationParametersIn.append("ClassObject"
+								operationParametersIn.append(parameterFromCollection.getType().getName()
 										+ ",");
 						}
 
