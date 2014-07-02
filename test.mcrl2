@@ -1,0 +1,34 @@
+
+
+sort Tasks = struct tasks(TaskID:Nat, Status:SortString, SourceTaskID:Nat, CallbackMethod:SortString);
+sort CacheReplicas = struct cacheReplicas(ReplicaID:Int,status:SortString, SE:SortString, Links:Int, LFN:SortString, Size:Nat);
+sort TaskReplicas = struct taskReplicas(TaskID:Nat, ReplicaID:Nat);
+sort StageRequests = struct stageRequests(ReplicaID:Nat, RequestID:Nat, StageStatus:SortString);
+sort Job = struct jobs(jid:Nat, Status:SortString);
+
+sort SortString = struct New | Staged | Failed;
+
+
+act a,b,c;
+
+act d:List(CacheReplicas);
+
+
+proc P = a.(true) -> b <> c;
+
+
+proc StorageManagementSystemDB_mem(tasks:List(Tasks), 
+				    cacheReplicas:List(CacheReplicas),
+				    taskReplicas:List(TaskReplicas), 
+				    stageRequests:List(StageRequests)) = 
+
+sum aman:List(CacheReplicas).d(aman).a.StorageManagementSystemDB_mem(tasks,cacheReplicas,taskReplicas,stageRequests)
+;
+
+
+proc JobDB_mem(jobs:List(Job)) = 
+b.JobDB_mem(jobs)
+;
+
+
+init P || StorageManagementSystemDB_mem([],[],[],[]) || JobDB_mem([]) ;
