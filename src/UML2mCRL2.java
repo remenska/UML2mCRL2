@@ -88,9 +88,9 @@ class Process {
 	String methodSignature;
 	String methodReturnSignature;
 	LinkedList<String> invocations = new LinkedList<String>();
-	HashMap<String, String> opParametersIn = new HashMap<String, String>();
-	HashMap<String, String> opParametersReturn = new HashMap<String, String>();
-	HashMap<String, String> sumParameters = new HashMap<String, String>();
+	LinkedHashMap<String, String> opParametersIn = new LinkedHashMap<String, String>();
+	LinkedHashMap<String, String> opParametersReturn = new LinkedHashMap<String, String>();
+	LinkedHashMap<String, String> sumParameters = new LinkedHashMap<String, String>();
 	Interaction enclosingInteraction;
 
 	boolean isProcessed = false;
@@ -115,7 +115,7 @@ class Process {
 		sumParameters.put(key, value);
 	}
 
-	public HashMap<String, String> getSumParameters() {
+	public LinkedHashMap<String, String> getSumParameters() {
 		return this.sumParameters;
 	}
 
@@ -128,12 +128,12 @@ class Process {
 				UMLPackage.Literals.PARAMETER);
 	}
 
-	public HashMap<String, String> getOpParametersIn() {
+	public LinkedHashMap<String, String> getOpParametersIn() {
 		fillOperationParameters();
 		return this.opParametersIn;
 	}
 
-	public HashMap<String, String> getOpParametersReturn() {
+	public LinkedHashMap<String, String> getOpParametersReturn() {
 		fillOperationParameters();
 		return this.opParametersReturn;
 	}
@@ -1138,14 +1138,37 @@ public class UML2mCRL2 {
 						StringBuffer sumParameters = new StringBuffer();
 						StringBuffer appendedParameters = new StringBuffer();
 						sumParameters.append("sum ");
-
+						// adding parameters TODO: the names should NOT be from the operation
+						EList<ValueSpecification> argumentNames = (((MessageOccurrenceSpecificationImpl) el)
+								.getMessage().getArguments());
+						Iterator<ValueSpecification> arguments_iterator = null;
+						LinkedList<String> argNames = new LinkedList<String>();
+						if(!argumentNames.isEmpty()){
+							arguments_iterator = argumentNames.iterator();
+							while (arguments_iterator.hasNext()) {
+								ValueSpecification argument = (ValueSpecification) arguments_iterator.next();
+								argNames.add(((OpaqueExpression) argument).getBodies().get(0));
+							}
+						}
+						
+						
+						// added
+						int i = 0;
 						for (Map.Entry<String, String> entry : calledProcess
 								.getOpParametersReturn().entrySet()) {
+							
+//							ValueSpecification argument = (ValueSpecification) arguments_iterator.next();
+//							String argName = ((OpaqueExpression) argument).getBodies().get(0);
+							StringBuffer argName = new StringBuffer("ebise");
+							if(argNames.size()!=0){
+								 argName = new StringBuffer(argNames.get(i++));
+
+							}
 							String key = entry.getKey();
 							String value = entry.getValue();
-							sumParameters.append(key + ":" + value + ",");
-							appendedParameters.append(key + ",");
-							findProcess.addSumParameter(key, value);
+							sumParameters.append(argName + ":" + value + ",");
+							appendedParameters.append(argName + ",");
+							findProcess.addSumParameter(argName.toString(), value);
 						}
 
 						if (calledProcess.getOpParametersReturn().size() != 0) {
@@ -1159,10 +1182,7 @@ public class UML2mCRL2 {
 									+ ((MessageOccurrenceSpecificationImpl) el)
 											.getMessage().getName()
 									+ "_return"
-									+ "("
-									+ appendedParameters.substring(0,
-											appendedParameters.length() - 1)
-									+ ")" + ")");
+									+  arguments + ")"); // TODO: remove arguments, was there just to check!
 
 						} // no parameters to add
 						else {
