@@ -88,9 +88,9 @@ class Process {
 	String methodSignature;
 	String methodReturnSignature;
 	LinkedList<String> invocations = new LinkedList<String>();
-	HashMap<String, String> opParametersIn = new HashMap<String, String>();
-	HashMap<String, String> opParametersReturn = new HashMap<String, String>();
-	HashMap<String, String> sumParameters = new HashMap<String, String>();
+	LinkedHashMap<String, String> opParametersIn = new LinkedHashMap<String, String>();
+	LinkedHashMap<String, String> opParametersReturn = new LinkedHashMap<String, String>();
+	LinkedHashMap<String, String> sumParameters = new LinkedHashMap<String, String>();
 	Interaction enclosingInteraction;
 
 	boolean isProcessed = false;
@@ -115,7 +115,7 @@ class Process {
 		sumParameters.put(key, value);
 	}
 
-	public HashMap<String, String> getSumParameters() {
+	public LinkedHashMap<String, String> getSumParameters() {
 		return this.sumParameters;
 	}
 
@@ -128,12 +128,12 @@ class Process {
 				UMLPackage.Literals.PARAMETER);
 	}
 
-	public HashMap<String, String> getOpParametersIn() {
+	public LinkedHashMap<String, String> getOpParametersIn() {
 		fillOperationParameters();
 		return this.opParametersIn;
 	}
 
-	public HashMap<String, String> getOpParametersReturn() {
+	public LinkedHashMap<String, String> getOpParametersReturn() {
 		fillOperationParameters();
 		return this.opParametersReturn;
 	}
@@ -163,7 +163,8 @@ class Process {
 
 				else {
 					this.opParametersReturn.put(
-							parameterFromCollection.getName(), "ClassObject");
+							parameterFromCollection.getName(), parameterFromCollection.getType().getName());
+							
 				}
 
 			}
@@ -182,7 +183,7 @@ class Process {
 
 				else {
 					this.opParametersIn.put(parameterFromCollection.getName(),
-							"ClassObject");
+							parameterFromCollection.getType().getName());
 				}
 
 			}
@@ -346,6 +347,19 @@ class Process {
 			}
 		}
 
+		//add recursion Proc P = ... .P;
+		if (classImpl == null && operationImpl == null) // FIXME for now we
+			// consider a starter
+			// process to have the
+			// name of the enclosing
+			// interaction
+			buffer.append(". " + this.getEnclosingInteraction().getName()
+					+ "(id)");
+		else {
+			buffer.append(". " + this.classImpl.getName() + "_"
+					+ this.operationImpl.getName() + "(id)");
+		}
+		//END_add recursion
 		buffer.append(";\n\n");
 		return buffer;
 	}
@@ -423,7 +437,7 @@ public class UML2mCRL2 {
 										.append(determinePrimitiveType((PrimitiveTypeImpl) parameterFromCollection
 												.getType()) + ",");
 							else
-								operationParametersReturn.append("ClassObject"
+								operationParametersReturn.append(parameterFromCollection.getType().getName()
 										+ ",");
 						}
 
@@ -438,7 +452,7 @@ public class UML2mCRL2 {
 										.append(determinePrimitiveType((PrimitiveTypeImpl) parameterFromCollection
 												.getType()) + ",");
 							else
-								operationParametersIn.append("ClassObject"
+								operationParametersIn.append(parameterFromCollection.getType().getName()
 										+ ",");
 						}
 
@@ -507,6 +521,10 @@ public class UML2mCRL2 {
 		outfile.write("%comment \n");
 		outfile.write("% created:" + new Date() + "\n \n");
 		outfile.write("%-------sorts--------- \n");
+		// FIX: make the list of Method names unique.
+		LinkedList<String>	areTheyUnique = new LinkedList<String>(new HashSet<String>(OperationSignatures));
+		System.out.println("Are there duplicates? " + areTheyUnique.size() +  " vs " + OperationSignatures.size());
+		
 		if (ClassType.size() == 0) {
 			System.err
 					.println("Strange:there are no classes in the UML model.\nPlease check for possible problems.");
@@ -527,7 +545,8 @@ public class UML2mCRL2 {
 		} else {
 			outfile.write("sort Method = struct ");
 			outfile.newLine();
-			ListIterator<String> OperationSignatures_st = OperationSignatures
+			// FIX: was 			ListIterator<String> OperationSignatures_st = OperationSignatures.listIterator(0);
+			ListIterator<String> OperationSignatures_st = areTheyUnique
 					.listIterator(0);
 			while (OperationSignatures_st.hasNext()) {
 				outfile.write("\t\t\t" + OperationSignatures_st.next());
@@ -538,6 +557,8 @@ public class UML2mCRL2 {
 				}
 			}
 		}
+		
+
 	}
 
 	public static void createClassObjectSort(
@@ -1118,14 +1139,37 @@ public class UML2mCRL2 {
 						StringBuffer sumParameters = new StringBuffer();
 						StringBuffer appendedParameters = new StringBuffer();
 						sumParameters.append("sum ");
-
+						// adding parameters TODO: the names should NOT be from the operation
+						EList<ValueSpecification> argumentNames = (((MessageOccurrenceSpecificationImpl) el)
+								.getMessage().getArguments());
+						Iterator<ValueSpecification> arguments_iterator = null;
+						LinkedList<String> argNames = new LinkedList<String>();
+						if(!argumentNames.isEmpty()){
+							arguments_iterator = argumentNames.iterator();
+							while (arguments_iterator.hasNext()) {
+								ValueSpecification argument = (ValueSpecification) arguments_iterator.next();
+								argNames.add(((OpaqueExpression) argument).getBodies().get(0));
+							}
+						}
+						
+						
+						// added
+						int i = 0;
 						for (Map.Entry<String, String> entry : calledProcess
 								.getOpParametersReturn().entrySet()) {
+							
+//							ValueSpecification argument = (ValueSpecification) arguments_iterator.next();
+//							String argName = ((OpaqueExpression) argument).getBodies().get(0);
+							StringBuffer argName = new StringBuffer("ebise");
+							if(argNames.size()!=0){
+								 argName = new StringBuffer(argNames.get(i++));
+
+							}
 							String key = entry.getKey();
 							String value = entry.getValue();
-							sumParameters.append(key + ":" + value + ",");
-							appendedParameters.append(key + ",");
-							findProcess.addSumParameter(key, value);
+							sumParameters.append(argName + ":" + value + ",");
+							appendedParameters.append(argName + ",");
+							findProcess.addSumParameter(argName.toString(), value);
 						}
 
 						if (calledProcess.getOpParametersReturn().size() != 0) {
@@ -1139,10 +1183,7 @@ public class UML2mCRL2 {
 									+ ((MessageOccurrenceSpecificationImpl) el)
 											.getMessage().getName()
 									+ "_return"
-									+ "("
-									+ appendedParameters.substring(0,
-											appendedParameters.length() - 1)
-									+ ")" + ")");
+									+  arguments + ")"); // TODO: remove arguments, was there just to check!
 
 						} // no parameters to add
 						else {
@@ -1314,7 +1355,7 @@ public class UML2mCRL2 {
 			if (countThem == operands.size())
 				lastOperand = true;
 			getFragmentsInsideOperand(operand, operator, firstOperand,
-					lastOperand, opaqueExpression.getBodies().get(0).toString());
+					lastOperand, opaqueExpression.getBodies().get(0).toString()); // TODO: what if there is no body??
 			firstOperand = false;
 		}
 		return operands;
@@ -1516,7 +1557,7 @@ public class UML2mCRL2 {
 		Collection<ActivityEdge> edges = node.getIncomings();
 		if (edges.size() != 1) {
 			System.err
-					.println("More than one incoming edge for CallBehaviorAction.\nNot sure which one to take...Please correct this");
+					.println("None, or more than one outgoing edge for CallBehaviorAction.\nNot sure which one to take...Please correct this");
 			System.exit(1);
 		}
 
