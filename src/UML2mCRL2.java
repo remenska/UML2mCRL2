@@ -422,7 +422,6 @@ public class UML2mCRL2 {
 
 						Parameter parameterFromCollection = (Parameter) parameters_iterator
 								.next();
-
 						// return parameters
 						if (parameterFromCollection.getDirection().toString()
 								.equals("return")
@@ -1139,7 +1138,7 @@ public class UML2mCRL2 {
 						StringBuffer sumParameters = new StringBuffer();
 						StringBuffer appendedParameters = new StringBuffer();
 						sumParameters.append("sum ");
-						// adding parameters TODO: the names should NOT be from the operation
+						
 						EList<ValueSpecification> argumentNames = (((MessageOccurrenceSpecificationImpl) el)
 								.getMessage().getArguments());
 						Iterator<ValueSpecification> arguments_iterator = null;
