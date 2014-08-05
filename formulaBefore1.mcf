@@ -1,0 +1,2 @@
+[(! StorageManagementDB_removeTasks([tasks(1,Failed,1)]))*.JobDB_setJobStatus(1,Staging).(! (JobDB_setJobStatus(1,Failed)||StorageManagementDB_removeTasks([tasks(1,Failed,1)])))*.StorageManagementDB_removeTasks([tasks(1,Failed,1)])]false 
+

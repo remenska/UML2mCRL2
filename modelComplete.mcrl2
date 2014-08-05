@@ -1,0 +1,1253 @@
+%comment 
+% created:Thu Jul 03 14:01:39 CEST 2014
+%-------maps----------
+% ================================
+map mapGetCacheReplicas: List(CacheReplicas)#SortString -> List(CacheReplicas);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+    statusSelect:SortString;
+
+eqn
+    mapGetCacheReplicas([], statusSelect) = [];
+    (Status(el) == statusSelect) -> mapGetCacheReplicas(el|>listCacheReplicas, statusSelect) = el|> mapGetCacheReplicas(listCacheReplicas, statusSelect);
+    (Status(el) != statusSelect)  -> mapGetCacheReplicas(el|>listCacheReplicas, statusSelect) =  mapGetCacheReplicas(listCacheReplicas, statusSelect);
+% =================================
+% map mapUpdateReplicaFailure: List(CacheReplicas)#List(CacheReplicas) -> List(CacheReplicas);
+% var
+%     listCacheReplicas, listTerminalReplicas:List(CacheReplicas);
+%     el:CacheReplicas;
+% eqn
+%     mapUpdateReplicaFailure([], listTerminalReplicas) = [];
+%     (el in listTerminalReplicas) -> mapUpdateReplicaFailure(el|>listCacheReplicas, listTerminalReplicas) = 
+% 	  cacheReplicas(ReplicaID(el), Failed, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaFailure(listCacheReplicas, listTerminalReplicas);
+%     !(el in listTerminalReplicas) -> mapUpdateReplicaFailure(el|>listCacheReplicas, listTerminalReplicas) = el|> mapUpdateReplicaFailure(listCacheReplicas, listTerminalReplicas);
+% =================================
+map mapUpdateReplicaInformation: List(CacheReplicas)#List(CacheReplicas) -> List(CacheReplicas);
+var
+    listCacheReplicas, listReplicaInformation:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    mapUpdateReplicaInformation([], listReplicaInformation) = [];
+    (el in listReplicaInformation) -> mapUpdateReplicaInformation(el|>listCacheReplicas, listReplicaInformation) = 
+	  cacheReplicas(ReplicaID(el), Waiting, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaInformation(listCacheReplicas, listReplicaInformation);
+    !(el in listReplicaInformation) -> mapUpdateReplicaInformation(el|>listCacheReplicas, listReplicaInformation) = el|> mapUpdateReplicaInformation(listCacheReplicas, listReplicaInformation);
+% =================================
+map mapGetSubmittedStagePins: List(CacheReplicas) -> List(CacheReplicas);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    mapGetSubmittedStagePins([]) = [];
+    (Status(el) in [New, Waiting, Offline, Failed]) -> mapGetSubmittedStagePins(el|>listCacheReplicas) = mapGetSubmittedStagePins(listCacheReplicas);
+    !(Status(el) in [New, Waiting, Offline, Failed]) -> mapGetSubmittedStagePins(el|>listCacheReplicas) = el|>mapGetSubmittedStagePins(listCacheReplicas);
+% =================================
+map mapUpdateReplicaStatus: List(CacheReplicas)#SortString#List(CacheReplicas) -> List(CacheReplicas);
+var
+    listCacheReplicas, listReplicaInformation:List(CacheReplicas);
+    el:CacheReplicas;
+    newStatus:SortString;
+eqn
+    mapUpdateReplicaStatus([], newStatus, listReplicaInformation) = [];
+    (el in listReplicaInformation && Status(el)==New && newStatus==Waiting) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus,listReplicaInformation) = 
+	  cacheReplicas(ReplicaID(el), Waiting, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
+    (el in listReplicaInformation && newStatus==Failed) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus, listReplicaInformation) = 
+	  cacheReplicas(ReplicaID(el), Failed, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
+    (el in listReplicaInformation && (Status(el)==Waiting || Status(el)==Offline) && newStatus==StageSubmitted) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus,listReplicaInformation) = 
+	  cacheReplicas(ReplicaID(el), StageSubmitted, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
+    (el in listReplicaInformation && Status(el)==StageSubmitted && newStatus==Staged) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus, listReplicaInformation) = 
+	  cacheReplicas(ReplicaID(el), Staged, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
+    (el in listReplicaInformation && Status(el)==Waiting && newStatus==Offline) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus, listReplicaInformation) = 
+	  cacheReplicas(ReplicaID(el), Staged, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
+    !(el in listReplicaInformation) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus,listReplicaInformation) = el|> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
+% =================================
+map mapGetStageRequests: List(Nat)#List(StageRequests) -> List(StageRequests);
+var
+    cacheReplicaIDs:List(Nat);
+    listStageRequests:List(StageRequests);
+    el:StageRequests;
+eqn
+    mapGetStageRequests(cacheReplicaIDs, []) = [];
+    (ReplicaID(el) in cacheReplicaIDs) -> mapGetStageRequests(cacheReplicaIDs, el|>listStageRequests) = el|> mapGetStageRequests(cacheReplicaIDs, listStageRequests);
+    (!(ReplicaID(el) in cacheReplicaIDs))  -> mapGetStageRequests(cacheReplicaIDs, el|>listStageRequests) =  mapGetStageRequests(cacheReplicaIDs, listStageRequests);
+% =================================
+map mapGetReplicaIDs: List(CacheReplicas) -> List(Nat);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    mapGetReplicaIDs([]) = [];
+    mapGetReplicaIDs(el|>listCacheReplicas) = ReplicaID(el)|>mapGetReplicaIDs(listCacheReplicas);
+% =================================
+map mapSetStageComplete: List(StageRequests)#List(Nat) -> List(StageRequests);
+var
+    listStageRequests:List(StageRequests);
+    el:StageRequests;
+    cacheReplicaIDs:List(Nat);
+eqn
+    mapSetStageComplete([], cacheReplicaIDs) = [];
+    (ReplicaID(el) in cacheReplicaIDs) -> mapSetStageComplete(el|>listStageRequests, cacheReplicaIDs) = 
+	  stageRequests(ReplicaID(el), RequestID(el), Staged) |> mapSetStageComplete(listStageRequests, cacheReplicaIDs);
+    !(ReplicaID(el) in cacheReplicaIDs) -> mapSetStageComplete(el|>listStageRequests, cacheReplicaIDs) = el|> mapSetStageComplete(listStageRequests, cacheReplicaIDs);
+% =================================
+map mapWakeupOldRequests: List(StageRequests)#List(Nat) -> List(StageRequests);
+var
+    listStageRequests:List(StageRequests);
+    el:StageRequests;
+    cacheReplicaIDs:List(Nat);
+eqn
+    mapWakeupOldRequests([], cacheReplicaIDs) = [];
+    (ReplicaID(el) in cacheReplicaIDs) -> mapWakeupOldRequests(el|>listStageRequests, cacheReplicaIDs) = 
+	 mapWakeupOldRequests(listStageRequests, cacheReplicaIDs);
+    !(ReplicaID(el) in cacheReplicaIDs) -> mapWakeupOldRequests(el|>listStageRequests, cacheReplicaIDs) = el|> mapWakeupOldRequests(listStageRequests, cacheReplicaIDs);
+% ================================
+map mapGetTasksWithStatus: List(Tasks)#SortString -> List(Tasks);
+var
+    listTasks:List(Tasks);
+    el:Tasks;
+    statusSelect:SortString;
+
+eqn
+    mapGetTasksWithStatus([], statusSelect) = [];
+    (Status(el) == statusSelect) -> mapGetTasksWithStatus(el|>listTasks, statusSelect) = el|> mapGetTasksWithStatus(listTasks, statusSelect);
+    (Status(el) != statusSelect)  -> mapGetTasksWithStatus(el|>listTasks, statusSelect) =  mapGetTasksWithStatus(listTasks, statusSelect);
+% =================================
+map mapRemoveTasks: List(Tasks)#List(Tasks) -> List(Tasks);
+var
+    listTasks, listTasksToRemove:List(Tasks);
+    el:Tasks;
+
+eqn
+    (listTasksToRemove==[]) -> mapRemoveTasks(listTasks, listTasksToRemove) = listTasks;
+    (listTasksToRemove!=[]) -> mapRemoveTasks([], listTasksToRemove) = [];
+    (el in listTasksToRemove && (listTasksToRemove!=[])) -> mapRemoveTasks(el|>listTasks, listTasksToRemove) = mapRemoveTasks(listTasks, listTasksToRemove);
+    !(el in listTasksToRemove && (listTasksToRemove!=[])) -> mapRemoveTasks(el|>listTasks, listTasksToRemove) = el|> mapRemoveTasks(listTasks, listTasksToRemove);
+% =================================
+map mapRemoveUnlinkedReplicas: List(CacheReplicas) -> List(CacheReplicas);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+
+eqn
+    mapRemoveUnlinkedReplicas([]) = [];
+    (Links(el)==0) -> mapRemoveUnlinkedReplicas(el|>listCacheReplicas) = mapRemoveUnlinkedReplicas(listCacheReplicas);
+    (Links(el)!=0) -> mapRemoveUnlinkedReplicas(el|>listCacheReplicas) = el|>mapRemoveUnlinkedReplicas(listCacheReplicas);
+% =================================
+map mapSetOldTasksAsFailed: List(Tasks) -> List(Tasks);
+var
+    listTasks:List(Tasks);
+    el:Tasks;
+
+eqn
+    mapSetOldTasksAsFailed([]) = [];
+    mapSetOldTasksAsFailed(el|>listTasks) = tasks(TaskID(el), Failed, SourceTaskID(el)) |> mapSetOldTasksAsFailed(listTasks);
+    mapSetOldTasksAsFailed(el|>listTasks) = el|>mapSetOldTasksAsFailed(listTasks);
+% =================================
+map mapSetJobStatus: List(Job)#Nat#SortString -> List(Job);
+var
+    listJobs:List(Job);
+    el:Job;
+    jobID:Nat;
+    status:SortString;
+
+eqn
+    mapSetJobStatus([], jobID, status) = [];
+    (jid(el)==jobID  && status==Done) -> mapSetJobStatus(el|>listJobs, jobID, status) = 
+	 jobs(jid(el), Checking) |> mapSetJobStatus(listJobs, jobID, status); 
+    (jid(el)==jobID  && status==Failed) -> mapSetJobStatus(el|>listJobs, jobID, status) = 
+	 jobs(jid(el), Failed) |> mapSetJobStatus(listJobs, jobID, status); 
+    (jid(el)==jobID  && status==Staging) -> mapSetJobStatus(el|>listJobs, jobID, status) = 
+	 jobs(jid(el), Staging) |> mapSetJobStatus(listJobs, jobID, status); 	 
+    (jid(el)!=jobID) -> mapSetJobStatus(el|>listJobs, jobID, status) = el|> mapSetJobStatus(listJobs, jobID, status);
+    
+% =================================
+map mapGetExistingreplicas: LfnDict#List(CacheReplicas) -> List(CacheReplicas);
+var
+    lfnDict:LfnDict;
+    el:CacheReplicas;
+    listCacheReplicas:List(CacheReplicas);
+eqn
+    mapGetExistingreplicas(lfnDict, []) = [];
+    (LFN(el) in LFNs(lfnDict) && SE(el)==SE(lfnDict)) -> mapGetExistingreplicas(lfnDict, el|>listCacheReplicas) = el |> mapGetExistingreplicas(lfnDict, listCacheReplicas);
+    (!(LFN(el) in LFNs(lfnDict)) || SE(el)!=SE(lfnDict)) -> mapGetExistingreplicas(lfnDict, el|>listCacheReplicas) = mapGetExistingreplicas(lfnDict, listCacheReplicas);
+    
+% =================================
+map mapGetJobStatus:Nat#List(Job) -> SortString;
+var
+    listJobs:List(Job);
+    el:Job;
+    jobID:Nat;
+eqn
+    mapGetJobStatus(jobID, []) = NonExistent;
+    (jobID==jid(el)) -> mapGetJobStatus(jobID, el|>listJobs) = Status(el);
+    (jobID!=jid(el)) -> mapGetJobStatus(jobID, el|>listJobs) = mapGetJobStatus(jobID, listJobs);
+% =================================
+map mapGetLFNsFromCacheReplicas:List(CacheReplicas) -> List(SortString);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    mapGetLFNsFromCacheReplicas([]) = [];
+    mapGetLFNsFromCacheReplicas(el|>listCacheReplicas) = LFN(el)|> mapGetLFNsFromCacheReplicas(listCacheReplicas);
+
+% =================================
+map mapGetTaskStateFromReplicaState:SortString#SortString#List(CacheReplicas) -> SortString;
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+    lfn,se:SortString;
+    
+eqn
+    mapGetTaskStateFromReplicaState(lfn,se,[]) = NonExistent;
+    (LFN(el)==lfn && SE(el)==se) -> mapGetTaskStateFromReplicaState(lfn,se,el|>listCacheReplicas) = Status(el);
+    (LFN(el)!=lfn || SE(el)!=se) -> mapGetTaskStateFromReplicaState(lfn,se,el|>listCacheReplicas) = mapGetTaskStateFromReplicaState(lfn,se,listCacheReplicas);
+   
+% =================================
+map mapInsertTaskReplicaInfo:List(TaskReplicas)#Nat#List(CacheReplicas) -> List(TaskReplicas);
+var
+    listTaskReplicas:List(TaskReplicas);
+    taskID:Nat;
+    el:CacheReplicas;
+    replicaIDs:List(CacheReplicas);
+    listCacheReplicas:List(CacheReplicas);
+eqn
+    mapInsertTaskReplicaInfo(listTaskReplicas,taskID,[]) = listTaskReplicas;
+    mapInsertTaskReplicaInfo(listTaskReplicas,taskID,el|>listCacheReplicas) = 
+    taskReplicas(taskID,ReplicaID(el)) |> mapInsertTaskReplicaInfo(listTaskReplicas,taskID,listCacheReplicas);
+% =================================
+map taskreplicasAfterInsert:List(CacheReplicas)#List(CacheReplicas) -> List(CacheReplicas);
+var
+    listCacheReplicas, listCacheReplicasInserted:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    taskreplicasAfterInsert([],listCacheReplicasInserted) = [];
+    (el in listCacheReplicasInserted) -> taskreplicasAfterInsert(el|>listCacheReplicas,listCacheReplicasInserted) =  
+    cacheReplicas(ReplicaID(el),Status(el), SE(el), Links(el)+1, LFN(el), Size(el))|> taskreplicasAfterInsert(listCacheReplicas, listCacheReplicasInserted);
+    !(el in listCacheReplicasInserted) -> taskreplicasAfterInsert(el|>listCacheReplicas,listCacheReplicasInserted) =  el|> taskreplicasAfterInsert(listCacheReplicas, listCacheReplicasInserted);    
+% =================================
+map getReplicaIDsForTaskID:Nat#List(TaskReplicas) -> List(Nat);
+var
+    listTaskReplicas:List(TaskReplicas);
+    el:TaskReplicas;
+    taskID:Nat;
+eqn
+    getReplicaIDsForTaskID(taskID,[]) = [];
+    (taskID==TaskID(el)) -> getReplicaIDsForTaskID(taskID, el|>listTaskReplicas) = ReplicaID(el)|> getReplicaIDsForTaskID(taskID,listTaskReplicas);
+    (taskID!=TaskID(el)) -> getReplicaIDsForTaskID(taskID, el|>listTaskReplicas) = getReplicaIDsForTaskID(taskID,listTaskReplicas);
+% =================================
+map mapGetTaskStatesFromReplicaStates:List(Nat)#List(CacheReplicas) -> List(SortString);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+    replicaIDs:List(Nat); 
+eqn
+    mapGetTaskStatesFromReplicaStates([],[]) = [];
+    mapGetTaskStatesFromReplicaStates(replicaIDs,[]) = [];
+    (ReplicaID(el) in replicaIDs) -> mapGetTaskStatesFromReplicaStates(replicaIDs,el|>listCacheReplicas) = Status(el) |> mapGetTaskStatesFromReplicaStates(replicaIDs, listCacheReplicas);
+% =================================
+map mapUpdateTaskStatus:List(Tasks)#Nat#SortString -> List(Tasks);
+var
+    listTasks:List(Tasks);
+    el:Tasks;
+    newStatus:SortString;
+    taskID:Nat;
+eqn
+    mapUpdateTaskStatus([],taskID,newStatus) = [];
+    (TaskID(el)==taskID) -> mapUpdateTaskStatus(el|>listTasks,taskID,newStatus) = tasks(TaskID(el), newStatus, SourceTaskID(el))|> mapUpdateTaskStatus(listTasks,taskID,newStatus);
+    (TaskID(el)!=taskID) -> mapUpdateTaskStatus(el|>listTasks,taskID,newStatus) = el|> mapUpdateTaskStatus(listTasks,taskID,newStatus);
+% =================================
+map mapGetCacheReplicaIDs:List(CacheReplicas) -> List(Nat);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    mapGetCacheReplicaIDs([]) = [];
+    mapGetCacheReplicaIDs(el|>listCacheReplicas) = ReplicaID(el)|>mapGetCacheReplicaIDs(listCacheReplicas);
+% =================================
+map mapGetReplicaIDTasks:List(Nat)#List(TaskReplicas) -> List(Nat);
+var
+    listTaskReplicas:List(TaskReplicas);
+    el:TaskReplicas;
+    listCacheReplicaIDs:List(Nat);
+eqn
+    mapGetReplicaIDTasks(listCacheReplicaIDs,[]) = [];
+    (ReplicaID(el) in listCacheReplicaIDs) -> mapGetReplicaIDTasks(listCacheReplicaIDs,el|>listTaskReplicas) = TaskID(el)|> mapGetReplicaIDTasks(listCacheReplicaIDs,listTaskReplicas);
+    !(ReplicaID(el) in listCacheReplicaIDs) -> mapGetReplicaIDTasks(listCacheReplicaIDs,el|>listTaskReplicas) =  mapGetReplicaIDTasks(listCacheReplicaIDs,listTaskReplicas);
+% =================================
+map mapGetAssociatedReplicaIDs:List(Nat)#List(TaskReplicas) -> List(Nat);
+var
+    listTaskReplicas:List(TaskReplicas);
+    el:TaskReplicas;
+    listTaskIDs:List(Nat);
+eqn
+    mapGetAssociatedReplicaIDs(listTaskIDs,[]) = [];
+    (TaskID(el) in listTaskIDs) -> mapGetAssociatedReplicaIDs(listTaskIDs,el|>listTaskReplicas) = ReplicaID(el)|> mapGetAssociatedReplicaIDs(listTaskIDs,listTaskReplicas);
+    !(TaskID(el) in listTaskIDs) -> mapGetAssociatedReplicaIDs(listTaskIDs,el|>listTaskReplicas) =  mapGetAssociatedReplicaIDs(listTaskIDs,listTaskReplicas);
+% =================================
+map mapGetAssociatedReplicas:List(Nat)#List(CacheReplicas)#SortString -> List(CacheReplicas);
+
+var status:SortString;
+    replicaIDs:List(Nat);
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    mapGetAssociatedReplicas(replicaIDs,[],status) = [];
+    (ReplicaID(el) in replicaIDs && Status(el)==status) -> mapGetAssociatedReplicas(replicaIDs,el|>listCacheReplicas,status) = el|>mapGetAssociatedReplicas(replicaIDs,listCacheReplicas,status);
+    (!(ReplicaID(el) in replicaIDs) || Status(el)!=status) -> mapGetAssociatedReplicas(replicaIDs,el|>listCacheReplicas,status) = mapGetAssociatedReplicas(replicaIDs,listCacheReplicas,status);
+% =================================
+map mapGetTaskIDs:List(Tasks) -> List(Nat);
+var
+    listTasks:List(Tasks);
+    el:Tasks;
+eqn
+    mapGetTaskIDs([]) = [];
+    mapGetTaskIDs(el|>listTasks) = TaskID(el)|>mapGetTaskIDs(listTasks);
+% =================================
+map mapRemoveTaskReplicas:List(TaskReplicas)#List(Nat) -> List(TaskReplicas);
+var
+    listTaskReplicas:List(TaskReplicas);
+    el:TaskReplicas;
+    listTaskIDs:List(Nat);
+eqn
+    mapRemoveTaskReplicas([],listTaskIDs) = [];
+    (TaskID(el) in listTaskIDs) -> mapRemoveTaskReplicas(el|>listTaskReplicas,listTaskIDs) = mapRemoveTaskReplicas(listTaskReplicas,listTaskIDs);
+    !(TaskID(el) in listTaskIDs) -> mapRemoveTaskReplicas(el|>listTaskReplicas,listTaskIDs) = el|>mapRemoveTaskReplicas(listTaskReplicas,listTaskIDs);
+% =================================
+map taskReplicasAfterRemove:List(CacheReplicas)#List(Nat) -> List(CacheReplicas);
+var
+    listCacheReplicas:List(CacheReplicas);
+    replicaIDs:List(Nat);
+    el:CacheReplicas;
+eqn
+    taskReplicasAfterRemove([],replicaIDs) = [];
+    (ReplicaID(el) in replicaIDs) -> taskReplicasAfterRemove(el|>listCacheReplicas,replicaIDs) =  
+    cacheReplicas(ReplicaID(el),Status(el), SE(el), Links(el)-1, LFN(el), Size(el))|> taskReplicasAfterRemove(listCacheReplicas, replicaIDs);
+    !(ReplicaID(el) in replicaIDs) -> taskReplicasAfterRemove(el|>listCacheReplicas,replicaIDs) =  el|> taskReplicasAfterRemove(listCacheReplicas, replicaIDs);    
+% =================================
+map mapPrestageStorageFile:List(CacheReplicas)-> List(StageRequests);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    mapPrestageStorageFile([]) = [];
+    mapPrestageStorageFile(el|>listCacheReplicas) = stageRequests(ReplicaID(el), ReplicaID(el)+10, StageSubmitted)|>mapPrestageStorageFile(listCacheReplicas);
+% =================================
+map mapGetCacheReplicaIDsForStageRequests:List(StageRequests)-> List(Nat);
+var
+    listStageRequests:List(StageRequests);
+    el:StageRequests;
+eqn
+    mapGetCacheReplicaIDsForStageRequests([]) = [];
+    mapGetCacheReplicaIDsForStageRequests(el|>listStageRequests) = ReplicaID(el)|>mapGetCacheReplicaIDsForStageRequests(listStageRequests);
+% =================================
+map mapGetReplicas:List(Nat)#List(CacheReplicas)-> List(CacheReplicas);
+var
+    listCacheReplicas:List(CacheReplicas);
+    replicaIDs:List(Nat);
+    el:CacheReplicas;
+eqn
+    mapGetReplicas(replicaIDs, []) = [];  
+    (ReplicaID(el) in replicaIDs) -> mapGetReplicas(replicaIDs,el|>listCacheReplicas) = el|>mapGetReplicas(replicaIDs,listCacheReplicas);
+    !(ReplicaID(el) in replicaIDs) -> mapGetReplicas(replicaIDs,el|>listCacheReplicas) = mapGetReplicas(replicaIDs,listCacheReplicas);
+
+% =================================
+map mapUpdateTasksForReplica:List(Tasks)#List(Nat)#List(TaskReplicas)#List(CacheReplicas) -> List(Tasks);
+var
+    listTasks:List(Tasks);
+    listTaskIDsToUpdate:List(Nat);
+    el:Tasks;
+    listTaskReplicas:List(TaskReplicas);
+    listCacheReplicas:List(CacheReplicas);
+eqn
+    mapUpdateTasksForReplica([],listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas) = [];
+
+    mapUpdateTasksForReplica(el|>listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas) =
+	  if(!(TaskID(el) in listTaskIDsToUpdate),el|> mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
+		if(Failed in mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(TaskID(el),listTaskReplicas),listCacheReplicas),
+		    tasks(TaskID(el),Failed, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
+		if(New in mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(TaskID(el),listTaskReplicas),listCacheReplicas),
+		    tasks(TaskID(el),New, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
+		if(Waiting in mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(TaskID(el),listTaskReplicas),listCacheReplicas),
+		    tasks(TaskID(el),Waiting, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
+		if(Offline in mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(TaskID(el),listTaskReplicas),listCacheReplicas),
+		    tasks(TaskID(el),Offline, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
+		if(StageSubmitted in mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(TaskID(el),listTaskReplicas),listCacheReplicas),
+		    tasks(TaskID(el),StageSubmitted, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
+	tasks(TaskID(el),Staged, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas)))))));
+% =================================
+map mapList2Set:List(SortString) -> Set(SortString);
+var
+    listSortString:List(SortString);
+    el:SortString;
+eqn
+    mapList2Set([]) = {};
+    mapList2Set(el|>listSortString) = {el} + mapList2Set(listSortString);
+% =================================
+  
+%-------sorts--------- 
+sort ClassType = struct 
+			RequestPreparationAgent | 
+			StageRequestAgent | 
+			StageMonitorAgent | 
+			StorageManagerHandler | 
+			StorageManagementDB | 
+			RequestFinalizationAgent | 
+			CacheReplicas | 
+			Tasks | 
+			StageRequests | 
+			TaskReplicas | 
+			FileCatalog | 
+% 			StorageElement | 
+			JobStateUpdateHandler | 
+			JobScheduling | 
+			Job | 
+			JobDB | 
+			ReplicaManager ; 
+sort Method = struct 
+			insertStageRequest_return | 
+			updateReplicaInformation(replicaInformation:List(CacheReplicas)) | 
+			_createTask(sourceTaskID:Nat) | 
+			_getOnlineReplicas_return(onlineReplicas:List(CacheReplicas)) | 
+			getStorageFileMetadata(pfnRepIDs:List(CacheReplicas)) | 
+			getFileSize(lfns:List(CacheReplicas)) | 
+			__checkIntegrity_return(onlineReplicas:List(CacheReplicas),offlineReplicas:List(CacheReplicas)) | 
+			getWaitingReplicas_return(replicas:List(CacheReplicas)) | 
+			getFileMetadata_return(terminalReplicas:List(CacheReplicas),stagedReplicas:List(CacheReplicas),oldRequests:List(CacheReplicas)) | 
+			_getOfflineReplicas | 
+			__getOfflineReplicas_return(offlineReplicas:List(CacheReplicas)) | 
+			__wakeupOldRequests(oldRequests:List(CacheReplicas)) | 
+			_getExistingReplicas(lfnDict:LfnDict) | 
+			getSubmittedStagePins_return(submittedReplicas:List(CacheReplicas)) | 
+			__requestStaging_return | 
+			__getExistingFiles(lfns:List(CacheReplicas)) | 
+			getOfflineReplicas_return(offlineReplicas:List(CacheReplicas)) | 
+			getStageRequests(replicaIDs:List(Nat)) | 
+			updateReplicaStatus(newReplicaStatus:SortString,replicaIDs:List(CacheReplicas)) | 
+			__getStagedReplicas_return(stagedReplicas:List(CacheReplicas)) | 
+			getStorageUsage | 
+			__wakeupOldRequests_return | 
+			callbackStagedTasks_return | 
+			getTasksWithStatus_return(tasks:List(Tasks)) | 
+			break_return | 
+			getStorageUsage_return | 
+			_exists_return(exist:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
+			getStorageFileMetadata_return(terminalReplicaIDs:List(CacheReplicas),onlineReplicaIDs:List(CacheReplicas),offlineReplicaIDs:List(CacheReplicas)) | 
+			_exists(lfns:List(CacheReplicas)) | 
+			_createTask_return(taskID:Nat) | 
+			callbackStagedTasks | 
+			wakeupOldRequests_return | 
+			_getExistingReplicas_return(existingReplicas:List(CacheReplicas)) | 
+			wakeupOldRequests(replicaIDs:List(CacheReplicas),retryIntervalHour:Nat) | 
+			__requestStaging | 
+			__getNewReplicas_return(replicas:List(CacheReplicas)) | 
+			__getStageSubmittedReplicas | 
+			getFileSize_return(fileSizes:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
+			insertStageRequest(stageRequests:List(StageRequests)) | 
+			__getTaskStateFromReplicaState(LFN:SortString, SE:SortString) | 
+			__getTaskStatesFromReplicaStates(taskID:Nat) | 			
+			getStageRequests_return(stageRequests:List(StageRequests)) | 
+			__addAssociatedReplicas(replicasToStage:List(CacheReplicas)) | 
+			_getOnlineReplicas | 
+			__monitorStorageElementStageRequests(stageRequests:List(StageRequests)) | 
+			_getMissingReplicas | 
+			_insertReplicaInformation(lfn:SortString,se:SortString) | 
+			getJobStatus_return(attributes:SortString) | 
+			updateReplicaStatus_return | 
+			_issuePrestageRequests(replicas:List(CacheReplicas)) | 
+			__getFileSize_return(fileSizes:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
+			setRequest(lfnDict:List(LfnDict),SourceTaskID:Nat) | 
+			clearFailedTasks | 
+			getCacheReplicas_return(replicas:List(CacheReplicas)) | 
+			setJobStatus(jobID:Nat,jobStatus:SortString) | 
+			getSubmittedStagePins | 
+			prepareNewReplicas_return | 
+			removeTasks(tasks:List(Tasks)) | 
+			getTasksWithStatus(status:SortString) | 
+			__getFileReplicas(lfns:List(CacheReplicas)) | 
+			__updateTaskStatus_return | 
+			prepareNewReplicas | 
+			getStagedReplicas | 
+			setOldTasksAsFailed_return | 
+			break | 
+			_getMissingReplicas_return(missingReplicas:List(CacheReplicas)) | 
+			clearFailedTasks_return | 
+			prestageStorageFile_return(StageRequestMetadata:List(StageRequests)) | 
+			setStageComplete(replicaIDs:List(CacheReplicas)) | 
+			updateReplicaFailure_return | 
+			_issuePrestageRequests_return | 
+			__getStagedReplicas | 
+			updateReplicaFailure(terminalReplicaIDs:List(CacheReplicas)) | 
+			__getFileSize(lfns:List(CacheReplicas)) | 
+			__getNewReplicas | 
+			getAssociatedReplicas(replicaIDs:List(CacheReplicas)) | 
+			getAssociatedReplicas_return(offlineReplicas:List(CacheReplicas),waitingReplicas:List(CacheReplicas)) | 
+			execute_return | 
+			__getTaskStateFromReplicaState_return(taskState:SortString) | 
+			__getTaskStatesFromReplicaStates_return(taskStates:List(SortString)) | 
+			updateJobFromStager_return | 
+			__getExistingFiles_return(exist:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
+			getJobStatus(jobID:Nat) | 
+			getCacheReplicas(Status:SortString) | 
+			_insertTaskReplicaInformation(taskID:Nat,replicaIDs:List(CacheReplicas)) | 
+			submitStageRequests_return | 
+			__getOfflineReplicas | 
+			__getWaitingReplicas_return(waitingReplicas:List(CacheReplicas)) | 
+			removeUnlinkedReplicas | 
+			execute | 
+			getStagedReplicas_return(stagedReplicas:List(CacheReplicas)) | 
+			_insertTaskReplicaInformation_return | 
+			_insertReplicaInformation_return | 
+			getOfflineReplicas | 
+			__addAssociatedReplicas_return(associatedReplicas:List(CacheReplicas)) | 
+			getFileMetadata(pfnRepIDs:List(StageRequests)) | 
+			setStageComplete_return | 
+			__checkIntegrity(replicas:List(CacheReplicas)) | 
+			removeTasks_return | 
+			monitorStageRequests_return | 
+			monitorStageRequests | 
+			_getOfflineReplicas_return(offlineReplicas:List(CacheReplicas)) | 
+			submitStageRequests | 
+			__updateTaskStatus(taskID:Nat,newTaskStatus:SortString) | 
+			updateReplicaInformation_return | 
+			updateJobFromStager(sourceTask:Nat,status:SortString) | 
+			removeUnlinkedReplicas_return | 
+			__getWaitingReplicas | 
+			prestageStorageFile(pfnRepIDs:List(CacheReplicas)) | 
+			setJobStatus_return | 
+			setRequest_return | 
+			__getStageSubmittedReplicas_return(stageSubmittedReplicas:List(StageRequests)) | 
+			__monitorStorageElementStageRequests_return | 
+			__getFileReplicas_return(fileReplicas:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
+			getWaitingReplicas | 
+			getActiveReplicas_return(replicas:List(CacheReplicas),noReplicas:List(CacheReplicas),failed:List(CacheReplicas)) | 
+			getActiveReplicas(lfns:List(CacheReplicas)) | 
+			_updateTasksForReplica(replicas:List(CacheReplicas)) |
+			_updateTasksForReplica_return |
+			setOldTasksAsFailed(daysOld:Nat) ; 
+
+sort ClassObject = struct
+			rpAgent | 
+			smDB | 
+			fileCatalog | 
+			smAgent | 
+% 			storageElement | 
+			rfAgent | 
+			jobStateUpdateHandler | 
+			jobDB | 
+			jobScheduling | 
+			jobState | 
+			srAgent | 
+			replicaManager ; 
+
+
+
+
+
+sort SortString = struct 
+			 New | 
+			 Waiting | 
+			 StageSubmitted | 
+			 Staged | 
+			 Failed | 
+			 Done | 
+			 Status | 
+			 Checking | 
+			 Staging | 
+			 Offline |
+			 NonExistent |
+			 LFN1 | LFN2 |
+			 SE1 | SE2; 
+			 
+
+sort Tasks = struct tasks(TaskID:Nat, Status:SortString, SourceTaskID:Nat); 
+sort CacheReplicas = struct cacheReplicas(ReplicaID:Nat,Status:SortString, SE:SortString, Links:Int, LFN:SortString, Size:Nat);
+sort TaskReplicas = struct taskReplicas(TaskID:Nat, ReplicaID:Nat);
+sort StageRequests = struct stageRequests(ReplicaID:Nat, RequestID:Nat, StageStatus:SortString);
+sort Job = struct jobs(jid:Nat, Status:SortString);
+sort LfnDict = struct lfnDict(LFNs:List(SortString), SE:SortString);
+
+%-------end sorts--------- 
+
+ %-------action definitions------- 
+act synch_call_send,synch_call_receive:Nat#ClassType#ClassObject#Method; 
+act synch_reply_receive,synch_reply_send:Nat#ClassType#ClassObject#Method; 
+ 
+act synch_call:Nat#ClassType#ClassObject#Method; 
+act synch_reply:Nat#ClassType#ClassObject#Method; 
+ 
+act asynch_call_send,asynch_call_receive:Nat#ClassType#ClassObject#Method; 
+act asynch_call:Nat#ClassType#ClassObject#Method; 
+ 
+act internal; 
+%-------end action definitions------- 
+
+proc JobDB_mem(id:Nat, jobs:List(Job)) = 
+	sum jobID:Nat,obj:ClassObject.synch_call_receive(id,JobDB,obj,getJobStatus(jobID)).
+	synch_reply_send(id,JobDB,obj,getJobStatus_return(mapGetJobStatus(jobID, jobs))) 
+	.JobDB_mem(id, jobs)
+	+
+	sum jobID:Nat,jobStatus:SortString,obj:ClassObject.synch_call_receive(id,JobDB,obj,setJobStatus(jobID,jobStatus)). 
+	synch_reply_send(id,JobDB,obj,setJobStatus_return)
+	.JobDB_mem(id, mapSetJobStatus(jobs, jobID, jobStatus))	
+;
+
+proc StorageManagementDB_mem(id:Nat, tasks:List(Tasks), 
+				    cacheReplicas:List(CacheReplicas),
+				    taskReplicas:List(TaskReplicas), 
+				    stageRequests:List(StageRequests)) = 	
+				    
+	sum Status:SortString,obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,getCacheReplicas(Status)). 
+	synch_reply_send(id,StorageManagementDB,obj,getCacheReplicas_return(mapGetCacheReplicas(cacheReplicas, Status)))
+	. StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	% 
+	sum terminalReplicaIDs:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,updateReplicaFailure(terminalReplicaIDs)). 
+	synch_reply_send(id,StorageManagementDB,obj,updateReplicaFailure_return)
+	.StorageManagementDB_mem(id, tasks, mapUpdateReplicaStatus(cacheReplicas, Failed,terminalReplicaIDs),taskReplicas, stageRequests)
+	+
+	sum replicaInformation:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,updateReplicaInformation(replicaInformation)). %TODO: Not updating size at the moment
+	synch_reply_send(id,StorageManagementDB,obj,updateReplicaInformation_return) 
+	.StorageManagementDB_mem(id, tasks, mapUpdateReplicaInformation(cacheReplicas, replicaInformation),taskReplicas, stageRequests)
+	+
+	sum obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,getSubmittedStagePins)
+	.synch_reply_send(id,StorageManagementDB,obj,getSubmittedStagePins_return(mapGetSubmittedStagePins(cacheReplicas))) 
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,getStagedReplicas). 
+	synch_reply_send(id,StorageManagementDB,obj,getStagedReplicas_return(mapGetCacheReplicas(cacheReplicas,Staged)))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum replicaIDs:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,getAssociatedReplicas(replicaIDs)). 
+	synch_reply_send(id,StorageManagementDB,obj,getAssociatedReplicas_return(
+	 mapGetAssociatedReplicas(mapGetAssociatedReplicaIDs(mapGetReplicaIDTasks(
+		    mapGetReplicaIDs(replicaIDs),taskReplicas),taskReplicas), cacheReplicas, Offline)
+	,mapGetAssociatedReplicas(mapGetAssociatedReplicaIDs(mapGetReplicaIDTasks(
+		    mapGetReplicaIDs(replicaIDs),taskReplicas),taskReplicas), cacheReplicas, Waiting)
+	))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,getWaitingReplicas). 
+	synch_reply_send(id,StorageManagementDB,obj,getWaitingReplicas_return(mapGetCacheReplicas(cacheReplicas, Waiting)))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum newReplicaStatus:SortString,replicaIDs:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,updateReplicaStatus(newReplicaStatus,replicaIDs)).
+	synch_reply_send(id,StorageManagementDB,obj,updateReplicaStatus_return)
+	.StorageManagementDB_mem(id, tasks, mapUpdateReplicaStatus(cacheReplicas, newReplicaStatus,replicaIDs),taskReplicas, stageRequests)
+	+
+	sum replicaIDs:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,_updateTasksForReplica(replicaIDs)).
+	synch_reply_send(id,StorageManagementDB,obj,_updateTasksForReplica_return)
+	.StorageManagementDB_mem(id, mapUpdateTasksForReplica(tasks,mapGetReplicaIDTasks(mapGetReplicaIDs(replicaIDs), taskReplicas),taskReplicas,cacheReplicas), cacheReplicas,taskReplicas, stageRequests)    
+	+
+	sum obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,getOfflineReplicas). 
+	synch_reply_send(id,StorageManagementDB,obj,getOfflineReplicas_return(mapGetCacheReplicas(cacheReplicas,Offline)))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum replicaIDs:List(Nat),obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,getStageRequests(replicaIDs)). 
+	synch_reply_send(id,StorageManagementDB,obj,getStageRequests_return(mapGetStageRequests(replicaIDs,stageRequests)))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+ 	sum replicaIDs:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,setStageComplete(replicaIDs)). 
+	synch_reply_send(id,StorageManagementDB,obj,setStageComplete_return)
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, mapSetStageComplete(stageRequests, mapGetReplicaIDs(replicaIDs)))
+	+
+	sum replicaIDs:List(CacheReplicas),retryIntervalHour:Nat,obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,wakeupOldRequests(replicaIDs,retryIntervalHour)). 
+	synch_reply_send(id,StorageManagementDB,obj,wakeupOldRequests_return)
+	.StorageManagementDB_mem(id, tasks, mapUpdateReplicaStatus(cacheReplicas, New, replicaIDs), taskReplicas, mapWakeupOldRequests(stageRequests, mapGetReplicaIDs(replicaIDs)))
+	+
+	sum stageRequestsToInsert:List(StageRequests),obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,insertStageRequest(stageRequestsToInsert)). 
+	synch_reply_send(id,StorageManagementDB,obj,insertStageRequest_return)
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests++stageRequestsToInsert)
+	+
+	sum status:SortString,obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,getTasksWithStatus(status)). 
+	synch_reply_send(id,StorageManagementDB,obj,getTasksWithStatus_return(mapGetTasksWithStatus(tasks,status)))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum tasksToRemove:List(Tasks),obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,removeTasks(tasksToRemove)). 
+	synch_reply_send(id,StorageManagementDB,obj,removeTasks_return)
+	.StorageManagementDB_mem(id, mapRemoveTasks(tasks, tasksToRemove), taskReplicasAfterRemove(cacheReplicas,mapGetAssociatedReplicaIDs(mapGetTaskIDs(tasksToRemove),taskReplicas)),mapRemoveTaskReplicas(taskReplicas,mapGetTaskIDs(tasksToRemove)), stageRequests)
+	+
+	sum obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,removeUnlinkedReplicas). 
+	synch_reply_send(id,StorageManagementDB,obj,removeUnlinkedReplicas_return)
+	.StorageManagementDB_mem(id, tasks, mapRemoveUnlinkedReplicas(cacheReplicas),taskReplicas, stageRequests) %TODO: removeStageRequests needed! Actually a bug might be hiding here, only for Failed are removed.
+	+
+	sum daysOld:Nat,obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,setOldTasksAsFailed(daysOld)). 
+	synch_reply_send(id,StorageManagementDB,obj,setOldTasksAsFailed_return)
+	.(
+	    StorageManagementDB_mem(id, mapSetOldTasksAsFailed(tasks), cacheReplicas,taskReplicas, stageRequests)
+	    +
+	    StorageManagementDB_mem(id,tasks, cacheReplicas,taskReplicas, stageRequests)
+	 )
+	+
+	sum sourceTaskID:Nat,obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,_createTask(sourceTaskID)). 
+	synch_reply_send(id,StorageManagementDB,obj,_createTask_return(#tasks+1))
+	.StorageManagementDB_mem(id, tasks(#tasks+1, New, sourceTaskID)|>tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum lfnDict:LfnDict,obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,_getExistingReplicas(lfnDict)). 
+	synch_reply_send(id,StorageManagementDB,obj,_getExistingReplicas_return(mapGetExistingreplicas(lfnDict, cacheReplicas)))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum LFN:SortString,SE:SortString,obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,__getTaskStateFromReplicaState(LFN,SE)).
+	synch_reply_send(id,StorageManagementDB,obj,__getTaskStateFromReplicaState_return(mapGetTaskStateFromReplicaState(LFN,SE, cacheReplicas)))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+ 
+	sum lfn:SortString,se:SortString,obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,_insertReplicaInformation(lfn,se)).
+	synch_reply_send(id,StorageManagementDB,obj,_insertReplicaInformation_return)
+	.StorageManagementDB_mem(id, tasks, cacheReplicas(#cacheReplicas+1,New,se,0,lfn,0)|>cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum taskID:Nat,replicaIDs:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,_insertTaskReplicaInformation(taskID,replicaIDs)). 
+	synch_reply_send(id,StorageManagementDB,obj,_insertTaskReplicaInformation_return)
+	.StorageManagementDB_mem(id, tasks, taskreplicasAfterInsert(cacheReplicas, replicaIDs), mapInsertTaskReplicaInfo(taskReplicas, taskID, replicaIDs), stageRequests)
+	+
+	sum taskID:Nat,obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,__getTaskStatesFromReplicaStates(taskID)).
+	synch_reply_send(id,StorageManagementDB,obj,__getTaskStatesFromReplicaStates_return(mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(taskID, taskReplicas),cacheReplicas)))
+% 	synch_reply_send(id,StorageManagementDB,obj,__getTaskStatesFromReplicaStates_return({New,Waiting}))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum taskID:Nat,newTaskStatus:SortString,obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,__updateTaskStatus(taskID,newTaskStatus)). 
+	synch_reply_send(id,StorageManagementDB,obj,__updateTaskStatus_return)
+	.StorageManagementDB_mem(id, mapUpdateTaskStatus(tasks,taskID,newTaskStatus), cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum stageRequests:List(StageRequests),obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,getFileMetadata(stageRequests)). 
+	synch_reply_send(id,StorageManagementDB,obj,getFileMetadata_return([],mapGetReplicas(mapGetCacheReplicaIDsForStageRequests(stageRequests), cacheReplicas),[])) % TODO: change to real values, for now all Staged, no terminal or old
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+
+	;
+	
+%-------Process definitions--------
+proc RequestPreparationAgent_execute(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,RequestPreparationAgent,obj,execute). 
+	synch_call_send(id,RequestPreparationAgent,rpAgent,prepareNewReplicas). 
+	synch_reply_receive(id,RequestPreparationAgent,rpAgent,prepareNewReplicas_return). 
+	synch_reply_send(id,RequestPreparationAgent,obj,execute_return)
+. RequestPreparationAgent_execute(id);
+
+proc RequestPreparationAgent_prepareNewReplicas(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,RequestPreparationAgent,obj,prepareNewReplicas). 
+	synch_call_send(id,RequestPreparationAgent,rpAgent,__getNewReplicas). 
+	sum res:List(CacheReplicas).synch_reply_receive(id,RequestPreparationAgent,rpAgent,__getNewReplicas_return(res)). 
+	((res==[])->(
+	synch_call_send(id,RequestPreparationAgent,rpAgent,break). 
+	synch_reply_receive(id,RequestPreparationAgent,rpAgent,break_return)
+	) <> 
+	synch_call_send(id,RequestPreparationAgent,rpAgent,__getExistingFiles(res)). 
+	sum exist:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas).synch_reply_receive(id,RequestPreparationAgent,rpAgent,__getExistingFiles_return(exist,terminal,failed)). 
+	(exist==[])->(
+	synch_call_send(id,RequestPreparationAgent,rpAgent,break). 
+	synch_reply_receive(id,RequestPreparationAgent,rpAgent,break_return)
+	) <> 
+	synch_call_send(id,RequestPreparationAgent,rpAgent,__getFileSize(exist)). 
+	sum fileSizes:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas).synch_reply_receive(id,RequestPreparationAgent,rpAgent,__getFileSize_return(fileSizes,terminal,failed)). 
+	(fileSizes==[])->(
+	synch_call_send(id,RequestPreparationAgent,rpAgent,break). 
+	synch_reply_receive(id,RequestPreparationAgent,rpAgent,break_return)
+	) <> 
+	synch_call_send(id,RequestPreparationAgent,rpAgent,__getFileReplicas(fileSizes)). 
+	sum replicas:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas).synch_reply_receive(id,RequestPreparationAgent,rpAgent,__getFileReplicas_return(replicas,terminal,failed)). 
+	(replicas==[])->(
+	synch_call_send(id,RequestPreparationAgent,rpAgent,break). 
+	synch_reply_receive(id,RequestPreparationAgent,rpAgent,break_return)
+	) <> 
+	((terminal!=[])->(
+	synch_call_send(id,StorageManagementDB,smDB,updateReplicaFailure(terminal)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,updateReplicaFailure_return).
+	synch_call_send(id,StorageManagementDB,smDB,_updateTasksForReplica(terminal)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,_updateTasksForReplica_return)
+	)<>internal). 
+	((replicas!=[])->(
+	synch_call_send(id,StorageManagementDB,smDB,updateReplicaInformation(replicas)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,updateReplicaInformation_return)
+	)<>internal)). 
+	
+	synch_reply_send(id,RequestPreparationAgent,obj,prepareNewReplicas_return)
+. RequestPreparationAgent_prepareNewReplicas(id);
+
+proc RequestPreparationAgent___getNewReplicas(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,RequestPreparationAgent,obj,__getNewReplicas). 
+	synch_call_send(id,StorageManagementDB,smDB,getCacheReplicas(New)). 
+	sum res:List(CacheReplicas).synch_reply_receive(id,StorageManagementDB,smDB,getCacheReplicas_return(res)). 
+	synch_reply_send(id,RequestPreparationAgent,obj,__getNewReplicas_return(res))
+. RequestPreparationAgent___getNewReplicas(id);
+
+proc RequestPreparationAgent___getExistingFiles(id:Nat) = 
+	sum lfns:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,RequestPreparationAgent,obj,__getExistingFiles(lfns)). 
+	synch_call_send(id,FileCatalog,fileCatalog,_exists(lfns)). 
+	sum exist:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas).synch_reply_receive(id,FileCatalog,fileCatalog,_exists_return(exist,terminal,failed)). 
+	synch_reply_send(id,RequestPreparationAgent,obj,__getExistingFiles_return(exist,terminal,failed))
+. RequestPreparationAgent___getExistingFiles(id);
+
+
+proc RequestPreparationAgent___getFileSize(id:Nat) = 
+	sum lfns:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,RequestPreparationAgent,obj,__getFileSize(lfns)). 
+	synch_call_send(id,FileCatalog,fileCatalog,getFileSize(lfns)). 
+	sum fileSizes:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas).synch_reply_receive(id,FileCatalog,fileCatalog,getFileSize_return(fileSizes,terminal,failed)). 
+	synch_reply_send(id,RequestPreparationAgent,obj,__getFileSize_return(fileSizes,terminal,failed))
+. RequestPreparationAgent___getFileSize(id);
+
+proc RequestPreparationAgent___getFileReplicas(id:Nat) = 
+	sum lfns:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,RequestPreparationAgent,obj,__getFileReplicas(lfns)). 
+	synch_call_send(id,FileCatalog,fileCatalog,getActiveReplicas(lfns)). 
+	sum replicas:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas).synch_reply_receive(id,FileCatalog,fileCatalog,getActiveReplicas_return(replicas,terminal,failed)). 
+	synch_reply_send(id,RequestPreparationAgent,obj,__getFileReplicas_return(replicas,terminal,failed))
+. RequestPreparationAgent___getFileReplicas(id);
+
+proc FileCatalog_getActiveReplicas(id:Nat) = 
+	sum lfns:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,FileCatalog,obj,getActiveReplicas(lfns)).
+	( 
+	synch_reply_send(id,FileCatalog,obj,getActiveReplicas_return(lfns,[],[]))
+	+
+	synch_reply_send(id,FileCatalog,obj,getActiveReplicas_return([],lfns,[])) 
+	+
+	synch_reply_send(id,FileCatalog,obj,getActiveReplicas_return([],[],lfns)) 
+	)
+. FileCatalog_getActiveReplicas(id);
+
+proc RequestPreparationAgent_break(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,RequestPreparationAgent,obj,break). 
+	synch_reply_send(id,RequestPreparationAgent,obj,break_return)
+. RequestPreparationAgent_break(id);
+
+proc StageRequestAgent_execute(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,StageRequestAgent,obj,execute). 
+	synch_call_send(id,StageRequestAgent,srAgent,getStorageUsage). 
+	synch_reply_receive(id,StageRequestAgent,srAgent,getStorageUsage_return). 
+	synch_call_send(id,StageRequestAgent,srAgent,submitStageRequests). 
+	synch_reply_receive(id,StageRequestAgent,srAgent,submitStageRequests_return). 
+	synch_reply_send(id,StageRequestAgent,obj,execute_return)
+. StageRequestAgent_execute(id);
+
+proc StageRequestAgent_getStorageUsage(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,StageRequestAgent,obj,getStorageUsage). 
+	synch_call_send(id,StorageManagementDB,smDB,getSubmittedStagePins). 
+	sum storageElementUsage:List(CacheReplicas).synch_reply_receive(id,StorageManagementDB,smDB,getSubmittedStagePins_return(storageElementUsage)). 
+	synch_reply_send(id,StageRequestAgent,obj,getStorageUsage_return)
+. StageRequestAgent_getStorageUsage(id);
+
+proc StageRequestAgent_submitStageRequests(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,StageRequestAgent,obj,submitStageRequests). 
+	synch_call_send(id,StageRequestAgent,srAgent,_getMissingReplicas). 
+	sum res:List(CacheReplicas).synch_reply_receive(id,StageRequestAgent,srAgent,_getMissingReplicas_return(res)). 
+	synch_call_send(id,StageRequestAgent,srAgent,_issuePrestageRequests(res)). 
+	synch_reply_receive(id,StageRequestAgent,srAgent,_issuePrestageRequests_return).
+	synch_call_send(id,StageRequestAgent,srAgent,_getOnlineReplicas). 
+	sum onlineReplicas:List(CacheReplicas).synch_reply_receive(id,StageRequestAgent,srAgent,_getOnlineReplicas_return(onlineReplicas)). 
+	synch_call_send(id,StageRequestAgent,srAgent,_getOfflineReplicas). 
+	sum offlineReplicas:List(CacheReplicas).synch_reply_receive(id,StageRequestAgent,srAgent,_getOfflineReplicas_return(offlineReplicas)). 
+	synch_call_send(id,StageRequestAgent,srAgent,_issuePrestageRequests(onlineReplicas++offlineReplicas)). 
+	synch_reply_receive(id,StageRequestAgent,srAgent,_issuePrestageRequests_return).
+	synch_reply_send(id,StageRequestAgent,obj,submitStageRequests_return)
+. StageRequestAgent_submitStageRequests(id);
+
+proc StageRequestAgent__getMissingReplicas(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,StageRequestAgent,obj,_getMissingReplicas). 
+	synch_call_send(id,StageRequestAgent,srAgent,__getStagedReplicas). 
+	sum stagedReplicas:List(CacheReplicas).synch_reply_receive(id,StageRequestAgent,srAgent,__getStagedReplicas_return(stagedReplicas)). 
+	synch_call_send(id,StageRequestAgent,srAgent,__addAssociatedReplicas(stagedReplicas)). 
+	sum associatedReplicas:List(CacheReplicas).synch_reply_receive(id,StageRequestAgent,srAgent,__addAssociatedReplicas_return(associatedReplicas)). 
+	synch_reply_send(id,StageRequestAgent,obj,_getMissingReplicas_return(associatedReplicas))
+. StageRequestAgent__getMissingReplicas(id);
+
+proc StageRequestAgent__getOnlineReplicas(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,StageRequestAgent,obj,_getOnlineReplicas). 
+	synch_call_send(id,StageRequestAgent,srAgent,__getWaitingReplicas). 
+	sum waitingReplicas:List(CacheReplicas).synch_reply_receive(id,StageRequestAgent,srAgent,__getWaitingReplicas_return(waitingReplicas)). 
+	synch_call_send(id,StageRequestAgent,srAgent,__checkIntegrity(waitingReplicas)). 
+	sum onlineReplicaIDs:List(CacheReplicas),offlineReplicaIDs:List(CacheReplicas).synch_reply_receive(id,StageRequestAgent,srAgent,__checkIntegrity_return(onlineReplicaIDs,offlineReplicaIDs)). 
+	synch_call_send(id,StageRequestAgent,srAgent,__addAssociatedReplicas(onlineReplicaIDs)). 
+	sum associatedReplicas:List(CacheReplicas).synch_reply_receive(id,StageRequestAgent,srAgent,__addAssociatedReplicas_return(associatedReplicas)). 
+	synch_reply_send(id,StageRequestAgent,obj,_getOnlineReplicas_return(associatedReplicas)).
+ StageRequestAgent__getOnlineReplicas(id);
+
+proc StageRequestAgent__getOfflineReplicas(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,StageRequestAgent,obj,_getOfflineReplicas). 
+	synch_call_send(id,StageRequestAgent,srAgent,__getOfflineReplicas). 
+	sum offlineReplicas:List(CacheReplicas).synch_reply_receive(id,StageRequestAgent,srAgent,__getOfflineReplicas_return(offlineReplicas)). 
+	synch_call_send(id,StageRequestAgent,srAgent,__addAssociatedReplicas(offlineReplicas)). 
+	sum associatedReplicas:List(CacheReplicas).synch_reply_receive(id,StageRequestAgent,srAgent,__addAssociatedReplicas_return(associatedReplicas)). 
+	synch_reply_send(id,StageRequestAgent,obj,_getOfflineReplicas_return(associatedReplicas))
+. StageRequestAgent__getOfflineReplicas(id);
+% 
+proc StageRequestAgent__issuePrestageRequests(id:Nat) = 
+	sum replicas:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,StageRequestAgent,obj,_issuePrestageRequests(replicas)). 
+	synch_call_send(id,ReplicaManager,replicaManager,prestageStorageFile(replicas)). 
+	sum stageRequestMetadata:List(StageRequests).synch_reply_receive(id,ReplicaManager,replicaManager,prestageStorageFile_return(stageRequestMetadata)). 
+	((stageRequestMetadata!=[])->(
+	synch_call_send(id,StorageManagementDB,smDB,insertStageRequest(stageRequestMetadata)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,insertStageRequest_return). 
+	synch_call_send(id,StorageManagementDB,smDB,updateReplicaStatus(StageSubmitted,replicas)).  %TODO: what if some CR are not submitted? (Was:updatedPfnIDs, now it's replicas)
+	synch_reply_receive(id,StorageManagementDB,smDB,updateReplicaStatus_return).
+	synch_call_send(id,StorageManagementDB,smDB,_updateTasksForReplica(replicas)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,_updateTasksForReplica_return)
+	)<>internal). 
+	synch_reply_send(id,StageRequestAgent,obj,_issuePrestageRequests_return) 
+. StageRequestAgent__issuePrestageRequests(id);
+% 
+proc StageRequestAgent___getStagedReplicas(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,StageRequestAgent,obj,__getStagedReplicas). 
+	synch_call_send(id,StorageManagementDB,smDB,getStagedReplicas). 
+	sum stagedReplicas:List(CacheReplicas).synch_reply_receive(id,StorageManagementDB,smDB,getStagedReplicas_return(stagedReplicas)). 
+	synch_reply_send(id,StageRequestAgent,obj,__getStagedReplicas_return(stagedReplicas))
+. StageRequestAgent___getStagedReplicas(id);
+
+proc StageRequestAgent___getWaitingReplicas(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,StageRequestAgent,obj,__getWaitingReplicas). 
+	synch_call_send(id,StorageManagementDB,smDB,getWaitingReplicas). 
+	sum waitingReplicas:List(CacheReplicas).synch_reply_receive(id,StorageManagementDB,smDB,getWaitingReplicas_return(waitingReplicas)). 
+	synch_reply_send(id,StageRequestAgent,obj,__getWaitingReplicas_return(waitingReplicas))
+. StageRequestAgent___getWaitingReplicas(id);
+
+proc StageRequestAgent___getOfflineReplicas(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,StageRequestAgent,obj,__getOfflineReplicas). 
+	synch_call_send(id,StorageManagementDB,smDB,getOfflineReplicas). 
+	sum offlineReplicas:List(CacheReplicas).synch_reply_receive(id,StorageManagementDB,smDB,getOfflineReplicas_return(offlineReplicas)). 
+	synch_reply_send(id,StageRequestAgent,obj,__getOfflineReplicas_return(offlineReplicas))
+. StageRequestAgent___getOfflineReplicas(id);
+% 
+proc StageRequestAgent___addAssociatedReplicas(id:Nat) = 
+	sum replicasToStage:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,StageRequestAgent,obj,__addAssociatedReplicas(replicasToStage)). 
+	synch_call_send(id,StorageManagementDB,smDB,getAssociatedReplicas(replicasToStage)). 
+	sum offlineReplicas:List(CacheReplicas),waitingReplicas:List(CacheReplicas).synch_reply_receive(id,StorageManagementDB,smDB,getAssociatedReplicas_return(offlineReplicas,waitingReplicas)). 
+	synch_call_send(id,StageRequestAgent,srAgent,__checkIntegrity(waitingReplicas)). 
+	sum onlineReplicaIDs:List(CacheReplicas),offlineReplicaIDs:List(CacheReplicas).synch_reply_receive(id,StageRequestAgent,srAgent,__checkIntegrity_return(onlineReplicaIDs,offlineReplicaIDs)).
+	synch_reply_send(id,StageRequestAgent,obj,__addAssociatedReplicas_return(offlineReplicas++waitingReplicas)) 
+. StageRequestAgent___addAssociatedReplicas(id);
+
+
+proc StageRequestAgent___checkIntegrity(id:Nat) = 
+	sum replicas:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,StageRequestAgent,obj,__checkIntegrity(replicas)). 
+	synch_call_send(id,ReplicaManager,replicaManager,getStorageFileMetadata(replicas)). 
+	sum terminalReplicaIDs:List(CacheReplicas),onlineReplicaIDs:List(CacheReplicas),offlineReplicaIDs:List(CacheReplicas).synch_reply_receive(id,ReplicaManager,replicaManager,getStorageFileMetadata_return(terminalReplicaIDs,onlineReplicaIDs,offlineReplicaIDs)). 
+	((terminalReplicaIDs!=[])->(
+	synch_call_send(id,StorageManagementDB,smDB,updateReplicaFailure(terminalReplicaIDs)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,updateReplicaFailure_return).
+	synch_call_send(id,StorageManagementDB,smDB,_updateTasksForReplica(terminalReplicaIDs)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,_updateTasksForReplica_return)
+	)<>internal). 
+	((offlineReplicaIDs!=[])->(
+	synch_call_send(id,StorageManagementDB,smDB,updateReplicaStatus(Offline,offlineReplicaIDs)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,updateReplicaStatus_return).
+	synch_call_send(id,StorageManagementDB,smDB,_updateTasksForReplica(offlineReplicaIDs)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,_updateTasksForReplica_return)
+	)<>internal). 
+	synch_reply_send(id,StageRequestAgent,obj,__checkIntegrity_return(onlineReplicaIDs,offlineReplicaIDs)) 
+. StageRequestAgent___checkIntegrity(id);
+%
+proc StageMonitorAgent_monitorStageRequests(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,StageMonitorAgent,obj,monitorStageRequests). 
+	synch_call_send(id,StageMonitorAgent,smAgent,__getStageSubmittedReplicas). 
+	sum res:List(StageRequests).synch_reply_receive(id,StageMonitorAgent,smAgent,__getStageSubmittedReplicas_return(res)). 
+	synch_call_send(id,StageMonitorAgent,smAgent,__monitorStorageElementStageRequests(res)). 
+	synch_reply_receive(id,StageMonitorAgent,smAgent,__monitorStorageElementStageRequests_return). 
+	synch_reply_send(id,StageMonitorAgent,obj,monitorStageRequests_return)
+. StageMonitorAgent_monitorStageRequests(id);
+%
+proc StageMonitorAgent_execute(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,StageMonitorAgent,obj,execute). 
+	synch_call_send(id,StageMonitorAgent,smAgent,monitorStageRequests). 
+	synch_reply_receive(id,StageMonitorAgent,smAgent,monitorStageRequests_return). 
+	synch_reply_send(id,StageMonitorAgent,obj,execute_return)
+. StageMonitorAgent_execute(id);
+% 
+proc StageMonitorAgent___monitorStorageElementStageRequests(id:Nat) = 
+	sum stageRequests:List(StageRequests),obj:ClassObject.synch_call_receive(id,StageMonitorAgent,obj,__monitorStorageElementStageRequests(stageRequests)). 
+	synch_call_send(id,StorageManagementDB,smDB,getFileMetadata(stageRequests)). 
+	sum terminalReplicaIDs:List(CacheReplicas),stagedReplicas:List(CacheReplicas),oldRequests:List(CacheReplicas).synch_reply_receive(id,StorageManagementDB,smDB,getFileMetadata_return(terminalReplicaIDs,stagedReplicas,oldRequests)). 
+	((terminalReplicaIDs!=[])->(
+	synch_call_send(id,StorageManagementDB,smDB,updateReplicaFailure(terminalReplicaIDs)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,updateReplicaFailure_return).
+	synch_call_send(id,StorageManagementDB,smDB,_updateTasksForReplica(terminalReplicaIDs)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,_updateTasksForReplica_return)
+	)<>internal). 
+	((stagedReplicas!=[])->(
+	synch_call_send(id,StorageManagementDB,smDB,setStageComplete(stagedReplicas)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,setStageComplete_return). 
+	synch_call_send(id,StorageManagementDB,smDB,updateReplicaStatus(Staged,stagedReplicas)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,updateReplicaStatus_return).
+	synch_call_send(id,StorageManagementDB,smDB,_updateTasksForReplica(stagedReplicas)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,_updateTasksForReplica_return)
+	)<>internal). 
+	((oldRequests!=[])->(
+	synch_call_send(id,StageMonitorAgent,smAgent,__wakeupOldRequests(oldRequests)). 
+	synch_reply_receive(id,StageMonitorAgent,smAgent,__wakeupOldRequests_return)
+	)<>internal). 
+	synch_reply_send(id,StageMonitorAgent,obj,__monitorStorageElementStageRequests_return)
+. StageMonitorAgent___monitorStorageElementStageRequests(id);
+% 
+proc StageMonitorAgent___getStageSubmittedReplicas(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,StageMonitorAgent,obj,__getStageSubmittedReplicas). 
+	synch_call_send(id,StorageManagementDB,smDB,getCacheReplicas(StageSubmitted)). 
+	sum submittedReplicas:List(CacheReplicas).synch_reply_receive(id,StorageManagementDB,smDB,getCacheReplicas_return(submittedReplicas)). 
+	synch_call_send(id,StorageManagementDB,smDB,getStageRequests(mapGetReplicaIDs(submittedReplicas))). 
+	sum stageRequests:List(StageRequests).synch_reply_receive(id,StorageManagementDB,smDB,getStageRequests_return(stageRequests)). 
+	synch_reply_send(id,StageMonitorAgent,obj,__getStageSubmittedReplicas_return(stageRequests))
+. StageMonitorAgent___getStageSubmittedReplicas(id);
+% 
+proc StageMonitorAgent___wakeupOldRequests(id:Nat) = 
+	sum oldRequests:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,StageMonitorAgent,obj,__wakeupOldRequests(oldRequests)). 
+	synch_call_send(id,StorageManagementDB,smDB,wakeupOldRequests(oldRequests,2)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,wakeupOldRequests_return). 
+	synch_reply_send(id,StageMonitorAgent,obj,__wakeupOldRequests_return)
+. StageMonitorAgent___wakeupOldRequests(id);
+
+
+proc StorageManagementDB_setRequest(id:Nat) = 
+	sum lfnDict:List(LfnDict),SourceTaskID:Nat,obj:ClassObject.synch_call_receive(id,StorageManagementDB,obj,setRequest(lfnDict,SourceTaskID)). 
+	synch_call_send(id,StorageManagementDB,smDB,_createTask(SourceTaskID)). 
+	sum taskID:Nat.synch_reply_receive(id,StorageManagementDB,smDB,_createTask_return(taskID)). 
+	setRequest_loop4(id,obj,lfnDict,taskID).
+	synch_call_send(id,StorageManagementDB,smDB,__getTaskStatesFromReplicaStates(taskID)). 
+	sum taskStates:List(SortString).synch_reply_receive(id,StorageManagementDB,smDB,__getTaskStatesFromReplicaStates_return(taskStates)).
+	((mapList2Set(taskStates) == {Staged})->(
+	synch_call_send(id,StorageManagementDB,smDB,__updateTaskStatus(taskID,Staged)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,__updateTaskStatus_return)
+	)<>internal). 
+	((Failed in taskStates)->(
+	synch_call_send(id,StorageManagementDB,smDB,__updateTaskStatus(taskID,Failed)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,__updateTaskStatus_return)
+	)<>internal). 
+	synch_reply_send(id,StorageManagementDB,obj,setRequest_return)
+. StorageManagementDB_setRequest(id)
+;
+
+
+proc RequestFinalizationAgent_execute(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,RequestFinalizationAgent,obj,execute). 
+	synch_call_send(id,RequestFinalizationAgent,rfAgent,clearFailedTasks). 
+	synch_reply_receive(id,RequestFinalizationAgent,rfAgent,clearFailedTasks_return). 
+	synch_call_send(id,RequestFinalizationAgent,rfAgent,callbackStagedTasks). 
+	synch_reply_receive(id,RequestFinalizationAgent,rfAgent,callbackStagedTasks_return). 
+	synch_call_send(id,RequestFinalizationAgent,rfAgent,removeUnlinkedReplicas). 
+	synch_reply_receive(id,RequestFinalizationAgent,rfAgent,removeUnlinkedReplicas_return). 
+	synch_call_send(id,RequestFinalizationAgent,rfAgent,setOldTasksAsFailed(3)). 
+	synch_reply_receive(id,RequestFinalizationAgent,rfAgent,setOldTasksAsFailed_return). 
+	synch_reply_send(id,RequestFinalizationAgent,obj,execute_return)
+. RequestFinalizationAgent_execute(id);
+% 
+proc RequestFinalizationAgent_clearFailedTasks(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,RequestFinalizationAgent,obj,clearFailedTasks). 
+	synch_call_send(id,StorageManagementDB,smDB,getTasksWithStatus(Failed)). 
+	sum failedTasks:List(Tasks).synch_reply_receive(id,StorageManagementDB,smDB,getTasksWithStatus_return(failedTasks)). 
+	clearFailedTasks_loop2(id,obj,failedTasks).
+	synch_call_send(id,StorageManagementDB,smDB,removeTasks(failedTasks)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,removeTasks_return). 
+	synch_reply_send(id,RequestFinalizationAgent,obj,clearFailedTasks_return)
+. RequestFinalizationAgent_clearFailedTasks(id);
+% 
+proc RequestFinalizationAgent_callbackStagedTasks(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,RequestFinalizationAgent,obj,callbackStagedTasks). 
+	synch_call_send(id,StorageManagementDB,smDB,getTasksWithStatus(Staged)). 
+	sum stagedTasks:List(Tasks).synch_reply_receive(id,StorageManagementDB,smDB,getTasksWithStatus_return(stagedTasks)). 
+	callbackStagedTasks_loop3(id,obj,stagedTasks). 
+	synch_call_send(id,StorageManagementDB,smDB,removeTasks(stagedTasks)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,removeTasks_return). 
+	synch_reply_send(id,RequestFinalizationAgent,obj,callbackStagedTasks_return)
+. RequestFinalizationAgent_callbackStagedTasks(id);
+
+proc RequestFinalizationAgent_removeUnlinkedReplicas(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,RequestFinalizationAgent,obj,removeUnlinkedReplicas). 
+	synch_call_send(id,StorageManagementDB,smDB,removeUnlinkedReplicas). 
+	synch_reply_receive(id,StorageManagementDB,smDB,removeUnlinkedReplicas_return). 
+	synch_reply_send(id,RequestFinalizationAgent,obj,removeUnlinkedReplicas_return)
+. RequestFinalizationAgent_removeUnlinkedReplicas(id);
+
+proc RequestFinalizationAgent_setOldTasksAsFailed(id:Nat) = 
+	sum daysOld:Nat,obj:ClassObject.synch_call_receive(id,RequestFinalizationAgent,obj,setOldTasksAsFailed(daysOld)). 
+	synch_call_send(id,StorageManagementDB,smDB,setOldTasksAsFailed(3)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,setOldTasksAsFailed_return). 
+	synch_reply_send(id,RequestFinalizationAgent,obj,setOldTasksAsFailed_return)
+. RequestFinalizationAgent_setOldTasksAsFailed(id);
+
+proc FileCatalog__exists(id:Nat) = 
+	sum lfns:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,FileCatalog,obj,_exists(lfns)).
+	(
+	synch_reply_send(id,FileCatalog,obj,_exists_return(lfns,[],[]))
+	+
+	synch_reply_send(id,FileCatalog,obj,_exists_return([],lfns,[]))
+	+
+	  synch_reply_send(id,FileCatalog,obj,_exists_return([], [], lfns))
+	)
+. FileCatalog__exists(id);
+
+proc FileCatalog_getFileSize(id:Nat) = 
+	sum lfns:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,FileCatalog,obj,getFileSize(lfns)). 
+	(
+	synch_reply_send(id,FileCatalog,obj,getFileSize_return(lfns,[],[]))
+	+
+	synch_reply_send(id,FileCatalog,obj,getFileSize_return([],lfns,[])) 
+	+
+	synch_reply_send(id,FileCatalog,obj,getFileSize_return([],[],lfns)) 
+	)
+. FileCatalog_getFileSize(id);
+% 
+proc JobStateUpdateHandler_updateJobFromStager(id:Nat) = 
+	sum sourceTask:Nat,statusCallBack:SortString,obj:ClassObject.synch_call_receive(id,JobStateUpdateHandler,obj,updateJobFromStager(sourceTask,statusCallBack)). 
+	synch_call_send(id,JobDB,jobDB,getJobStatus(sourceTask)). 
+	sum status:SortString.synch_reply_receive(id,JobDB,jobDB,getJobStatus_return(status)).
+	((status!=Staging) -> 
+	internal <>
+	(
+	synch_call_send(id,JobDB,jobDB,setJobStatus(sourceTask,statusCallBack)). 
+	synch_reply_receive(id,JobDB,jobDB,setJobStatus_return)
+	)).	
+	synch_reply_send(id,JobStateUpdateHandler,obj,updateJobFromStager_return)
+. JobStateUpdateHandler_updateJobFromStager(id);
+% 
+proc JobScheduling___requestStaging(id:Nat) = 
+	sum obj:ClassObject.synch_call_receive(id,JobScheduling,obj,__requestStaging). 
+	synch_call_send(id,StorageManagementDB,smDB,setRequest([lfnDict([LFN1], SE1), lfnDict([LFN2], SE2)],1)). % TODO: change to other parameters, this is the submission; 1==jobID
+	synch_reply_receive(id,StorageManagementDB,smDB,setRequest_return). 
+	synch_call_send(id,JobDB,jobDB,setJobStatus(1,Staging)). 
+	synch_reply_receive(id,JobDB,jobDB,setJobStatus_return)	.
+	synch_reply_send(id,JobScheduling,obj,__requestStaging_return)
+% . JobScheduling___requestStaging(id)
+;
+% 
+proc ReplicaManager_prestageStorageFile(id:Nat) = 
+	sum pfnRepIDs:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,ReplicaManager,obj,prestageStorageFile(pfnRepIDs)). 
+	synch_reply_send(id,ReplicaManager,obj,prestageStorageFile_return(mapPrestageStorageFile(pfnRepIDs)))
+. ReplicaManager_prestageStorageFile(id);
+% 
+proc ReplicaManager_getStorageFileMetadata(id:Nat) = 
+	sum pfnRepIDs:List(CacheReplicas),obj:ClassObject.synch_call_receive(id,ReplicaManager,obj,getStorageFileMetadata(pfnRepIDs)). 
+	(
+	synch_reply_send(id,ReplicaManager,obj,getStorageFileMetadata_return(pfnRepIDs,[],[]))
+	+
+	synch_reply_send(id,ReplicaManager,obj,getStorageFileMetadata_return([],pfnRepIDs,[])) 
+	+
+	synch_reply_send(id,ReplicaManager,obj,getStorageFileMetadata_return([],[],pfnRepIDs)) 
+	)
+. ReplicaManager_getStorageFileMetadata(id);
+% 
+proc RequestPreparationSD(id:Nat) = 
+	synch_call_send(id,RequestPreparationAgent,rpAgent,execute). 
+	synch_reply_receive(id,RequestPreparationAgent,rpAgent,execute_return)
+. RequestPreparationSD(id);
+
+proc StageMonitorSD(id:Nat) = 
+	synch_call_send(id,StageMonitorAgent,smAgent,execute). 
+	synch_reply_receive(id,StageMonitorAgent,smAgent,execute_return)
+. StageMonitorSD(id);
+
+proc RequestFinalizationSD(id:Nat) = 
+	synch_call_send(id,RequestFinalizationAgent,rfAgent,execute). 
+	synch_reply_receive(id,RequestFinalizationAgent,rfAgent,execute_return)
+. RequestFinalizationSD(id);
+% 
+proc clearFailedTasks_loop2(id:Nat,obj:ClassObject,failedTasks:List(Tasks))= 
+	(failedTasks!=[]) -> ( 
+	synch_call_send(id,JobStateUpdateHandler,jobStateUpdateHandler,updateJobFromStager(SourceTaskID(head(failedTasks)),Failed)). 
+	synch_reply_receive(id,JobStateUpdateHandler,jobStateUpdateHandler,updateJobFromStager_return)
+	 .clearFailedTasks_loop2(id,obj,tail(failedTasks))) 
+	 <> 
+ 		 internal;
+% 
+proc callbackStagedTasks_loop3(id:Nat,obj:ClassObject,stagedTasks:List(Tasks))= 
+	(stagedTasks!=[]) -> ( 
+	synch_call_send(id,JobStateUpdateHandler,jobStateUpdateHandler,updateJobFromStager(SourceTaskID(head(stagedTasks)),Done)). 
+	synch_reply_receive(id,JobStateUpdateHandler,jobStateUpdateHandler,updateJobFromStager_return)
+	 .callbackStagedTasks_loop3(id,obj,tail(stagedTasks))) 
+	 <> 
+ 		 internal;
+% 
+proc setRequestSD(id:Nat) = 
+	synch_call_send(id,JobScheduling,jobScheduling,__requestStaging). 
+	synch_reply_receive(id,JobScheduling,jobScheduling,__requestStaging_return)
+. setRequestSD(id);
+% 
+proc setRequest_loop4(id:Nat,obj:ClassObject,lfnDict:List(LfnDict),taskID:Nat)= 
+	(lfnDict!=[]) -> ( 
+	synch_call_send(id,StorageManagementDB,smDB,_getExistingReplicas(head(lfnDict))). 
+	sum existingReplicas:List(CacheReplicas).synch_reply_receive(id,StorageManagementDB,smDB,_getExistingReplicas_return(existingReplicas)). 
+	setRequest_loop5(id,obj,head(lfnDict),existingReplicas).
+	synch_call_send(id,StorageManagementDB,smDB,_getExistingReplicas(head(lfnDict))). 
+	sum existingReplicas:List(CacheReplicas).synch_reply_receive(id,StorageManagementDB,smDB,_getExistingReplicas_return(existingReplicas)). 
+	synch_call_send(id,StorageManagementDB,smDB,_insertTaskReplicaInformation(taskID,existingReplicas)). 
+	synch_reply_receive(id,StorageManagementDB,smDB,_insertTaskReplicaInformation_return) 
+	.setRequest_loop4(id,obj,tail(lfnDict),taskID)) 
+	 <> 
+ 		 internal;
+
+proc setRequest_loop5(id:Nat,obj:ClassObject,lfnDict:LfnDict,existingReplicas:List(CacheReplicas))= 
+	(LFNs(lfnDict)!=[]) -> ( 
+	(
+	(head(LFNs(lfnDict)) in mapGetLFNsFromCacheReplicas(existingReplicas))->(
+	synch_call_send(id,StorageManagementDB,smDB,__getTaskStateFromReplicaState(head(LFNs(lfnDict)), SE(lfnDict))). 
+	sum taskState:SortString.synch_reply_receive(id,StorageManagementDB,smDB,__getTaskStateFromReplicaState_return(taskState))
+	 ) <> 
+	(
+	synch_call_send(id,StorageManagementDB,smDB,_insertReplicaInformation(head(LFNs(lfnDict)), SE(lfnDict))). 
+	synch_reply_receive(id,StorageManagementDB,smDB,_insertReplicaInformation_return) 
+	)
+	)
+	 .setRequest_loop5(id,obj,lfnDict(tail(LFNs(lfnDict)),SE(lfnDict)), existingReplicas)
+	) 
+	 <> 
+ 		 internal;
+% 
+proc StageRequestSD(id:Nat) = 
+	synch_call_send(id,StageRequestAgent,srAgent,execute). 
+	synch_reply_receive(id,StageRequestAgent,srAgent,execute_return)
+. StageRequestSD(id);
+
+%-------End process definitions-------- 
+ 
+%-------systemInitProcess-------- 
+ 
+proc systemInit = RequestPreparationSD(1) || 
+StorageManagementDB_mem(1,[], [], [], [] ) ||
+RequestPreparationAgent_execute(1)  || % RequestPreparationSD
+RequestPreparationAgent_prepareNewReplicas(1) || % RequestPreparationSD
+RequestPreparationAgent___getNewReplicas(1)  || % RequestPreparationSD
+RequestPreparationAgent_break(1) || % RequestPreparationSD
+RequestPreparationAgent___getExistingFiles(1)  || % RequestPreparationSD
+RequestPreparationAgent___getFileSize(1) || % RequestPreparationSD
+RequestPreparationAgent___getFileReplicas(1) || % RequestPreparationSD
+FileCatalog_getActiveReplicas(1) || % RequestPreparationSD
+FileCatalog_getFileSize(1) || % RequestPreparationSD
+FileCatalog__exists(1) || % RequestPreparationSD
+StageMonitorSD(1) || 
+StageMonitorAgent_execute(1) || % StageMonitorSD
+StageMonitorAgent_monitorStageRequests(1) || % StageMonitorSD
+StageMonitorAgent___getStageSubmittedReplicas(1) || % StageMonitorSD
+StageMonitorAgent___monitorStorageElementStageRequests(1) || % TODO: This process wasn't here in the init, check why!!!
+% StorageElement_getFileMetadata(1) || % TODO: same as above
+StageMonitorAgent___wakeupOldRequests(1) || % TODO: same as above
+RequestFinalizationSD(1) || 
+RequestFinalizationAgent_execute(1) || % RequestFinalizationSD
+RequestFinalizationAgent_clearFailedTasks(1) || % RequestFinalizationSD
+RequestFinalizationAgent_callbackStagedTasks(1) || % RequestFinalizationSD
+RequestFinalizationAgent_removeUnlinkedReplicas(1) || % RequestFinalizationSD
+RequestFinalizationAgent_setOldTasksAsFailed(1) || % RequestFinalizationSD
+setRequestSD(1) || 
+JobScheduling___requestStaging(1) || % setRequestSD
+StorageManagementDB_setRequest(1) || % setRequestSD
+JobDB_mem(1, [jobs(1,Checking)]) ||
+StageRequestSD(1) || 
+StageRequestAgent_execute(1) || % StageRequestSD
+StageRequestAgent_getStorageUsage(1) || % StageRequestSD
+StageRequestAgent_submitStageRequests(1) || % StageRequestSD
+StageRequestAgent__getMissingReplicas(1) || % StageRequestSD
+StageRequestAgent__getOnlineReplicas(1) || % StageRequestSD
+StageRequestAgent___checkIntegrity(1) || % StageRequestSD
+StageRequestAgent___addAssociatedReplicas(1) || % StageRequestSD
+StageRequestAgent__getOfflineReplicas(1) || % StageRequestSD
+StageRequestAgent___getOfflineReplicas(1) || % StageRequestSD
+ReplicaManager_getStorageFileMetadata(1) || % StageRequestSD
+ReplicaManager_prestageStorageFile(1) || % TODO: This process wasn't here in the init, check why!!!
+StageRequestAgent___getWaitingReplicas(1) || % StageRequestSD
+StageRequestAgent__issuePrestageRequests(1) || %TODO: This process wasn't here in the init, check why!!!
+JobStateUpdateHandler_updateJobFromStager(1) || % TODO: same as above!
+StageRequestAgent___getStagedReplicas(1) ; % || % StageRequestSD
+%-------Init section-------- 
+
+init hide ({internal}, 
+allow({internal,synch_call,synch_reply, asynch_call 
+}, 
+comm({ 
+synch_call_send|synch_call_receive->synch_call, 
+synch_reply_receive|synch_reply_send->  
+synch_reply,  
+asynch_call_send|asynch_call_receive->  
+asynch_call  
+},  
+				 systemInit  
+)));
