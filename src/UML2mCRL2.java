@@ -826,7 +826,7 @@ public class UML2mCRL2 {
 		LoopProcess loopProcess = null;
 		Stack<Process> theReadyStack = null;
 		Stack<Process> theBusyStack = null;
-		while (fragments_iterator.hasNext()) {
+		while (fragments_iterator.hasNext()) { // "break" fails because there are no fragments inside it (messages or whatever)
 			InteractionFragment el = (InteractionFragment) fragments_iterator
 					.next();
 			if (el.getClass().equals(MessageOccurrenceSpecificationImpl.class)) {
@@ -1286,7 +1286,7 @@ public class UML2mCRL2 {
 				getOperandsForCombinedFragment((CombinedFragmentImpl) el,
 						((CombinedFragmentImpl) el).getInteractionOperator()
 								.toString());
-				// System.out.println("EndCombinedFragment");
+				// System.out.println("EndCombinedFragment"); //there should be a break here??
 			}
 		}
 		if (insideOperand) {
@@ -1407,9 +1407,8 @@ public class UML2mCRL2 {
 		return proc;
 	}
 
-	//via class and operation names
-	public static Process findProcess(String className,
-			String operationName) {
+	// via class and operation names
+	public static Process findProcess(String className, String operationName) {
 		Process proc = null;
 		ListIterator<Process> iterator = processes.listIterator(0);
 		while (iterator.hasNext()) {
@@ -1579,10 +1578,10 @@ public class UML2mCRL2 {
 	}
 
 	public static void main(String args[]) {
-		try{
+		try {
 			// int starter = 0;
-			EPackage.Registry.INSTANCE
-					.put(UMLPackage.eNS_URI, UMLPackage.eINSTANCE);
+			EPackage.Registry.INSTANCE.put(UMLPackage.eNS_URI,
+					UMLPackage.eINSTANCE);
 			Resource.Factory.Registry.INSTANCE.getExtensionToFactoryMap().put(
 					UMLResource.FILE_EXTENSION, UMLResource.Factory.INSTANCE);
 			ResourceSet resourceSet = new ResourceSetImpl();
@@ -1596,94 +1595,94 @@ public class UML2mCRL2 {
 					"http://schema.omg.org/spec/UML/2.2", UMLPackage.eINSTANCE);
 
 			Resource resource = null;
-				File f = new File(args[0]);
-				URI uri = URI.createFileURI(f.getAbsolutePath());
-				resource = (UMLResource) resourceSet.getResource(uri, true);
-				resource.load(null);
-				org.eclipse.uml2.uml.Package rootPackage = (org.eclipse.uml2.uml.Package) EcoreUtil
-						.getObjectByType(resource.getContents(),
-								UMLPackage.Literals.PACKAGE);
-				// ---------------------------
-				if(rootPackage==null){
-					System.err.println("Root package of the UML model is missing. Please check your model and .uml export!");
-					System.err.println("Exiting....");
-					System.exit(1);
+			File f = new File(args[0]);
+			URI uri = URI.createFileURI(f.getAbsolutePath());
+			resource = (UMLResource) resourceSet.getResource(uri, true);
+			resource.load(null);
+			org.eclipse.uml2.uml.Package rootPackage = (org.eclipse.uml2.uml.Package) EcoreUtil
+					.getObjectByType(resource.getContents(),
+							UMLPackage.Literals.PACKAGE);
+			// ---------------------------
+			if (rootPackage == null) {
+				System.err
+						.println("Root package of the UML model is missing. Please check your model and .uml export!");
+				System.err.println("Exiting....");
+				System.exit(1);
+			}
+			createSorts(rootPackage);
+			createClassObjectSort(rootPackage);
+			outfile.newLine();
+
+			getAllCollaborations(rootPackage);
+			outfile.newLine();
+			outfile.newLine();
+			createSortStrings();
+			createActionDefinitions();
+
+			outfile.newLine();
+			outfile.write("%-------Process definitions--------");
+			outfile.newLine();
+			ListIterator<Process> processes_iterator = processes
+					.listIterator(0);
+			// System.out.println("PROCESSES:");
+			while (processes_iterator.hasNext()) {
+				Process process = (Process) processes_iterator.next();
+				if (!process.getInvocations().isEmpty()) {// those with no
+															// invocations are
+															// surplus, the rest
+															// are
+															// initiators
+					StringBuffer processString = process.prepareForMCRL2();
+					outfile.append(processString.toString());
 				}
-				createSorts(rootPackage);
-				createClassObjectSort(rootPackage);
-				outfile.newLine();
+			}
+			printProcessesMCRL2();
+			outfile.write("%-------End process definitions-------- \n \n");
+			// systemInit construction via ADs
+			outfile.write("%-------systemInitProcess-------- \n \n");
+			int indexActivity = 0;
 
-				getAllCollaborations(rootPackage);
-				outfile.newLine();
-				outfile.newLine();
-				createSortStrings();
-				createActionDefinitions();
+			LinkedList<Activity> activities = getAllActivities(rootPackage);
+			if (activities.size() == 0) {
+				System.err
+						.println("No activity diagram found!. Please specify one for the system-level concurrency");
+				System.exit(1);
+			}
 
-				outfile.newLine();
-				outfile.write("%-------Process definitions--------");
-				outfile.newLine();
-				ListIterator<Process> processes_iterator = processes
-						.listIterator(0);
-				// System.out.println("PROCESSES:");
-				while (processes_iterator.hasNext()) {
-					Process process = (Process) processes_iterator.next();
-					if (!process.getInvocations().isEmpty()) {// those with no
-																// invocations are
-																// surplus, the rest
-																// are
-																// initiators
-						StringBuffer processString = process.prepareForMCRL2();
-						outfile.append(processString.toString());
-					}
-				}
-				printProcessesMCRL2();
-				outfile.write("%-------End process definitions-------- \n \n");
-				// systemInit construction via ADs
-				outfile.write("%-------systemInitProcess-------- \n \n");
-				int indexActivity = 0;
-
-				LinkedList<Activity> activities = getAllActivities(rootPackage);
-				if (activities.size() == 0) {
+			if (activities.size() > 1) {
+				if (args[1] == null
+						|| !args[1].contains("-setup")
+						|| rootPackage
+								.getPackagedElement(args[1].split("=")[1]) == null) {
 					System.err
-							.println("No activity diagram found!. Please specify one for the system-level concurrency");
+							.println("More than one Activity Diagram present:");
+					for (Activity activity : activities)
+						System.err.println("\t AD name: " + activity.getName());
+					System.err
+							.println("Please specify the correct one for the system-level concurrency setup,\nusing the -setup=<ActivityName> switch");
 					System.exit(1);
+				} else {
+					indexActivity = activities.indexOf(rootPackage
+							.getPackagedElement(args[1].split("=")[1]));
 				}
 
-				if (activities.size() > 1) {
-					if (args[1] == null
-							|| !args[1].contains("-setup")
-							|| rootPackage
-									.getPackagedElement(args[1].split("=")[1]) == null) {
-						System.err
-								.println("More than one Activity Diagram present:");
-						for (Activity activity : activities)
-							System.err.println("\t AD name: " + activity.getName());
-						System.err
-								.println("Please specify the correct one for the system-level concurrency setup,\nusing the -setup=<ActivityName> switch");
-						System.exit(1);
-					} else {
-						indexActivity = activities.indexOf(rootPackage
-								.getPackagedElement(args[1].split("=")[1]));
-					}
+			}
 
-				}
+			for (ActivityNode node : activities.get(indexActivity).getNodes())
+				if (node instanceof CallBehaviorAction)
+					processNode(node);
+			outfile.write(systemInit.substring(0, systemInit.lastIndexOf("||"))
+					+ "; \n");
 
-				for (ActivityNode node : activities.get(indexActivity).getNodes())
-					if (node instanceof CallBehaviorAction)
-						processNode(node);
-				outfile.write(systemInit.substring(0, systemInit.lastIndexOf("||"))
-						+ "; \n");
-
-				outfile.write("%-------Init section-------- \n");
-				createInitSection();
-				outfile.close();
-				System.out.println("------------------------------");
-				System.out.println("Finished generating model <model.mcrl2>");
-		} catch(ArrayIndexOutOfBoundsException me){
+			outfile.write("%-------Init section-------- \n");
+			createInitSection();
+			outfile.close();
+			System.out.println("------------------------------");
+			System.out.println("Finished generating model <model.mcrl2>");
+		} catch (ArrayIndexOutOfBoundsException me) {
 			System.err.println("Usage: UML2mCRL2 <exportedModel.uml>");
 			System.exit(1);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.err.println("Usage: UML2mCRL2 <exportedModel.uml>");
 			System.err.println("Error message: " + e.getMessage());
 			e.printStackTrace();
@@ -1695,7 +1694,7 @@ public class UML2mCRL2 {
 	public static void createSortStrings() throws IOException {
 		outfile.newLine();
 		ArrayList<String> passedStrings = new ArrayList<String>();
-//		System.out.println("Debug SortString: " + SortString);
+		// System.out.println("Debug SortString: " + SortString);
 		if (SortString.size() != 0) {
 			outfile.write("sort SortString = struct \n");
 			Iterator<String> it_sortString = SortString.iterator();

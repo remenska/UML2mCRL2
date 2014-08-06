@@ -1,0 +1,1783 @@
+%comment 
+% created:Thu Jul 03 14:01:39 CEST 2014
+%-------maps----------
+% ================================
+map mapGetCacheReplicas: List(CacheReplicas)#SortString -> List(CacheReplicas);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+    statusSelect:SortString;
+
+eqn
+    mapGetCacheReplicas([], statusSelect) = [];
+    (Status(el) == statusSelect) -> mapGetCacheReplicas(el|>listCacheReplicas, statusSelect) = el|> mapGetCacheReplicas(listCacheReplicas, statusSelect);
+    (Status(el) != statusSelect)  -> mapGetCacheReplicas(el|>listCacheReplicas, statusSelect) =  mapGetCacheReplicas(listCacheReplicas, statusSelect);
+% =================================
+map mapUpdateReplicaInformation: List(CacheReplicas)#List(CacheReplicas) -> List(CacheReplicas);
+var
+    listCacheReplicas, listReplicaInformation:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    mapUpdateReplicaInformation([], listReplicaInformation) = [];
+    (el in listReplicaInformation) -> mapUpdateReplicaInformation(el|>listCacheReplicas, listReplicaInformation) = 
+	  cacheReplicas(ReplicaID(el), Waiting, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaInformation(listCacheReplicas, listReplicaInformation);
+    !(el in listReplicaInformation) -> mapUpdateReplicaInformation(el|>listCacheReplicas, listReplicaInformation) = el|> mapUpdateReplicaInformation(listCacheReplicas, listReplicaInformation);
+% =================================
+map mapGetSubmittedStagePins: List(CacheReplicas) -> List(CacheReplicas);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    mapGetSubmittedStagePins([]) = [];
+    (Status(el) in [New, Waiting, Offline, Failed]) -> mapGetSubmittedStagePins(el|>listCacheReplicas) = mapGetSubmittedStagePins(listCacheReplicas);
+    !(Status(el) in [New, Waiting, Offline, Failed]) -> mapGetSubmittedStagePins(el|>listCacheReplicas) = el|>mapGetSubmittedStagePins(listCacheReplicas);
+% =================================
+map mapUpdateReplicaStatus: List(CacheReplicas)#SortString#List(CacheReplicas) -> List(CacheReplicas);
+var
+    listCacheReplicas, listReplicaInformation:List(CacheReplicas);
+    el:CacheReplicas;
+    newStatus:SortString;
+eqn
+    mapUpdateReplicaStatus([], newStatus, listReplicaInformation) = [];
+    (el in listReplicaInformation && newStatus==New) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus,listReplicaInformation) = 
+	  cacheReplicas(ReplicaID(el), New, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
+    (el in listReplicaInformation && Status(el)==New && newStatus==Waiting) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus,listReplicaInformation) = 
+	  cacheReplicas(ReplicaID(el), Waiting, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
+    (el in listReplicaInformation && newStatus==Failed) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus, listReplicaInformation) = 
+	  cacheReplicas(ReplicaID(el), Failed, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
+    (el in listReplicaInformation && (Status(el)==Waiting || Status(el)==Offline) && newStatus==StageSubmitted) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus,listReplicaInformation) = 
+	  cacheReplicas(ReplicaID(el), StageSubmitted, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
+    (el in listReplicaInformation && Status(el)==StageSubmitted && newStatus==Staged) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus, listReplicaInformation) = 
+	  cacheReplicas(ReplicaID(el), Staged, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
+    (el in listReplicaInformation && Status(el)==Waiting && newStatus==Offline) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus, listReplicaInformation) = 
+	  cacheReplicas(ReplicaID(el), Staged, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
+    !(el in listReplicaInformation) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus,listReplicaInformation) = el|> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
+% =================================
+map mapGetStageRequests: List(Nat)#List(StageRequests) -> List(StageRequests);
+var
+    cacheReplicaIDs:List(Nat);
+    listStageRequests:List(StageRequests);
+    el:StageRequests;
+eqn
+    mapGetStageRequests(cacheReplicaIDs, []) = [];
+    (ReplicaID(el) in cacheReplicaIDs) -> mapGetStageRequests(cacheReplicaIDs, el|>listStageRequests) = el|> mapGetStageRequests(cacheReplicaIDs, listStageRequests);
+    (!(ReplicaID(el) in cacheReplicaIDs))  -> mapGetStageRequests(cacheReplicaIDs, el|>listStageRequests) =  mapGetStageRequests(cacheReplicaIDs, listStageRequests);
+% =================================
+map mapGetReplicaIDs: List(CacheReplicas) -> List(Nat);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    mapGetReplicaIDs([]) = [];
+    mapGetReplicaIDs(el|>listCacheReplicas) = ReplicaID(el)|>mapGetReplicaIDs(listCacheReplicas);
+% =================================
+map mapSetStageComplete: List(StageRequests)#List(Nat) -> List(StageRequests);
+var
+    listStageRequests:List(StageRequests);
+    el:StageRequests;
+    cacheReplicaIDs:List(Nat);
+eqn
+    mapSetStageComplete([], cacheReplicaIDs) = [];
+    (ReplicaID(el) in cacheReplicaIDs) -> mapSetStageComplete(el|>listStageRequests, cacheReplicaIDs) = 
+	  stageRequests(ReplicaID(el), RequestID(el), Staged, PinExpired(el)) |> mapSetStageComplete(listStageRequests, cacheReplicaIDs);
+    !(ReplicaID(el) in cacheReplicaIDs) -> mapSetStageComplete(el|>listStageRequests, cacheReplicaIDs) = el|> mapSetStageComplete(listStageRequests, cacheReplicaIDs);
+% =================================
+map mapWakeupOldRequests: List(StageRequests)#List(Nat) -> List(StageRequests);
+var
+    listStageRequests:List(StageRequests);
+    el:StageRequests;
+    cacheReplicaIDs:List(Nat);
+eqn
+    mapWakeupOldRequests([], cacheReplicaIDs) = [];
+    (ReplicaID(el) in cacheReplicaIDs) -> mapWakeupOldRequests(el|>listStageRequests, cacheReplicaIDs) = 
+	 mapWakeupOldRequests(listStageRequests, cacheReplicaIDs);
+    !(ReplicaID(el) in cacheReplicaIDs) -> mapWakeupOldRequests(el|>listStageRequests, cacheReplicaIDs) = el|> mapWakeupOldRequests(listStageRequests, cacheReplicaIDs);
+% ================================
+map mapGetTasksWithStatus: List(Tasks)#SortString -> List(Tasks);
+var
+    listTasks:List(Tasks);
+    el:Tasks;
+    statusSelect:SortString;
+
+eqn
+    mapGetTasksWithStatus([], statusSelect) = [];
+    (Status(el) == statusSelect) -> mapGetTasksWithStatus(el|>listTasks, statusSelect) = el|> mapGetTasksWithStatus(listTasks, statusSelect);
+    (Status(el) != statusSelect)  -> mapGetTasksWithStatus(el|>listTasks, statusSelect) =  mapGetTasksWithStatus(listTasks, statusSelect);
+% =================================
+map mapRemoveTasks: List(Tasks)#List(Tasks) -> List(Tasks);
+var
+    listTasks, listTasksToRemove:List(Tasks);
+    el:Tasks;
+
+eqn
+    (listTasksToRemove==[]) -> mapRemoveTasks(listTasks, listTasksToRemove) = listTasks;
+    (listTasksToRemove!=[]) -> mapRemoveTasks([], listTasksToRemove) = [];
+    (el in listTasksToRemove && (listTasksToRemove!=[])) -> mapRemoveTasks(el|>listTasks, listTasksToRemove) = mapRemoveTasks(listTasks, listTasksToRemove);
+    !(el in listTasksToRemove && (listTasksToRemove!=[])) -> mapRemoveTasks(el|>listTasks, listTasksToRemove) = el|> mapRemoveTasks(listTasks, listTasksToRemove);
+% =================================
+map mapRemoveUnlinkedReplicas: List(StageRequests)#List(CacheReplicas) -> List(CacheReplicas);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+    listStageRequests:List(StageRequests);
+
+eqn
+    mapRemoveUnlinkedReplicas(listStageRequests,[]) = [];
+    (Links(el)==0 && (Status(el)==Failed || ReplicaID(el) in mapSelectExpired(listStageRequests))) -> mapRemoveUnlinkedReplicas(listStageRequests,el|>listCacheReplicas) = mapRemoveUnlinkedReplicas(listStageRequests,listCacheReplicas);
+    !(Links(el)==0 && (Status(el)==Failed || ReplicaID(el) in mapSelectExpired(listStageRequests))) -> mapRemoveUnlinkedReplicas(listStageRequests,el|>listCacheReplicas) = el|>mapRemoveUnlinkedReplicas(listStageRequests,listCacheReplicas);
+% =================================
+map mapSelectExpired:List(StageRequests) -> List(Nat);
+var
+    listStageRequests:List(StageRequests);
+    el:StageRequests;
+eqn
+    mapSelectExpired([]) = [];
+    (PinExpired(el)) -> mapSelectExpired(el|>listStageRequests) = ReplicaID(el)|>mapSelectExpired(listStageRequests);
+    !(PinExpired(el)) -> mapSelectExpired(el|>listStageRequests) = mapSelectExpired(listStageRequests);
+% =================================
+map mapSetOldTasksAsFailed: List(Tasks) -> List(Tasks);
+var
+    listTasks:List(Tasks);
+    el:Tasks;
+
+eqn
+    mapSetOldTasksAsFailed([]) = [];
+    mapSetOldTasksAsFailed(el|>listTasks) = tasks(TaskID(el), Failed, SourceTaskID(el)) |> mapSetOldTasksAsFailed(listTasks);
+    mapSetOldTasksAsFailed(el|>listTasks) = el|>mapSetOldTasksAsFailed(listTasks);
+% =================================
+map mapSetJobStatus: List(Job)#Nat#SortString -> List(Job);
+var
+    listJobs:List(Job);
+    el:Job;
+    jobID:Nat;
+    status:SortString;
+
+eqn
+    mapSetJobStatus([], jobID, status) = [];
+    (jid(el)==jobID  && status==Done) -> mapSetJobStatus(el|>listJobs, jobID, status) = 
+	 jobs(jid(el), Checking) |> mapSetJobStatus(listJobs, jobID, status); 
+    (jid(el)==jobID  && status==Failed) -> mapSetJobStatus(el|>listJobs, jobID, status) = 
+	 jobs(jid(el), Failed) |> mapSetJobStatus(listJobs, jobID, status); 
+    (jid(el)==jobID  && status==Staging) -> mapSetJobStatus(el|>listJobs, jobID, status) = 
+	 jobs(jid(el), Staging) |> mapSetJobStatus(listJobs, jobID, status); 	 
+    (jid(el)!=jobID) -> mapSetJobStatus(el|>listJobs, jobID, status) = el|> mapSetJobStatus(listJobs, jobID, status);
+    
+% =================================
+map mapGetExistingreplicas: LfnDict#List(CacheReplicas) -> List(CacheReplicas);
+var
+    lfnDict:LfnDict;
+    el:CacheReplicas;
+    listCacheReplicas:List(CacheReplicas);
+eqn
+    mapGetExistingreplicas(lfnDict, []) = [];
+    (LFN(el) in LFNs(lfnDict) && SE(el)==SE(lfnDict)) -> mapGetExistingreplicas(lfnDict, el|>listCacheReplicas) = el |> mapGetExistingreplicas(lfnDict, listCacheReplicas);
+    (!(LFN(el) in LFNs(lfnDict)) || SE(el)!=SE(lfnDict)) -> mapGetExistingreplicas(lfnDict, el|>listCacheReplicas) = mapGetExistingreplicas(lfnDict, listCacheReplicas);
+    
+% =================================
+map mapGetJobStatus:Nat#List(Job) -> SortString;
+var
+    listJobs:List(Job);
+    el:Job;
+    jobID:Nat;
+eqn
+    mapGetJobStatus(jobID, []) = NonExistent;
+    (jobID==jid(el)) -> mapGetJobStatus(jobID, el|>listJobs) = Status(el);
+    (jobID!=jid(el)) -> mapGetJobStatus(jobID, el|>listJobs) = mapGetJobStatus(jobID, listJobs);
+% =================================
+map mapGetLFNsFromCacheReplicas:List(CacheReplicas) -> List(SortString);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    mapGetLFNsFromCacheReplicas([]) = [];
+    mapGetLFNsFromCacheReplicas(el|>listCacheReplicas) = LFN(el)|> mapGetLFNsFromCacheReplicas(listCacheReplicas);
+
+% =================================
+map mapGetTaskStateFromReplicaState:SortString#SortString#List(CacheReplicas) -> SortString;
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+    lfn,se:SortString;
+    
+eqn
+    mapGetTaskStateFromReplicaState(lfn,se,[]) = NonExistent;
+    (LFN(el)==lfn && SE(el)==se) -> mapGetTaskStateFromReplicaState(lfn,se,el|>listCacheReplicas) = Status(el);
+    (LFN(el)!=lfn || SE(el)!=se) -> mapGetTaskStateFromReplicaState(lfn,se,el|>listCacheReplicas) = mapGetTaskStateFromReplicaState(lfn,se,listCacheReplicas);
+   
+% =================================
+map mapInsertTaskReplicaInfo:List(TaskReplicas)#Nat#List(CacheReplicas) -> List(TaskReplicas);
+var
+    listTaskReplicas:List(TaskReplicas);
+    taskID:Nat;
+    el:CacheReplicas;
+    replicaIDs:List(CacheReplicas);
+    listCacheReplicas:List(CacheReplicas);
+eqn
+    mapInsertTaskReplicaInfo(listTaskReplicas,taskID,[]) = listTaskReplicas;
+    mapInsertTaskReplicaInfo(listTaskReplicas,taskID,el|>listCacheReplicas) = 
+    taskReplicas(taskID,ReplicaID(el)) |> mapInsertTaskReplicaInfo(listTaskReplicas,taskID,listCacheReplicas);
+% =================================
+map taskreplicasAfterInsert:List(CacheReplicas)#List(CacheReplicas) -> List(CacheReplicas);
+var
+    listCacheReplicas, listCacheReplicasInserted:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    taskreplicasAfterInsert([],listCacheReplicasInserted) = [];
+    (el in listCacheReplicasInserted) -> taskreplicasAfterInsert(el|>listCacheReplicas,listCacheReplicasInserted) =  
+    cacheReplicas(ReplicaID(el),Status(el), SE(el), Links(el)+1, LFN(el), Size(el))|> taskreplicasAfterInsert(listCacheReplicas, listCacheReplicasInserted);
+    !(el in listCacheReplicasInserted) -> taskreplicasAfterInsert(el|>listCacheReplicas,listCacheReplicasInserted) =  el|> taskreplicasAfterInsert(listCacheReplicas, listCacheReplicasInserted);    
+% =================================
+map getReplicaIDsForTaskID:Nat#List(TaskReplicas) -> List(Nat);
+var
+    listTaskReplicas:List(TaskReplicas);
+    el:TaskReplicas;
+    taskID:Nat;
+eqn
+    getReplicaIDsForTaskID(taskID,[]) = [];
+    (taskID==TaskID(el)) -> getReplicaIDsForTaskID(taskID, el|>listTaskReplicas) = ReplicaID(el)|> getReplicaIDsForTaskID(taskID,listTaskReplicas);
+    (taskID!=TaskID(el)) -> getReplicaIDsForTaskID(taskID, el|>listTaskReplicas) = getReplicaIDsForTaskID(taskID,listTaskReplicas);
+% =================================
+map mapGetTaskStatesFromReplicaStates:List(Nat)#List(CacheReplicas) -> List(SortString);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+    replicaIDs:List(Nat); 
+eqn
+    mapGetTaskStatesFromReplicaStates([],[]) = [];
+    mapGetTaskStatesFromReplicaStates(replicaIDs,[]) = [];
+    mapGetTaskStatesFromReplicaStates([],listCacheReplicas) = [];
+    (ReplicaID(el) in replicaIDs) -> mapGetTaskStatesFromReplicaStates(replicaIDs,el|>listCacheReplicas) = Status(el) |> mapGetTaskStatesFromReplicaStates(replicaIDs, listCacheReplicas);
+% =================================
+map mapUpdateTaskStatus:List(Tasks)#Nat#SortString -> List(Tasks);
+var
+    listTasks:List(Tasks);
+    el:Tasks;
+    newStatus:SortString;
+    taskID:Nat;
+eqn
+    mapUpdateTaskStatus([],taskID,newStatus) = [];
+    (TaskID(el)==taskID) -> mapUpdateTaskStatus(el|>listTasks,taskID,newStatus) = tasks(TaskID(el), newStatus, SourceTaskID(el))|> mapUpdateTaskStatus(listTasks,taskID,newStatus);
+    (TaskID(el)!=taskID) -> mapUpdateTaskStatus(el|>listTasks,taskID,newStatus) = el|> mapUpdateTaskStatus(listTasks,taskID,newStatus);
+% =================================
+map mapGetCacheReplicaIDs:List(CacheReplicas) -> List(Nat);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    mapGetCacheReplicaIDs([]) = [];
+    mapGetCacheReplicaIDs(el|>listCacheReplicas) = ReplicaID(el)|>mapGetCacheReplicaIDs(listCacheReplicas);
+% =================================
+map mapGetReplicaIDTasks:List(Nat)#List(TaskReplicas) -> List(Nat);
+var
+    listTaskReplicas:List(TaskReplicas);
+    el:TaskReplicas;
+    listCacheReplicaIDs:List(Nat);
+eqn
+    mapGetReplicaIDTasks(listCacheReplicaIDs,[]) = [];
+    (ReplicaID(el) in listCacheReplicaIDs) -> mapGetReplicaIDTasks(listCacheReplicaIDs,el|>listTaskReplicas) = TaskID(el)|> mapGetReplicaIDTasks(listCacheReplicaIDs,listTaskReplicas);
+    !(ReplicaID(el) in listCacheReplicaIDs) -> mapGetReplicaIDTasks(listCacheReplicaIDs,el|>listTaskReplicas) =  mapGetReplicaIDTasks(listCacheReplicaIDs,listTaskReplicas);
+% =================================
+map mapGetAssociatedReplicaIDs:List(Nat)#List(TaskReplicas) -> List(Nat);
+var
+    listTaskReplicas:List(TaskReplicas);
+    el:TaskReplicas;
+    listTaskIDs:List(Nat);
+eqn
+    mapGetAssociatedReplicaIDs(listTaskIDs,[]) = [];
+    (TaskID(el) in listTaskIDs) -> mapGetAssociatedReplicaIDs(listTaskIDs,el|>listTaskReplicas) = ReplicaID(el)|> mapGetAssociatedReplicaIDs(listTaskIDs,listTaskReplicas);
+    !(TaskID(el) in listTaskIDs) -> mapGetAssociatedReplicaIDs(listTaskIDs,el|>listTaskReplicas) =  mapGetAssociatedReplicaIDs(listTaskIDs,listTaskReplicas);
+% =================================
+map mapGetAssociatedReplicas:List(Nat)#List(CacheReplicas)#SortString -> List(CacheReplicas);
+
+var status:SortString;
+    replicaIDs:List(Nat);
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    mapGetAssociatedReplicas(replicaIDs,[],status) = [];
+    (ReplicaID(el) in replicaIDs && Status(el)==status) -> mapGetAssociatedReplicas(replicaIDs,el|>listCacheReplicas,status) = el|>mapGetAssociatedReplicas(replicaIDs,listCacheReplicas,status);
+    (!(ReplicaID(el) in replicaIDs) || Status(el)!=status) -> mapGetAssociatedReplicas(replicaIDs,el|>listCacheReplicas,status) = mapGetAssociatedReplicas(replicaIDs,listCacheReplicas,status);
+% =================================
+map mapGetTaskIDs:List(Tasks) -> List(Nat);
+var
+    listTasks:List(Tasks);
+    el:Tasks;
+eqn
+    mapGetTaskIDs([]) = [];
+    mapGetTaskIDs(el|>listTasks) = TaskID(el)|>mapGetTaskIDs(listTasks);
+% =================================
+map mapRemoveTaskReplicas:List(TaskReplicas)#List(Nat) -> List(TaskReplicas);
+var
+    listTaskReplicas:List(TaskReplicas);
+    el:TaskReplicas;
+    listTaskIDs:List(Nat);
+eqn
+    mapRemoveTaskReplicas([],listTaskIDs) = [];
+    (TaskID(el) in listTaskIDs) -> mapRemoveTaskReplicas(el|>listTaskReplicas,listTaskIDs) = mapRemoveTaskReplicas(listTaskReplicas,listTaskIDs);
+    !(TaskID(el) in listTaskIDs) -> mapRemoveTaskReplicas(el|>listTaskReplicas,listTaskIDs) = el|>mapRemoveTaskReplicas(listTaskReplicas,listTaskIDs);
+% =================================
+map taskReplicasAfterRemove:List(CacheReplicas)#List(Nat) -> List(CacheReplicas);
+var
+    listCacheReplicas:List(CacheReplicas);
+    replicaIDs:List(Nat);
+    el:CacheReplicas;
+eqn
+    taskReplicasAfterRemove([],replicaIDs) = [];
+    (ReplicaID(el) in replicaIDs) -> taskReplicasAfterRemove(el|>listCacheReplicas,replicaIDs) =  
+    cacheReplicas(ReplicaID(el),Status(el), SE(el), Links(el)-1, LFN(el), Size(el))|> taskReplicasAfterRemove(listCacheReplicas, replicaIDs);
+    !(ReplicaID(el) in replicaIDs) -> taskReplicasAfterRemove(el|>listCacheReplicas,replicaIDs) =  el|> taskReplicasAfterRemove(listCacheReplicas, replicaIDs);    
+% =================================
+map mapPrestageStorageFile:List(CacheReplicas)-> List(StageRequests);
+var
+    listCacheReplicas:List(CacheReplicas);
+    el:CacheReplicas;
+eqn
+    mapPrestageStorageFile([]) = [];
+    mapPrestageStorageFile(el|>listCacheReplicas) = stageRequests(ReplicaID(el), ReplicaID(el)+10, StageSubmitted, false)|>mapPrestageStorageFile(listCacheReplicas);
+% =================================
+map mapGetCacheReplicaIDsForStageRequests:List(StageRequests)-> List(Nat);
+var
+    listStageRequests:List(StageRequests);
+    el:StageRequests;
+eqn
+    mapGetCacheReplicaIDsForStageRequests([]) = [];
+    mapGetCacheReplicaIDsForStageRequests(el|>listStageRequests) = ReplicaID(el)|>mapGetCacheReplicaIDsForStageRequests(listStageRequests);
+% =================================
+map mapGetReplicas:List(Nat)#List(CacheReplicas)-> List(CacheReplicas);
+var
+    listCacheReplicas:List(CacheReplicas);
+    replicaIDs:List(Nat);
+    el:CacheReplicas;
+eqn
+    mapGetReplicas(replicaIDs, []) = [];  
+    (ReplicaID(el) in replicaIDs) -> mapGetReplicas(replicaIDs,el|>listCacheReplicas) = el|>mapGetReplicas(replicaIDs,listCacheReplicas);
+    !(ReplicaID(el) in replicaIDs) -> mapGetReplicas(replicaIDs,el|>listCacheReplicas) = mapGetReplicas(replicaIDs,listCacheReplicas);
+
+% =================================
+map mapUpdateTasksForReplica:List(Tasks)#List(Nat)#List(TaskReplicas)#List(CacheReplicas) -> List(Tasks);
+var
+    listTasks:List(Tasks);
+    listTaskIDsToUpdate:List(Nat);
+    el:Tasks;
+    listTaskReplicas:List(TaskReplicas);
+    listCacheReplicas:List(CacheReplicas);
+eqn
+    mapUpdateTasksForReplica([],listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas) = [];
+
+    mapUpdateTasksForReplica(el|>listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas) =
+	  if(!(TaskID(el) in listTaskIDsToUpdate),el|> mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
+		if(Failed in mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(TaskID(el),listTaskReplicas),listCacheReplicas),
+		    tasks(TaskID(el),Failed, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
+		if(New in mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(TaskID(el),listTaskReplicas),listCacheReplicas),
+		    tasks(TaskID(el),New, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
+		if(Waiting in mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(TaskID(el),listTaskReplicas),listCacheReplicas),
+		    tasks(TaskID(el),Waiting, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
+		if(Offline in mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(TaskID(el),listTaskReplicas),listCacheReplicas),
+		    tasks(TaskID(el),Offline, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
+		if(StageSubmitted in mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(TaskID(el),listTaskReplicas),listCacheReplicas),
+		    tasks(TaskID(el),StageSubmitted, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
+	tasks(TaskID(el),Staged, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas)))))));
+% =================================
+map mapList2Set:List(SortString) -> Set(SortString);
+var
+    listSortString:List(SortString);
+    el:SortString;
+eqn
+    mapList2Set([]) = {};
+    mapList2Set(el|>listSortString) = {el} + mapList2Set(listSortString);
+% =================================
+map mapRemoveStageRequest:List(StageRequests)#Nat -> List(StageRequests);
+var
+    listStageRequests:List(StageRequests);
+    el:StageRequests;
+    replicaID:Nat;
+eqn
+    mapRemoveStageRequest([],replicaID) = [];
+    (ReplicaID(el)==replicaID) -> mapRemoveStageRequest(el|>listStageRequests,replicaID) = mapRemoveStageRequest(listStageRequests,replicaID);
+    (ReplicaID(el)!=replicaID) -> mapRemoveStageRequest(el|>listStageRequests,replicaID) = el|>mapRemoveStageRequest(listStageRequests,replicaID);
+% =================================
+map mapRemoveStageRequests:List(CacheReplicas)#List(StageRequests) -> List(StageRequests);
+var
+    listCacheReplicas:List(CacheReplicas);
+    listStageRequests:List(StageRequests);
+    el:CacheReplicas;
+eqn
+    mapRemoveStageRequests([],listStageRequests) = listStageRequests;
+    (Links(el)==0 && (Status(el)==Failed || ReplicaID(el) in mapSelectExpired(listStageRequests))) -> mapRemoveStageRequests(el|>listCacheReplicas,listStageRequests) = mapRemoveStageRequests(listCacheReplicas,mapRemoveStageRequest(listStageRequests,ReplicaID(el)));
+    !(Links(el)==0 && (Status(el)==Failed || ReplicaID(el) in mapSelectExpired(listStageRequests))) -> mapRemoveStageRequests(el|>listCacheReplicas,listStageRequests) = mapRemoveStageRequests(listCacheReplicas,listStageRequests);
+% =================================
+map mapSetExpired:List(StageRequests) -> List(StageRequests);
+var
+    listStageRequests:List(StageRequests);
+    el:StageRequests;
+
+eqn
+    mapSetExpired([]) = [];
+    (StageStatus(el)==Staged) -> mapSetExpired(el|>listStageRequests) = stageRequests(ReplicaID(el), RequestID(el), StageStatus(el), true)|> mapSetExpired(listStageRequests);
+    (StageStatus(el)!=Staged) -> mapSetExpired(el|>listStageRequests) = el|>mapSetExpired(listStageRequests);
+% =================================
+%-------sorts--------- 
+% sort ClassType = struct 
+% 			RequestPreparationAgent | 
+% 			StageRequestAgent | 
+% 			StageMonitorAgent | 
+% 			StorageManagerHandler | 
+% 			StorageManagementDB | 
+% 			RequestFinalizationAgent | 
+% 			CacheReplicas | 
+% 			Tasks | 
+% 			StageRequests | 
+% 			TaskReplicas | 
+% 			FileCatalog | 
+% % 			StorageElement | 
+% 			JobStateUpdateHandler | 
+% 			JobScheduling | 
+% 			Job | 
+% 			JobDB | 
+% 			ReplicaManager ; 
+% sort Method = struct 
+% 			insertStageRequest_return | 
+% 			updateReplicaInformation(replicaInformation:List(CacheReplicas)) | 
+% 			_createTask(sourceTaskID:Nat) | 
+% 			_getOnlineReplicas_return(onlineReplicas:List(CacheReplicas)) | 
+% 			getStorageFileMetadata(pfnRepIDs:List(CacheReplicas)) | 
+% 			getFileSize(lfns:List(CacheReplicas)) | 
+% 			__checkIntegrity_return(onlineReplicas:List(CacheReplicas),offlineReplicas:List(CacheReplicas)) | 
+% 			getWaitingReplicas_return(replicas:List(CacheReplicas)) | 
+% 			getFileMetadata_return(terminalReplicas:List(CacheReplicas),stagedReplicas:List(CacheReplicas),oldRequests:List(CacheReplicas)) | 
+% 			_getOfflineReplicas | 
+% 			__getOfflineReplicas_return(offlineReplicas:List(CacheReplicas)) | 
+% 			__wakeupOldRequests(oldRequests:List(CacheReplicas)) | 
+% 			_getExistingReplicas(lfnDict:LfnDict) | 
+% 			getSubmittedStagePins_return(submittedReplicas:List(CacheReplicas)) | 
+% 			__requestStaging_return | 
+% 			__getExistingFiles(lfns:List(CacheReplicas)) | 
+% 			getOfflineReplicas_return(offlineReplicas:List(CacheReplicas)) | 
+% 			getStageRequests(replicaIDs:List(Nat)) | 
+% 			updateReplicaStatus(newReplicaStatus:SortString,replicaIDs:List(CacheReplicas)) | 
+% 			__getStagedReplicas_return(stagedReplicas:List(CacheReplicas)) | 
+% 			getStorageUsage | 
+% 			__wakeupOldRequests_return | 
+% 			callbackStagedTasks_return | 
+% 			getTasksWithStatus_return(tasks:List(Tasks)) | 
+% 			break_return | 
+% 			getStorageUsage_return | 
+% 			_exists_return(exist:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
+% 			getStorageFileMetadata_return(terminalReplicaIDs:List(CacheReplicas),onlineReplicaIDs:List(CacheReplicas),offlineReplicaIDs:List(CacheReplicas)) | 
+% 			_exists(lfns:List(CacheReplicas)) | 
+% 			_createTask_return(taskID:Nat) | 
+% 			callbackStagedTasks | 
+% 			wakeupOldRequests_return | 
+% 			_getExistingReplicas_return(existingReplicas:List(CacheReplicas)) | 
+% 			wakeupOldRequests(replicaIDs:List(CacheReplicas),retryIntervalHour:Nat) | 
+% 			__requestStaging | 
+% 			__getNewReplicas_return(replicas:List(CacheReplicas)) | 
+% 			__getStageSubmittedReplicas | 
+% 			getFileSize_return(fileSizes:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
+% 			insertStageRequest(stageRequests:List(StageRequests)) | 
+% 			__getTaskStateFromReplicaState(LFN:SortString, SE:SortString) | 
+% 			__getTaskStatesFromReplicaStates(taskID:Nat) | 			
+% 			getStageRequests_return(stageRequests:List(StageRequests)) | 
+% 			__addAssociatedReplicas(replicasToStage:List(CacheReplicas)) | 
+% 			_getOnlineReplicas | 
+% 			__monitorStorageElementStageRequests(stageRequests:List(StageRequests)) | 
+% 			_getMissingReplicas | 
+% 			_insertReplicaInformation(lfn:SortString,se:SortString) | 
+% 			getJobStatus_return(attributes:SortString) | 
+% 			updateReplicaStatus_return | 
+% 			_issuePrestageRequests(replicas:List(CacheReplicas)) | 
+% 			__getFileSize_return(fileSizes:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
+% 			setRequest(lfnDict:List(LfnDict),SourceTaskID:Nat) | 
+% 			clearFailedTasks | 
+% 			getCacheReplicas_return(replicas:List(CacheReplicas)) | 
+% 			setJobStatus(jobID:Nat,jobStatus:SortString) | 
+% 			getSubmittedStagePins | 
+% 			prepareNewReplicas_return | 
+% 			removeTasks(tasks:List(Tasks)) | 
+% 			getTasksWithStatus(status:SortString) | 
+% 			__getFileReplicas(lfns:List(CacheReplicas)) | 
+% 			__updateTaskStatus_return | 
+% 			prepareNewReplicas | 
+% 			getStagedReplicas | 
+% 			setOldTasksAsFailed_return | 
+% 			break | 
+% 			_getMissingReplicas_return(missingReplicas:List(CacheReplicas)) | 
+% 			clearFailedTasks_return | 
+% 			prestageStorageFile_return(StageRequestMetadata:List(StageRequests)) | 
+% 			setStageComplete(replicaIDs:List(CacheReplicas)) | 
+% 			updateReplicaFailure_return | 
+% 			_issuePrestageRequests_return | 
+% 			__getStagedReplicas | 
+% 			updateReplicaFailure(terminalReplicaIDs:List(CacheReplicas)) | 
+% 			__getFileSize(lfns:List(CacheReplicas)) | 
+% 			__getNewReplicas | 
+% 			getAssociatedReplicas(replicaIDs:List(CacheReplicas)) | 
+% 			getAssociatedReplicas_return(offlineReplicas:List(CacheReplicas),waitingReplicas:List(CacheReplicas)) | 
+% 			execute_return | 
+% 			__getTaskStateFromReplicaState_return(taskState:SortString) | 
+% 			__getTaskStatesFromReplicaStates_return(taskStates:List(SortString)) | 
+% 			updateJobFromStager_return | 
+% 			__getExistingFiles_return(exist:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
+% 			getJobStatus(jobID:Nat) | 
+% 			getCacheReplicas(Status:SortString) | 
+% 			_insertTaskReplicaInformation(taskID:Nat,replicaIDs:List(CacheReplicas)) | 
+% 			submitStageRequests_return | 
+% 			__getOfflineReplicas | 
+% 			__getWaitingReplicas_return(waitingReplicas:List(CacheReplicas)) | 
+% 			removeUnlinkedReplicas | 
+% 			execute | 
+% 			getStagedReplicas_return(stagedReplicas:List(CacheReplicas)) | 
+% 			_insertTaskReplicaInformation_return | 
+% 			_insertReplicaInformation_return | 
+% 			getOfflineReplicas | 
+% 			__addAssociatedReplicas_return(associatedReplicas:List(CacheReplicas)) | 
+% 			getFileMetadata(pfnRepIDs:List(StageRequests)) | 
+% 			setStageComplete_return | 
+% 			__checkIntegrity(replicas:List(CacheReplicas)) | 
+% 			removeTasks_return | 
+% 			monitorStageRequests_return | 
+% 			monitorStageRequests | 
+% 			_getOfflineReplicas_return(offlineReplicas:List(CacheReplicas)) | 
+% 			submitStageRequests | 
+% 			__updateTaskStatus(taskID:Nat,newTaskStatus:SortString) | 
+% 			updateReplicaInformation_return | 
+% 			updateJobFromStager(sourceTask:Nat,status:SortString) | 
+% 			removeUnlinkedReplicas_return | 
+% 			__getWaitingReplicas | 
+% 			prestageStorageFile(pfnRepIDs:List(CacheReplicas)) | 
+% 			setJobStatus_return | 
+% 			setRequest_return | 
+% 			__getStageSubmittedReplicas_return(stageSubmittedReplicas:List(StageRequests)) | 
+% 			__monitorStorageElementStageRequests_return | 
+% 			__getFileReplicas_return(fileReplicas:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
+% 			getWaitingReplicas | 
+% 			getActiveReplicas_return(replicas:List(CacheReplicas),noReplicas:List(CacheReplicas),failed:List(CacheReplicas)) | 
+% 			getActiveReplicas(lfns:List(CacheReplicas)) | 
+% 			_updateTasksForReplica(replicas:List(CacheReplicas)) |
+% 			_updateTasksForReplica_return |
+% 			setOldTasksAsFailed(daysOld:Nat) ; 
+% 
+% sort ClassObject = struct
+% 			rpAgent | 
+% 			smDB | 
+% 			fileCatalog | 
+% 			smAgent | 
+% % 			storageElement | 
+% 			rfAgent | 
+% 			jobStateUpdateHandler | 
+% 			jobDB | 
+% 			jobScheduling | 
+% 			jobState | 
+% 			srAgent | 
+% 			replicaManager ; 
+% 
+% 
+
+
+
+sort SortString = struct 
+			 New | 
+			 Waiting | 
+			 StageSubmitted | 
+			 Staged | 
+			 Failed | 
+			 Done | 
+			 Status | 
+			 Checking | 
+			 Staging | 
+			 Offline |
+			 NonExistent |
+			 LFN1 | LFN2 |
+			 SE1 | SE2; 
+			 
+
+sort Tasks = struct tasks(TaskID:Nat, Status:SortString, SourceTaskID:Nat); 
+sort CacheReplicas = struct cacheReplicas(ReplicaID:Nat,Status:SortString, SE:SortString, Links:Int, LFN:SortString, Size:Nat);
+sort TaskReplicas = struct taskReplicas(TaskID:Nat, ReplicaID:Nat);
+sort StageRequests = struct stageRequests(ReplicaID:Nat, RequestID:Nat, StageStatus:SortString, PinExpired:Bool);
+sort Job = struct jobs(jid:Nat, Status:SortString);
+sort LfnDict = struct lfnDict(LFNs:List(SortString), SE:SortString);
+
+%-------end sorts--------- 
+
+ %-------action definitions------- 
+% act synch_call_send,synch_call_receive:Nat#ClassType#ClassObject#Method; 
+% act synch_reply_receive,synch_reply_send:Nat#ClassType#ClassObject#Method; 
+%  
+% act synch_call:Nat#ClassType#ClassObject#Method; 
+% act synch_reply:Nat#ClassType#ClassObject#Method; 
+%  
+% act asynch_call_send,asynch_call_receive:Nat#ClassType#ClassObject#Method; 
+% act asynch_call:Nat#ClassType#ClassObject#Method; 
+ 
+act condReturn, setExpired; 
+
+%-------------------------
+act StorageManagementDB_s_insertStageRequest_return,StorageManagementDB_r_insertStageRequest_return,StorageManagementDB_insertStageRequest_return;
+act StorageManagementDB_s_updateReplicaInformation,StorageManagementDB_r_updateReplicaInformation,StorageManagementDB_updateReplicaInformation:List(CacheReplicas);
+act StorageManagementDB_s__createTask,StorageManagementDB_r__createTask,StorageManagementDB__createTask:Nat;
+act StageRequestAgent_s__getOnlineReplicas_return,StageRequestAgent_r__getOnlineReplicas_return,StageRequestAgent__getOnlineReplicas_return:List(CacheReplicas);
+act ReplicaManager_s_getStorageFileMetadata,ReplicaManager_r_getStorageFileMetadata,ReplicaManager_getStorageFileMetadata:List(CacheReplicas);
+act FileCatalog_s_getFileSize,FileCatalog_r_getFileSize,FileCatalog_getFileSize:List(CacheReplicas);
+act StageRequestAgent_s___checkIntegrity_return,StageRequestAgent_r___checkIntegrity_return,StageRequestAgent___checkIntegrity_return:List(CacheReplicas)#List(CacheReplicas);
+act StorageManagementDB_s_getWaitingReplicas_return,StorageManagementDB_r_getWaitingReplicas_return,StorageManagementDB_getWaitingReplicas_return:List(CacheReplicas);
+act StorageManagementDB_s_getFileMetadata_return,StorageManagementDB_r_getFileMetadata_return,StorageManagementDB_getFileMetadata_return:List(CacheReplicas)#List(CacheReplicas)#List(CacheReplicas);
+act StageRequestAgent_s__getOfflineReplicas,StageRequestAgent_r__getOfflineReplicas,StageRequestAgent__getOfflineReplicas;
+act StageRequestAgent_s___getOfflineReplicas_return,StageRequestAgent_r___getOfflineReplicas_return,StageRequestAgent___getOfflineReplicas_return:List(CacheReplicas);
+act StageMonitorAgent_s___wakeupOldRequests,StageMonitorAgent_r___wakeupOldRequests,StageMonitorAgent___wakeupOldRequests:List(CacheReplicas);
+act StorageManagementDB_s__getExistingReplicas,StorageManagementDB_r__getExistingReplicas,StorageManagementDB__getExistingReplicas:LfnDict;
+act StorageManagementDB_s_getSubmittedStagePins_return,StorageManagementDB_r_getSubmittedStagePins_return,StorageManagementDB_getSubmittedStagePins_return:List(CacheReplicas);
+act JobScheduling_s___requestStaging_return,JobScheduling_r___requestStaging_return,JobScheduling___requestStaging_return;
+act RequestPreparationAgent_s___getExistingFiles,RequestPreparationAgent_r___getExistingFiles,RequestPreparationAgent___getExistingFiles:List(CacheReplicas);
+act StorageManagementDB_s_getOfflineReplicas_return,StorageManagementDB_r_getOfflineReplicas_return,StorageManagementDB_getOfflineReplicas_return:List(CacheReplicas);
+act StorageManagementDB_s_getStageRequests,StorageManagementDB_r_getStageRequests,StorageManagementDB_getStageRequests:List(Nat);
+act StorageManagementDB_s_updateReplicaStatus,StorageManagementDB_r_updateReplicaStatus,StorageManagementDB_updateReplicaStatus:SortString#List(CacheReplicas);
+act StageRequestAgent_s___getStagedReplicas_return,StageRequestAgent_r___getStagedReplicas_return,StageRequestAgent___getStagedReplicas_return:List(CacheReplicas);
+act StageRequestAgent_s_getStorageUsage,StageRequestAgent_r_getStorageUsage,StageRequestAgent_getStorageUsage;
+act StageMonitorAgent_s___wakeupOldRequests_return,StageMonitorAgent_r___wakeupOldRequests_return,StageMonitorAgent___wakeupOldRequests_return;
+act RequestFinalizationAgent_s_callbackStagedTasks_return,RequestFinalizationAgent_r_callbackStagedTasks_return,RequestFinalizationAgent_callbackStagedTasks_return;
+act StorageManagementDB_s_getTasksWithStatus_return,StorageManagementDB_r_getTasksWithStatus_return,StorageManagementDB_getTasksWithStatus_return:List(Tasks);
+act RequestPreparationAgent_s_break_return,RequestPreparationAgent_r_break_return,RequestPreparationAgent_break_return;
+act StageRequestAgent_s_getStorageUsage_return,StageRequestAgent_r_getStorageUsage_return,StageRequestAgent_getStorageUsage_return;
+act FileCatalog_s__exists_return,FileCatalog_r__exists_return,FileCatalog__exists_return:List(CacheReplicas)#List(CacheReplicas)#List(CacheReplicas);
+act ReplicaManager_s_getStorageFileMetadata_return,ReplicaManager_r_getStorageFileMetadata_return,ReplicaManager_getStorageFileMetadata_return:List(CacheReplicas)#List(CacheReplicas)#List(CacheReplicas);
+act FileCatalog_s__exists,FileCatalog_r__exists,FileCatalog__exists:List(CacheReplicas);
+act StorageManagementDB_s__createTask_return,StorageManagementDB_r__createTask_return,StorageManagementDB__createTask_return:Nat;
+act RequestFinalizationAgent_s_callbackStagedTasks,RequestFinalizationAgent_r_callbackStagedTasks,RequestFinalizationAgent_callbackStagedTasks;
+act StorageManagementDB_s_wakeupOldRequests_return,StorageManagementDB_r_wakeupOldRequests_return,StorageManagementDB_wakeupOldRequests_return;
+act StorageManagementDB_s__getExistingReplicas_return,StorageManagementDB_r__getExistingReplicas_return,StorageManagementDB__getExistingReplicas_return:List(CacheReplicas);
+act StorageManagementDB_s_wakeupOldRequests,StorageManagementDB_r_wakeupOldRequests,StorageManagementDB_wakeupOldRequests:List(CacheReplicas)#Nat;
+act JobScheduling_s___requestStaging,JobScheduling_r___requestStaging,JobScheduling___requestStaging;
+act RequestPreparationAgent_s___getNewReplicas_return,RequestPreparationAgent_r___getNewReplicas_return,RequestPreparationAgent___getNewReplicas_return:List(CacheReplicas);
+act StageMonitorAgent_s___getStageSubmittedReplicas,StageMonitorAgent_r___getStageSubmittedReplicas,StageMonitorAgent___getStageSubmittedReplicas;
+act FileCatalog_s_getFileSize_return,FileCatalog_r_getFileSize_return,FileCatalog_getFileSize_return:List(CacheReplicas)#List(CacheReplicas)#List(CacheReplicas);
+act StorageManagementDB_s_insertStageRequest,StorageManagementDB_r_insertStageRequest,StorageManagementDB_insertStageRequest:List(StageRequests);
+act StorageManagementDB_s___getTaskStateFromReplicaState,StorageManagementDB_r___getTaskStateFromReplicaState,StorageManagementDB___getTaskStateFromReplicaState:SortString#SortString;
+act StorageManagementDB_s___getTaskStatesFromReplicaStates,StorageManagementDB_r___getTaskStatesFromReplicaStates,StorageManagementDB___getTaskStatesFromReplicaStates:Nat;
+act StorageManagementDB_s_getStageRequests_return,StorageManagementDB_r_getStageRequests_return,StorageManagementDB_getStageRequests_return:List(StageRequests);
+act StageRequestAgent_s___addAssociatedReplicas,StageRequestAgent_r___addAssociatedReplicas,StageRequestAgent___addAssociatedReplicas:List(CacheReplicas);
+act StageRequestAgent_s__getOnlineReplicas,StageRequestAgent_r__getOnlineReplicas,StageRequestAgent__getOnlineReplicas;
+act StageMonitorAgent_s___monitorStorageElementStageRequests,StageMonitorAgent_r___monitorStorageElementStageRequests,StageMonitorAgent___monitorStorageElementStageRequests:List(StageRequests);
+act StageRequestAgent_s__getMissingReplicas,StageRequestAgent_r__getMissingReplicas,StageRequestAgent__getMissingReplicas;
+act StorageManagementDB_s__insertReplicaInformation,StorageManagementDB_r__insertReplicaInformation,StorageManagementDB__insertReplicaInformation:SortString#SortString;
+act JobDB_s_getJobStatus_return,JobDB_r_getJobStatus_return,JobDB_getJobStatus_return:SortString;
+act StorageManagementDB_s_updateReplicaStatus_return,StorageManagementDB_r_updateReplicaStatus_return,StorageManagementDB_updateReplicaStatus_return;
+act StageRequestAgent_s__issuePrestageRequests,StageRequestAgent_r__issuePrestageRequests,StageRequestAgent__issuePrestageRequests:List(CacheReplicas);
+act RequestPreparationAgent_s___getFileSize_return,RequestPreparationAgent_r___getFileSize_return,RequestPreparationAgent___getFileSize_return:List(CacheReplicas)#List(CacheReplicas)#List(CacheReplicas);
+act StorageManagementDB_s_setRequest,StorageManagementDB_r_setRequest,StorageManagementDB_setRequest:List(LfnDict)#Nat;
+act RequestFinalizationAgent_s_clearFailedTasks,RequestFinalizationAgent_r_clearFailedTasks,RequestFinalizationAgent_clearFailedTasks;
+act StorageManagementDB_s_getCacheReplicas_return,StorageManagementDB_r_getCacheReplicas_return,StorageManagementDB_getCacheReplicas_return:List(CacheReplicas);
+act JobDB_s_setJobStatus,JobDB_r_setJobStatus,JobDB_setJobStatus:Nat#SortString;
+act StorageManagementDB_s_getSubmittedStagePins,StorageManagementDB_r_getSubmittedStagePins,StorageManagementDB_getSubmittedStagePins;
+act RequestPreparationAgent_s_prepareNewReplicas_return,RequestPreparationAgent_r_prepareNewReplicas_return,RequestPreparationAgent_prepareNewReplicas_return;
+act StorageManagementDB_s_removeTasks,StorageManagementDB_r_removeTasks,StorageManagementDB_removeTasks:List(Tasks);
+act StorageManagementDB_s_getTasksWithStatus,StorageManagementDB_r_getTasksWithStatus,StorageManagementDB_getTasksWithStatus:SortString;
+act RequestPreparationAgent_s___getFileReplicas,RequestPreparationAgent_r___getFileReplicas,RequestPreparationAgent___getFileReplicas:List(CacheReplicas);
+act StorageManagementDB_s___updateTaskStatus_return,StorageManagementDB_r___updateTaskStatus_return,StorageManagementDB___updateTaskStatus_return;
+act RequestPreparationAgent_s_prepareNewReplicas,RequestPreparationAgent_r_prepareNewReplicas,RequestPreparationAgent_prepareNewReplicas;
+act StorageManagementDB_s_getStagedReplicas,StorageManagementDB_r_getStagedReplicas,StorageManagementDB_getStagedReplicas;
+act StorageManagementDB_s_setOldTasksAsFailed_return,StorageManagementDB_r_setOldTasksAsFailed_return,StorageManagementDB_setOldTasksAsFailed_return;
+act RequestFinalizationAgent_s_setOldTasksAsFailed_return,RequestFinalizationAgent_r_setOldTasksAsFailed_return,RequestFinalizationAgent_setOldTasksAsFailed_return;
+act RequestPreparationAgent_s_break,RequestPreparationAgent_r_break,RequestPreparationAgent_break;
+act StageRequestAgent_s__getMissingReplicas_return,StageRequestAgent_r__getMissingReplicas_return,StageRequestAgent__getMissingReplicas_return:List(CacheReplicas);
+act RequestFinalizationAgent_s_clearFailedTasks_return,RequestFinalizationAgent_r_clearFailedTasks_return,RequestFinalizationAgent_clearFailedTasks_return;
+act ReplicaManager_s_prestageStorageFile_return,ReplicaManager_r_prestageStorageFile_return,ReplicaManager_prestageStorageFile_return:List(StageRequests);
+act StorageManagementDB_s_setStageComplete,StorageManagementDB_r_setStageComplete,StorageManagementDB_setStageComplete:List(CacheReplicas);
+act StorageManagementDB_s_updateReplicaFailure_return,StorageManagementDB_r_updateReplicaFailure_return,StorageManagementDB_updateReplicaFailure_return;
+act StageRequestAgent_s__issuePrestageRequests_return,StageRequestAgent_r__issuePrestageRequests_return,StageRequestAgent__issuePrestageRequests_return;
+act StageRequestAgent_s___getStagedReplicas,StageRequestAgent_r___getStagedReplicas,StageRequestAgent___getStagedReplicas;
+act StorageManagementDB_s_updateReplicaFailure,StorageManagementDB_r_updateReplicaFailure,StorageManagementDB_updateReplicaFailure:List(CacheReplicas);
+act RequestPreparationAgent_s___getFileSize,RequestPreparationAgent_r___getFileSize,RequestPreparationAgent___getFileSize:List(CacheReplicas);
+act RequestPreparationAgent_s___getNewReplicas,RequestPreparationAgent_r___getNewReplicas,RequestPreparationAgent___getNewReplicas;
+act StorageManagementDB_s_getAssociatedReplicas,StorageManagementDB_r_getAssociatedReplicas,StorageManagementDB_getAssociatedReplicas:List(CacheReplicas);
+act StorageManagementDB_s_getAssociatedReplicas_return,StorageManagementDB_r_getAssociatedReplicas_return,StorageManagementDB_getAssociatedReplicas_return:List(CacheReplicas)#List(CacheReplicas);
+
+act RequestPreparationAgent_s_execute_return,RequestPreparationAgent_r_execute_return,RequestPreparationAgent_execute_return;
+act StageRequestAgent_s_execute_return,StageRequestAgent_r_execute_return,StageRequestAgent_execute_return;
+act StageMonitorAgent_s_execute_return,StageMonitorAgent_r_execute_return,StageMonitorAgent_execute_return;
+act RequestFinalizationAgent_s_execute_return,RequestFinalizationAgent_r_execute_return,RequestFinalizationAgent_execute_return;
+
+
+act StorageManagementDB_s___getTaskStateFromReplicaState_return,StorageManagementDB_r___getTaskStateFromReplicaState_return,StorageManagementDB___getTaskStateFromReplicaState_return:SortString;
+act StorageManagementDB_s___getTaskStatesFromReplicaStates_return,StorageManagementDB_r___getTaskStatesFromReplicaStates_return,StorageManagementDB___getTaskStatesFromReplicaStates_return:List(SortString);
+act JobStateUpdateHandler_s_updateJobFromStager_return,JobStateUpdateHandler_r_updateJobFromStager_return,JobStateUpdateHandler_updateJobFromStager_return;
+act RequestPreparationAgent_s___getExistingFiles_return,RequestPreparationAgent_r___getExistingFiles_return,RequestPreparationAgent___getExistingFiles_return:List(CacheReplicas)#List(CacheReplicas)#List(CacheReplicas);
+act JobDB_s_getJobStatus,JobDB_r_getJobStatus,JobDB_getJobStatus:Nat;
+act StorageManagementDB_s_getCacheReplicas,StorageManagementDB_r_getCacheReplicas,StorageManagementDB_getCacheReplicas:SortString;
+act StorageManagementDB_s__insertTaskReplicaInformation,StorageManagementDB_r__insertTaskReplicaInformation,StorageManagementDB__insertTaskReplicaInformation:Nat#List(CacheReplicas);
+act StageRequestAgent_s_submitStageRequests_return,StageRequestAgent_r_submitStageRequests_return,StageRequestAgent_submitStageRequests_return;
+act StageRequestAgent_s___getOfflineReplicas,StageRequestAgent_r___getOfflineReplicas,StageRequestAgent___getOfflineReplicas;
+act StageRequestAgent_s___getWaitingReplicas_return,StageRequestAgent_r___getWaitingReplicas_return,StageRequestAgent___getWaitingReplicas_return:List(CacheReplicas);
+act RequestFinalizationAgent_s_removeUnlinkedReplicas,RequestFinalizationAgent_r_removeUnlinkedReplicas,RequestFinalizationAgent_removeUnlinkedReplicas;
+act StorageManagementDB_s_removeUnlinkedReplicas,StorageManagementDB_r_removeUnlinkedReplicas,StorageManagementDB_removeUnlinkedReplicas;
+
+act RequestPreparationAgent_s_execute,RequestPreparationAgent_r_execute,RequestPreparationAgent_execute;
+act StageRequestAgent_s_execute,StageRequestAgent_r_execute,StageRequestAgent_execute;
+act StageMonitorAgent_s_execute,StageMonitorAgent_r_execute,StageMonitorAgent_execute;
+act RequestFinalizationAgent_s_execute,RequestFinalizationAgent_r_execute,RequestFinalizationAgent_execute;
+
+act StorageManagementDB_s_getStagedReplicas_return,StorageManagementDB_r_getStagedReplicas_return,StorageManagementDB_getStagedReplicas_return:List(CacheReplicas);
+act StorageManagementDB_s__insertTaskReplicaInformation_return,StorageManagementDB_r__insertTaskReplicaInformation_return,StorageManagementDB__insertTaskReplicaInformation_return;
+act StorageManagementDB_s__insertReplicaInformation_return,StorageManagementDB_r__insertReplicaInformation_return,StorageManagementDB__insertReplicaInformation_return;
+act StorageManagementDB_s_getOfflineReplicas,StorageManagementDB_r_getOfflineReplicas,StorageManagementDB_getOfflineReplicas;
+act StageRequestAgent_s___addAssociatedReplicas_return,StageRequestAgent_r___addAssociatedReplicas_return,StageRequestAgent___addAssociatedReplicas_return:List(CacheReplicas);
+act StorageManagementDB_s_getFileMetadata,StorageManagementDB_r_getFileMetadata,StorageManagementDB_getFileMetadata:List(StageRequests);
+act StorageManagementDB_s_setStageComplete_return,StorageManagementDB_r_setStageComplete_return,StorageManagementDB_setStageComplete_return;
+act StageRequestAgent_s___checkIntegrity,StageRequestAgent_r___checkIntegrity,StageRequestAgent___checkIntegrity:List(CacheReplicas);
+act StorageManagementDB_s_removeTasks_return,StorageManagementDB_r_removeTasks_return,StorageManagementDB_removeTasks_return;
+act StageMonitorAgent_s_monitorStageRequests_return,StageMonitorAgent_r_monitorStageRequests_return,StageMonitorAgent_monitorStageRequests_return;
+act StageMonitorAgent_s_monitorStageRequests,StageMonitorAgent_r_monitorStageRequests,StageMonitorAgent_monitorStageRequests;
+act StageRequestAgent_s__getOfflineReplicas_return,StageRequestAgent_r__getOfflineReplicas_return,StageRequestAgent__getOfflineReplicas_return:List(CacheReplicas);
+act StageRequestAgent_s_submitStageRequests,StageRequestAgent_r_submitStageRequests,StageRequestAgent_submitStageRequests;
+act StorageManagementDB_s___updateTaskStatus,StorageManagementDB_r___updateTaskStatus,StorageManagementDB___updateTaskStatus:Nat#SortString;
+act StorageManagementDB_s_updateReplicaInformation_return,StorageManagementDB_r_updateReplicaInformation_return,StorageManagementDB_updateReplicaInformation_return;
+act JobStateUpdateHandler_s_updateJobFromStager,JobStateUpdateHandler_r_updateJobFromStager,JobStateUpdateHandler_updateJobFromStager:Nat#SortString;
+act StorageManagementDB_s_removeUnlinkedReplicas_return,StorageManagementDB_r_removeUnlinkedReplicas_return,StorageManagementDB_removeUnlinkedReplicas_return;
+act RequestFinalizationAgent_s_removeUnlinkedReplicas_return,RequestFinalizationAgent_r_removeUnlinkedReplicas_return,RequestFinalizationAgent_removeUnlinkedReplicas_return;
+act StageRequestAgent_s___getWaitingReplicas,StageRequestAgent_r___getWaitingReplicas,StageRequestAgent___getWaitingReplicas;
+act ReplicaManager_s_prestageStorageFile,ReplicaManager_r_prestageStorageFile,ReplicaManager_prestageStorageFile:List(CacheReplicas);
+act JobDB_s_setJobStatus_return,JobDB_r_setJobStatus_return,JobDB_setJobStatus_return;
+act StorageManagementDB_s_setRequest_return,StorageManagementDB_r_setRequest_return,StorageManagementDB_setRequest_return;
+act StageMonitorAgent_s___getStageSubmittedReplicas_return,StageMonitorAgent_r___getStageSubmittedReplicas_return,StageMonitorAgent___getStageSubmittedReplicas_return:List(StageRequests);
+act StageMonitorAgent_s___monitorStorageElementStageRequests_return,StageMonitorAgent_r___monitorStorageElementStageRequests_return,StageMonitorAgent___monitorStorageElementStageRequests_return;
+act RequestPreparationAgent_s___getFileReplicas_return,RequestPreparationAgent_r___getFileReplicas_return,RequestPreparationAgent___getFileReplicas_return:List(CacheReplicas)#List(CacheReplicas)#List(CacheReplicas);
+act StorageManagementDB_s_getWaitingReplicas,StorageManagementDB_r_getWaitingReplicas,StorageManagementDB_getWaitingReplicas;
+act FileCatalog_s_getActiveReplicas_return,FileCatalog_r_getActiveReplicas_return,FileCatalog_getActiveReplicas_return:List(CacheReplicas)#List(CacheReplicas)#List(CacheReplicas);
+act FileCatalog_s_getActiveReplicas,FileCatalog_r_getActiveReplicas,FileCatalog_getActiveReplicas:List(CacheReplicas);
+act StorageManagementDB_s__updateTasksForReplica,StorageManagementDB_r__updateTasksForReplica,StorageManagementDB__updateTasksForReplica:List(CacheReplicas);
+act StorageManagementDB_s__updateTasksForReplica_return,StorageManagementDB_r__updateTasksForReplica_return,StorageManagementDB__updateTasksForReplica_return;
+act RequestFinalizationAgent_s_setOldTasksAsFailed,RequestFinalizationAgent_r_setOldTasksAsFailed,RequestFinalizationAgent_setOldTasksAsFailed:Nat;
+act StorageManagementDB_s_setOldTasksAsFailed,StorageManagementDB_r_setOldTasksAsFailed,StorageManagementDB_setOldTasksAsFailed:Nat;
+
+%-------end action definitions------- 
+
+proc JobDB_mem(id:Nat, jobs:List(Job)) = 
+	sum jobID:Nat.JobDB_r_getJobStatus(jobID).
+	JobDB_s_getJobStatus_return(mapGetJobStatus(jobID, jobs)) 
+	.JobDB_mem(id, jobs)
+	+
+	sum jobID:Nat,jobStatus:SortString.JobDB_r_setJobStatus(jobID,jobStatus). 
+	JobDB_s_setJobStatus_return
+	.JobDB_mem(id, mapSetJobStatus(jobs, jobID, jobStatus))	
+;
+
+proc StorageManagementDB_mem(id:Nat, tasks:List(Tasks), 
+				    cacheReplicas:List(CacheReplicas),
+				    taskReplicas:List(TaskReplicas), 
+				    stageRequests:List(StageRequests)) = 	
+				    
+	sum Status:SortString.StorageManagementDB_r_getCacheReplicas(Status). 
+	StorageManagementDB_s_getCacheReplicas_return(mapGetCacheReplicas(cacheReplicas, Status))
+	. StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum terminalReplicaIDs:List(CacheReplicas).StorageManagementDB_r_updateReplicaFailure(terminalReplicaIDs). 
+	StorageManagementDB_s_updateReplicaFailure_return
+	.StorageManagementDB_mem(id, tasks, mapUpdateReplicaStatus(cacheReplicas, Failed,terminalReplicaIDs),taskReplicas, stageRequests)
+	+
+	sum replicaInformation:List(CacheReplicas).StorageManagementDB_r_updateReplicaInformation(replicaInformation). %TODO: Not updating size at the moment
+	StorageManagementDB_s_updateReplicaInformation_return 
+	.StorageManagementDB_mem(id, tasks, mapUpdateReplicaInformation(cacheReplicas, replicaInformation),taskReplicas, stageRequests)
+	+
+	StorageManagementDB_r_getSubmittedStagePins
+	.StorageManagementDB_s_getSubmittedStagePins_return(mapGetSubmittedStagePins(cacheReplicas)) 
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	StorageManagementDB_r_getStagedReplicas. 
+	StorageManagementDB_s_getStagedReplicas_return(mapGetCacheReplicas(cacheReplicas,Staged))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum replicaIDs:List(CacheReplicas).StorageManagementDB_r_getAssociatedReplicas(replicaIDs). 
+	StorageManagementDB_s_getAssociatedReplicas_return(mapGetAssociatedReplicas(mapGetAssociatedReplicaIDs(mapGetReplicaIDTasks(mapGetReplicaIDs(replicaIDs),taskReplicas),taskReplicas), cacheReplicas, Offline),mapGetAssociatedReplicas(mapGetAssociatedReplicaIDs(mapGetReplicaIDTasks(mapGetReplicaIDs(replicaIDs),taskReplicas),taskReplicas), cacheReplicas, Waiting))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	StorageManagementDB_r_getWaitingReplicas. 
+	StorageManagementDB_s_getWaitingReplicas_return(mapGetCacheReplicas(cacheReplicas, Waiting))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum newReplicaStatus:SortString,replicaIDs:List(CacheReplicas).StorageManagementDB_r_updateReplicaStatus(newReplicaStatus,replicaIDs).
+	StorageManagementDB_s_updateReplicaStatus_return
+	.StorageManagementDB_mem(id, tasks, mapUpdateReplicaStatus(cacheReplicas, newReplicaStatus,replicaIDs),taskReplicas, stageRequests)
+	+
+	sum replicaIDs:List(CacheReplicas).StorageManagementDB_r__updateTasksForReplica(replicaIDs).
+	StorageManagementDB_s__updateTasksForReplica_return
+	.StorageManagementDB_mem(id, mapUpdateTasksForReplica(tasks,mapGetReplicaIDTasks(mapGetReplicaIDs(replicaIDs), taskReplicas),taskReplicas,cacheReplicas), cacheReplicas,taskReplicas, stageRequests)    
+	+
+	StorageManagementDB_r_getOfflineReplicas. 
+	StorageManagementDB_s_getOfflineReplicas_return(mapGetCacheReplicas(cacheReplicas,Offline))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum replicaIDs:List(Nat).StorageManagementDB_r_getStageRequests(replicaIDs). 
+	StorageManagementDB_s_getStageRequests_return(mapGetStageRequests(replicaIDs,stageRequests))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+ 	sum replicaIDs:List(CacheReplicas).StorageManagementDB_r_setStageComplete(replicaIDs). 
+	StorageManagementDB_s_setStageComplete_return
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, mapSetStageComplete(stageRequests, mapGetReplicaIDs(replicaIDs)))
+	+
+	sum replicaIDs:List(CacheReplicas),retryIntervalHour:Nat.StorageManagementDB_r_wakeupOldRequests(replicaIDs,retryIntervalHour). 
+	StorageManagementDB_s_wakeupOldRequests_return
+	.StorageManagementDB_mem(id, tasks, mapUpdateReplicaStatus(cacheReplicas, New, replicaIDs), taskReplicas, mapWakeupOldRequests(stageRequests, mapGetReplicaIDs(replicaIDs)))
+	+
+	sum stageRequestsToInsert:List(StageRequests).StorageManagementDB_r_insertStageRequest(stageRequestsToInsert). 
+	StorageManagementDB_s_insertStageRequest_return
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests++stageRequestsToInsert)
+	+
+	sum status:SortString.StorageManagementDB_r_getTasksWithStatus(status). 
+	StorageManagementDB_s_getTasksWithStatus_return(mapGetTasksWithStatus(tasks,status))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum tasksToRemove:List(Tasks).StorageManagementDB_r_removeTasks(tasksToRemove). 
+	StorageManagementDB_s_removeTasks_return
+	.StorageManagementDB_mem(id, mapRemoveTasks(tasks, tasksToRemove), taskReplicasAfterRemove(cacheReplicas,mapGetAssociatedReplicaIDs(mapGetTaskIDs(tasksToRemove),taskReplicas)),mapRemoveTaskReplicas(taskReplicas,mapGetTaskIDs(tasksToRemove)), stageRequests)
+	+
+	StorageManagementDB_r_removeUnlinkedReplicas. 
+	StorageManagementDB_s_removeUnlinkedReplicas_return.
+	StorageManagementDB_mem(id, tasks, mapRemoveUnlinkedReplicas(stageRequests,cacheReplicas),taskReplicas, mapRemoveStageRequests(cacheReplicas,stageRequests)) 
+	+
+	sum daysOld:Nat.StorageManagementDB_r_setOldTasksAsFailed(daysOld). 
+	StorageManagementDB_s_setOldTasksAsFailed_return
+	.(
+	    StorageManagementDB_mem(id, mapSetOldTasksAsFailed(tasks), cacheReplicas,taskReplicas, stageRequests)
+	    +
+	    StorageManagementDB_mem(id,tasks, cacheReplicas,taskReplicas, stageRequests)
+	 )
+	+
+	sum sourceTaskID:Nat.StorageManagementDB_r__createTask(sourceTaskID). 
+	StorageManagementDB_s__createTask_return(#tasks+1)
+	.StorageManagementDB_mem(id, tasks(#tasks+1, New, sourceTaskID)|>tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum lfnDict:LfnDict.StorageManagementDB_r__getExistingReplicas(lfnDict). 
+	StorageManagementDB_s__getExistingReplicas_return(mapGetExistingreplicas(lfnDict, cacheReplicas))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum LFN:SortString,SE:SortString.StorageManagementDB_r___getTaskStateFromReplicaState(LFN,SE).
+	StorageManagementDB_s___getTaskStateFromReplicaState_return(mapGetTaskStateFromReplicaState(LFN,SE, cacheReplicas))
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+ 
+	sum lfn:SortString,se:SortString.StorageManagementDB_r__insertReplicaInformation(lfn,se).
+	StorageManagementDB_s__insertReplicaInformation_return
+	.StorageManagementDB_mem(id, tasks, cacheReplicas(#cacheReplicas+1,New,se,0,lfn,0)|>cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum taskID:Nat,replicaIDs:List(CacheReplicas).StorageManagementDB_r__insertTaskReplicaInformation(taskID,replicaIDs). 
+	StorageManagementDB_s__insertTaskReplicaInformation_return
+	.StorageManagementDB_mem(id, tasks, taskreplicasAfterInsert(cacheReplicas, replicaIDs), mapInsertTaskReplicaInfo(taskReplicas, taskID, replicaIDs), stageRequests)
+	+
+	sum taskID:Nat.StorageManagementDB_r___getTaskStatesFromReplicaStates(taskID).
+	StorageManagementDB_s___getTaskStatesFromReplicaStates_return(mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(taskID, taskReplicas),cacheReplicas))
+% 	StorageManagementDB_s___getTaskStatesFromReplicaStates_return({New,Waiting})
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum taskID:Nat,newTaskStatus:SortString.StorageManagementDB_r___updateTaskStatus(taskID,newTaskStatus). 
+	StorageManagementDB_s___updateTaskStatus_return
+	.StorageManagementDB_mem(id, mapUpdateTaskStatus(tasks,taskID,newTaskStatus), cacheReplicas,taskReplicas, stageRequests)
+	+
+	sum stageRequests:List(StageRequests).StorageManagementDB_r_getFileMetadata(stageRequests). 
+	(
+	StorageManagementDB_s_getFileMetadata_return([],mapGetReplicas(mapGetCacheReplicaIDsForStageRequests(stageRequests), cacheReplicas),[]) 
+	+
+	StorageManagementDB_s_getFileMetadata_return(mapGetReplicas(mapGetCacheReplicaIDsForStageRequests(stageRequests), cacheReplicas),[],[]) 
+	+
+	StorageManagementDB_s_getFileMetadata_return([],[],mapGetReplicas(mapGetCacheReplicaIDsForStageRequests(stageRequests), cacheReplicas))
+	)
+	.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, stageRequests)
+	+
+	(stageRequests!=[]) -> setExpired.StorageManagementDB_mem(id, tasks, cacheReplicas,taskReplicas, mapSetExpired(stageRequests))
+	;
+	
+%-------Process definitions--------
+proc RequestPreparationAgent_execute_proc(id:Nat) = 
+	RequestPreparationAgent_r_execute. 
+	RequestPreparationAgent_s_prepareNewReplicas. 
+	RequestPreparationAgent_r_prepareNewReplicas_return. 
+	RequestPreparationAgent_s_execute_return
+. RequestPreparationAgent_execute_proc(id);
+
+proc RequestPreparationAgent_prepareNewReplicas_proc(id:Nat) = 
+	RequestPreparationAgent_r_prepareNewReplicas. 
+	RequestPreparationAgent_s___getNewReplicas. 
+	sum res:List(CacheReplicas).RequestPreparationAgent_r___getNewReplicas_return(res). 
+	((res==[])->(
+	RequestPreparationAgent_s_break. 
+	RequestPreparationAgent_r_break_return
+	) <> 
+	RequestPreparationAgent_s___getExistingFiles(res). 
+	sum exist:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas).RequestPreparationAgent_r___getExistingFiles_return(exist,terminal,failed). 
+	(exist==[])->(
+	RequestPreparationAgent_s_break. 
+	RequestPreparationAgent_r_break_return
+	) <> 
+	RequestPreparationAgent_s___getFileSize(exist). 
+	sum fileSizes:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas).RequestPreparationAgent_r___getFileSize_return(fileSizes,terminal,failed). 
+	(fileSizes==[])->(
+	RequestPreparationAgent_s_break. 
+	RequestPreparationAgent_r_break_return
+	) <> 
+	RequestPreparationAgent_s___getFileReplicas(fileSizes). 
+	sum replicas:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas).RequestPreparationAgent_r___getFileReplicas_return(replicas,terminal,failed). 
+	(replicas==[])->(
+	RequestPreparationAgent_s_break. 
+	RequestPreparationAgent_r_break_return
+	) <> 
+	((terminal!=[])->(
+	StorageManagementDB_s_updateReplicaFailure(terminal). 
+	StorageManagementDB_r_updateReplicaFailure_return.
+	StorageManagementDB_s__updateTasksForReplica(terminal). 
+	StorageManagementDB_r__updateTasksForReplica_return
+	)<>condReturn). 
+	((replicas!=[])->(
+	StorageManagementDB_s_updateReplicaInformation(replicas). 
+	StorageManagementDB_r_updateReplicaInformation_return
+	)<>condReturn)). 
+	
+	RequestPreparationAgent_s_prepareNewReplicas_return
+. RequestPreparationAgent_prepareNewReplicas_proc(id);
+
+proc RequestPreparationAgent___getNewReplicas_proc(id:Nat) = 
+	RequestPreparationAgent_r___getNewReplicas. 
+	StorageManagementDB_s_getCacheReplicas(New). 
+	sum res:List(CacheReplicas).StorageManagementDB_r_getCacheReplicas_return(res). 
+	RequestPreparationAgent_s___getNewReplicas_return(res)
+. RequestPreparationAgent___getNewReplicas_proc(id);
+
+proc RequestPreparationAgent___getExistingFiles_proc(id:Nat) = 
+	sum lfns:List(CacheReplicas).RequestPreparationAgent_r___getExistingFiles(lfns). 
+	FileCatalog_s__exists(lfns). 
+	sum exist:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas).FileCatalog_r__exists_return(exist,terminal,failed). 
+	RequestPreparationAgent_s___getExistingFiles_return(exist,terminal,failed)
+. RequestPreparationAgent___getExistingFiles_proc(id);
+
+
+proc RequestPreparationAgent___getFileSize_proc(id:Nat) = 
+	sum lfns:List(CacheReplicas).RequestPreparationAgent_r___getFileSize(lfns). 
+	FileCatalog_s_getFileSize(lfns). 
+	sum fileSizes:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas).FileCatalog_r_getFileSize_return(fileSizes,terminal,failed). 
+	RequestPreparationAgent_s___getFileSize_return(fileSizes,terminal,failed)
+. RequestPreparationAgent___getFileSize_proc(id);
+
+proc RequestPreparationAgent___getFileReplicas_proc(id:Nat) = 
+	sum lfns:List(CacheReplicas).RequestPreparationAgent_r___getFileReplicas(lfns). 
+	FileCatalog_s_getActiveReplicas(lfns). 
+	sum replicas:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas).FileCatalog_r_getActiveReplicas_return(replicas,terminal,failed). 
+	RequestPreparationAgent_s___getFileReplicas_return(replicas,terminal,failed)
+. RequestPreparationAgent___getFileReplicas_proc(id);
+
+proc FileCatalog_getActiveReplicas_proc(id:Nat) = 
+	sum lfns:List(CacheReplicas).FileCatalog_r_getActiveReplicas(lfns).
+	( 
+	FileCatalog_s_getActiveReplicas_return(lfns,[],[])
+	+
+	FileCatalog_s_getActiveReplicas_return([],lfns,[]) 
+	+
+	FileCatalog_s_getActiveReplicas_return([],[],lfns) 
+	)
+. FileCatalog_getActiveReplicas_proc(id);
+
+proc RequestPreparationAgent_break_proc(id:Nat) = 
+	RequestPreparationAgent_r_break. 
+	RequestPreparationAgent_s_break_return
+. RequestPreparationAgent_break_proc(id);
+
+proc StageRequestAgent_execute_proc(id:Nat) = 
+	StageRequestAgent_r_execute. 
+	StageRequestAgent_s_getStorageUsage. 
+	StageRequestAgent_r_getStorageUsage_return. 
+	StageRequestAgent_s_submitStageRequests. 
+	StageRequestAgent_r_submitStageRequests_return. 
+	StageRequestAgent_s_execute_return
+. StageRequestAgent_execute_proc(id);
+
+proc StageRequestAgent_getStorageUsage_proc(id:Nat) = 
+	StageRequestAgent_r_getStorageUsage. 
+	StorageManagementDB_s_getSubmittedStagePins. 
+	sum storageElementUsage:List(CacheReplicas).StorageManagementDB_r_getSubmittedStagePins_return(storageElementUsage). 
+	StageRequestAgent_s_getStorageUsage_return
+. StageRequestAgent_getStorageUsage_proc(id);
+
+proc StageRequestAgent_submitStageRequests_proc(id:Nat) = 
+	StageRequestAgent_r_submitStageRequests. 
+	StageRequestAgent_s__getMissingReplicas. 
+	sum res:List(CacheReplicas).StageRequestAgent_r__getMissingReplicas_return(res). 
+	StageRequestAgent_s__issuePrestageRequests(res). 
+	StageRequestAgent_r__issuePrestageRequests_return.
+	StageRequestAgent_s__getOnlineReplicas. 
+	sum onlineReplicas:List(CacheReplicas).StageRequestAgent_r__getOnlineReplicas_return(onlineReplicas). 
+	StageRequestAgent_s__getOfflineReplicas. 
+	sum offlineReplicas:List(CacheReplicas).StageRequestAgent_r__getOfflineReplicas_return(offlineReplicas). 
+	StageRequestAgent_s__issuePrestageRequests(onlineReplicas++offlineReplicas). 
+	StageRequestAgent_r__issuePrestageRequests_return.
+	StageRequestAgent_s_submitStageRequests_return
+. StageRequestAgent_submitStageRequests_proc(id);
+
+proc StageRequestAgent__getMissingReplicas_proc(id:Nat) = 
+	StageRequestAgent_r__getMissingReplicas. 
+	StageRequestAgent_s___getStagedReplicas. 
+	sum stagedReplicas:List(CacheReplicas).StageRequestAgent_r___getStagedReplicas_return(stagedReplicas). 
+	StageRequestAgent_s___addAssociatedReplicas(stagedReplicas). 
+	sum associatedReplicas:List(CacheReplicas).StageRequestAgent_r___addAssociatedReplicas_return(associatedReplicas). 
+	StageRequestAgent_s__getMissingReplicas_return(associatedReplicas)
+. StageRequestAgent__getMissingReplicas_proc(id);
+
+proc StageRequestAgent__getOnlineReplicas_proc(id:Nat) = 
+	StageRequestAgent_r__getOnlineReplicas. 
+	StageRequestAgent_s___getWaitingReplicas. 
+	sum waitingReplicas:List(CacheReplicas).StageRequestAgent_r___getWaitingReplicas_return(waitingReplicas). 
+	StageRequestAgent_s___checkIntegrity(waitingReplicas). 
+	sum onlineReplicaIDs:List(CacheReplicas),offlineReplicaIDs:List(CacheReplicas).StageRequestAgent_r___checkIntegrity_return(onlineReplicaIDs,offlineReplicaIDs). 
+	StageRequestAgent_s___addAssociatedReplicas(onlineReplicaIDs). 
+	sum associatedReplicas:List(CacheReplicas).StageRequestAgent_r___addAssociatedReplicas_return(associatedReplicas). 
+	StageRequestAgent_s__getOnlineReplicas_return(associatedReplicas).
+ StageRequestAgent__getOnlineReplicas_proc(id);
+
+proc StageRequestAgent__getOfflineReplicas_proc(id:Nat) = 
+	StageRequestAgent_r__getOfflineReplicas. 
+	StageRequestAgent_s___getOfflineReplicas. 
+	sum offlineReplicas:List(CacheReplicas).StageRequestAgent_r___getOfflineReplicas_return(offlineReplicas). 
+	StageRequestAgent_s___addAssociatedReplicas(offlineReplicas). 
+	sum associatedReplicas:List(CacheReplicas).StageRequestAgent_r___addAssociatedReplicas_return(associatedReplicas). 
+	StageRequestAgent_s__getOfflineReplicas_return(associatedReplicas)
+. StageRequestAgent__getOfflineReplicas_proc(id);
+% 
+proc StageRequestAgent__issuePrestageRequests_proc(id:Nat) = 
+	sum replicas:List(CacheReplicas).StageRequestAgent_r__issuePrestageRequests(replicas). 
+	ReplicaManager_s_prestageStorageFile(replicas). 
+	sum stageRequestMetadata:List(StageRequests).ReplicaManager_r_prestageStorageFile_return(stageRequestMetadata). 
+	((stageRequestMetadata!=[])->(
+	StorageManagementDB_s_insertStageRequest(stageRequestMetadata). 
+	StorageManagementDB_r_insertStageRequest_return. 
+	StorageManagementDB_s_updateReplicaStatus(StageSubmitted,replicas).  %TODO: what if some CR are not submitted? (Was:updatedPfnIDs, now it's replicas
+	StorageManagementDB_r_updateReplicaStatus_return.
+	StorageManagementDB_s__updateTasksForReplica(replicas). 
+	StorageManagementDB_r__updateTasksForReplica_return
+	)<>condReturn). 
+	StageRequestAgent_s__issuePrestageRequests_return 
+. StageRequestAgent__issuePrestageRequests_proc(id);
+% 
+
+proc StageRequestAgent___getStagedReplicas_proc(id:Nat) = 
+	StageRequestAgent_r___getStagedReplicas. 
+	StorageManagementDB_s_getStagedReplicas. 
+	sum stagedReplicas:List(CacheReplicas).StorageManagementDB_r_getStagedReplicas_return(stagedReplicas). 
+	StageRequestAgent_s___getStagedReplicas_return(stagedReplicas)
+. StageRequestAgent___getStagedReplicas_proc(id);
+
+proc StageRequestAgent___getWaitingReplicas_proc(id:Nat) = 
+	StageRequestAgent_r___getWaitingReplicas. 
+	StorageManagementDB_s_getWaitingReplicas. 
+	sum waitingReplicas:List(CacheReplicas).StorageManagementDB_r_getWaitingReplicas_return(waitingReplicas). 
+	StageRequestAgent_s___getWaitingReplicas_return(waitingReplicas)
+. StageRequestAgent___getWaitingReplicas_proc(id);
+
+proc StageRequestAgent___getOfflineReplicas_proc(id:Nat) = 
+	StageRequestAgent_r___getOfflineReplicas. 
+	StorageManagementDB_s_getOfflineReplicas. 
+	sum offlineReplicas:List(CacheReplicas).StorageManagementDB_r_getOfflineReplicas_return(offlineReplicas). 
+	StageRequestAgent_s___getOfflineReplicas_return(offlineReplicas)
+. StageRequestAgent___getOfflineReplicas_proc(id);
+% 
+proc StageRequestAgent___addAssociatedReplicas_proc(id:Nat) = 
+	sum replicasToStage:List(CacheReplicas).StageRequestAgent_r___addAssociatedReplicas(replicasToStage). 
+	StorageManagementDB_s_getAssociatedReplicas(replicasToStage). 
+	sum offlineReplicas:List(CacheReplicas),waitingReplicas:List(CacheReplicas).StorageManagementDB_r_getAssociatedReplicas_return(offlineReplicas,waitingReplicas). 
+	StageRequestAgent_s___checkIntegrity(waitingReplicas). 
+	sum onlineReplicaIDs:List(CacheReplicas),offlineReplicaIDs:List(CacheReplicas).StageRequestAgent_r___checkIntegrity_return(onlineReplicaIDs,offlineReplicaIDs).
+	StageRequestAgent_s___addAssociatedReplicas_return(offlineReplicas++waitingReplicas) 
+. StageRequestAgent___addAssociatedReplicas_proc(id);
+
+
+proc StageRequestAgent___checkIntegrity_proc(id:Nat) = 
+	sum replicas:List(CacheReplicas).StageRequestAgent_r___checkIntegrity(replicas). 
+	ReplicaManager_s_getStorageFileMetadata(replicas). 
+	sum terminalReplicaIDs:List(CacheReplicas),onlineReplicaIDs:List(CacheReplicas),offlineReplicaIDs:List(CacheReplicas).ReplicaManager_r_getStorageFileMetadata_return(terminalReplicaIDs,onlineReplicaIDs,offlineReplicaIDs). 
+	((terminalReplicaIDs!=[])->(
+	StorageManagementDB_s_updateReplicaFailure(terminalReplicaIDs). 
+	StorageManagementDB_r_updateReplicaFailure_return.
+	StorageManagementDB_s__updateTasksForReplica(terminalReplicaIDs). 
+	StorageManagementDB_r__updateTasksForReplica_return
+	)<>condReturn). 
+	((offlineReplicaIDs!=[])->(
+	StorageManagementDB_s_updateReplicaStatus(Offline,offlineReplicaIDs). 
+	StorageManagementDB_r_updateReplicaStatus_return.
+	StorageManagementDB_s__updateTasksForReplica(offlineReplicaIDs). 
+	StorageManagementDB_r__updateTasksForReplica_return
+	)<>condReturn). 
+	StageRequestAgent_s___checkIntegrity_return(onlineReplicaIDs,offlineReplicaIDs) 
+. StageRequestAgent___checkIntegrity_proc(id);
+%
+proc StageMonitorAgent_monitorStageRequests_proc(id:Nat) = 
+	StageMonitorAgent_r_monitorStageRequests. 
+	StageMonitorAgent_s___getStageSubmittedReplicas. 
+	sum res:List(StageRequests).StageMonitorAgent_r___getStageSubmittedReplicas_return(res). 
+	StageMonitorAgent_s___monitorStorageElementStageRequests(res). 
+	StageMonitorAgent_r___monitorStorageElementStageRequests_return. 
+	StageMonitorAgent_s_monitorStageRequests_return
+. StageMonitorAgent_monitorStageRequests_proc(id);
+%
+proc StageMonitorAgent_execute_proc(id:Nat) = 
+	StageMonitorAgent_r_execute. 
+	StageMonitorAgent_s_monitorStageRequests. 
+	StageMonitorAgent_r_monitorStageRequests_return. 
+	StageMonitorAgent_s_execute_return
+. StageMonitorAgent_execute_proc(id);
+% 
+proc StageMonitorAgent___monitorStorageElementStageRequests_proc(id:Nat) = 
+	sum stageRequests:List(StageRequests).StageMonitorAgent_r___monitorStorageElementStageRequests(stageRequests). 
+	StorageManagementDB_s_getFileMetadata(stageRequests). 
+	sum terminalReplicaIDs:List(CacheReplicas),stagedReplicas:List(CacheReplicas),oldRequests:List(CacheReplicas).StorageManagementDB_r_getFileMetadata_return(terminalReplicaIDs,stagedReplicas,oldRequests). 
+	((terminalReplicaIDs!=[])->(
+	StorageManagementDB_s_updateReplicaFailure(terminalReplicaIDs). 
+	StorageManagementDB_r_updateReplicaFailure_return.
+	StorageManagementDB_s__updateTasksForReplica(terminalReplicaIDs). 
+	StorageManagementDB_r__updateTasksForReplica_return
+	)<>condReturn). 
+	((stagedReplicas!=[])->(
+	StorageManagementDB_s_setStageComplete(stagedReplicas). 
+	StorageManagementDB_r_setStageComplete_return. 
+	StorageManagementDB_s_updateReplicaStatus(Staged,stagedReplicas). 
+	StorageManagementDB_r_updateReplicaStatus_return.
+	StorageManagementDB_s__updateTasksForReplica(stagedReplicas). 
+	StorageManagementDB_r__updateTasksForReplica_return
+	)<>condReturn). 
+	((oldRequests!=[])->(
+	StageMonitorAgent_s___wakeupOldRequests(oldRequests). 
+	StageMonitorAgent_r___wakeupOldRequests_return
+	)<>condReturn). 
+	StageMonitorAgent_s___monitorStorageElementStageRequests_return
+. StageMonitorAgent___monitorStorageElementStageRequests_proc(id);
+% 
+proc StageMonitorAgent___getStageSubmittedReplicas_proc(id:Nat) = 
+	StageMonitorAgent_r___getStageSubmittedReplicas. 
+	StorageManagementDB_s_getCacheReplicas(StageSubmitted). 
+	sum submittedReplicas:List(CacheReplicas).StorageManagementDB_r_getCacheReplicas_return(submittedReplicas). 
+	StorageManagementDB_s_getStageRequests(mapGetReplicaIDs(submittedReplicas)). 
+	sum stageRequests:List(StageRequests).StorageManagementDB_r_getStageRequests_return(stageRequests). 
+	StageMonitorAgent_s___getStageSubmittedReplicas_return(stageRequests)
+. StageMonitorAgent___getStageSubmittedReplicas_proc(id);
+% 
+proc StageMonitorAgent___wakeupOldRequests_proc(id:Nat) = 
+	sum oldRequests:List(CacheReplicas).StageMonitorAgent_r___wakeupOldRequests(oldRequests). 
+	StorageManagementDB_s_wakeupOldRequests(oldRequests,2). 
+	StorageManagementDB_r_wakeupOldRequests_return. 
+	StageMonitorAgent_s___wakeupOldRequests_return
+. StageMonitorAgent___wakeupOldRequests_proc(id);
+
+
+proc StorageManagementDB_setRequest_proc(id:Nat) = 
+	sum lfnDict:List(LfnDict),SourceTaskID:Nat.StorageManagementDB_r_setRequest(lfnDict,SourceTaskID). 
+	StorageManagementDB_s__createTask(SourceTaskID). 
+	sum taskID:Nat.StorageManagementDB_r__createTask_return(taskID). 
+	setRequest_loop4(id,lfnDict,taskID).
+	StorageManagementDB_s___getTaskStatesFromReplicaStates(taskID). 
+	sum taskStates:List(SortString).StorageManagementDB_r___getTaskStatesFromReplicaStates_return(taskStates).
+	((mapList2Set(taskStates) == {Staged})->(
+	StorageManagementDB_s___updateTaskStatus(taskID,Staged). 
+	StorageManagementDB_r___updateTaskStatus_return
+	)<>condReturn). 
+	((Failed in taskStates)->(
+	StorageManagementDB_s___updateTaskStatus(taskID,Failed). 
+	StorageManagementDB_r___updateTaskStatus_return
+	)<>condReturn). 
+	StorageManagementDB_s_setRequest_return
+. StorageManagementDB_setRequest_proc(id)
+;
+
+
+proc RequestFinalizationAgent_execute_proc(id:Nat) = 
+	RequestFinalizationAgent_r_execute. 
+	RequestFinalizationAgent_s_clearFailedTasks. 
+	RequestFinalizationAgent_r_clearFailedTasks_return. 
+	RequestFinalizationAgent_s_callbackStagedTasks. 
+	RequestFinalizationAgent_r_callbackStagedTasks_return. 
+	RequestFinalizationAgent_s_removeUnlinkedReplicas. 
+	RequestFinalizationAgent_r_removeUnlinkedReplicas_return. 
+	RequestFinalizationAgent_s_setOldTasksAsFailed(3). 
+	RequestFinalizationAgent_r_setOldTasksAsFailed_return. 
+	RequestFinalizationAgent_s_execute_return
+. RequestFinalizationAgent_execute_proc(id);
+% 
+proc RequestFinalizationAgent_clearFailedTasks_proc(id:Nat) = 
+	RequestFinalizationAgent_r_clearFailedTasks. 
+	StorageManagementDB_s_getTasksWithStatus(Failed). 
+	sum failedTasks:List(Tasks).StorageManagementDB_r_getTasksWithStatus_return(failedTasks). 
+	clearFailedTasks_loop2(id,failedTasks).
+	StorageManagementDB_s_removeTasks(failedTasks). 
+	StorageManagementDB_r_removeTasks_return. 
+	RequestFinalizationAgent_s_clearFailedTasks_return
+. RequestFinalizationAgent_clearFailedTasks_proc(id);
+% 
+proc RequestFinalizationAgent_callbackStagedTasks_proc(id:Nat) = 
+	RequestFinalizationAgent_r_callbackStagedTasks. 
+	StorageManagementDB_s_getTasksWithStatus(Staged). 
+	sum stagedTasks:List(Tasks).StorageManagementDB_r_getTasksWithStatus_return(stagedTasks). 
+	callbackStagedTasks_loop3(id,stagedTasks). 
+	StorageManagementDB_s_removeTasks(stagedTasks). 
+	StorageManagementDB_r_removeTasks_return. 
+	RequestFinalizationAgent_s_callbackStagedTasks_return
+. RequestFinalizationAgent_callbackStagedTasks_proc(id);
+
+proc RequestFinalizationAgent_removeUnlinkedReplicas_proc(id:Nat) = 
+	RequestFinalizationAgent_r_removeUnlinkedReplicas. 
+	StorageManagementDB_s_removeUnlinkedReplicas. 
+	StorageManagementDB_r_removeUnlinkedReplicas_return. 
+	RequestFinalizationAgent_s_removeUnlinkedReplicas_return
+. RequestFinalizationAgent_removeUnlinkedReplicas_proc(id);
+
+proc RequestFinalizationAgent_setOldTasksAsFailed_proc(id:Nat) = 
+	sum daysOld:Nat.RequestFinalizationAgent_r_setOldTasksAsFailed(daysOld). 
+	StorageManagementDB_s_setOldTasksAsFailed(3). 
+	StorageManagementDB_r_setOldTasksAsFailed_return. 
+	RequestFinalizationAgent_s_setOldTasksAsFailed_return
+. RequestFinalizationAgent_setOldTasksAsFailed_proc(id);
+
+proc FileCatalog__exists_proc(id:Nat) = 
+	sum lfns:List(CacheReplicas).FileCatalog_r__exists(lfns).
+	(
+	FileCatalog_s__exists_return(lfns,[],[])
+	+
+	FileCatalog_s__exists_return([],lfns,[])
+	+
+	FileCatalog_s__exists_return([], [], lfns)
+	)
+. FileCatalog__exists_proc(id);
+
+proc FileCatalog_getFileSize_proc(id:Nat) = 
+	sum lfns:List(CacheReplicas).FileCatalog_r_getFileSize(lfns). 
+	(
+	FileCatalog_s_getFileSize_return(lfns,[],[])
+	+
+	FileCatalog_s_getFileSize_return([],lfns,[]) 
+	+
+	FileCatalog_s_getFileSize_return([],[],lfns) 
+	)
+. FileCatalog_getFileSize_proc(id);
+% 
+proc JobStateUpdateHandler_updateJobFromStager_proc(id:Nat) = 
+	sum sourceTask:Nat,statusCallBack:SortString.JobStateUpdateHandler_r_updateJobFromStager(sourceTask,statusCallBack). 
+	JobDB_s_getJobStatus(sourceTask). 
+	sum status:SortString.JobDB_r_getJobStatus_return(status).
+	((status!=Staging) -> 
+	condReturn <>
+	(
+	JobDB_s_setJobStatus(sourceTask,statusCallBack). 
+	JobDB_r_setJobStatus_return
+	)).	
+	JobStateUpdateHandler_s_updateJobFromStager_return
+. JobStateUpdateHandler_updateJobFromStager_proc(id);
+% 
+proc JobScheduling___requestStaging_proc(id:Nat) = 
+	JobScheduling_r___requestStaging. 
+	StorageManagementDB_s_setRequest([lfnDict([LFN1], SE1)],1). % TODO: change to other parameters, this is the submission; 1==jobID
+	StorageManagementDB_r_setRequest_return. 
+	JobDB_s_setJobStatus(1,Staging). 
+	JobDB_r_setJobStatus_return.
+	JobScheduling_s___requestStaging_return
+. JobScheduling___requestStaging_proc(id)
+;
+% 
+proc ReplicaManager_prestageStorageFile_proc(id:Nat) = 
+	sum pfnRepIDs:List(CacheReplicas).ReplicaManager_r_prestageStorageFile(pfnRepIDs). 
+	ReplicaManager_s_prestageStorageFile_return(mapPrestageStorageFile(pfnRepIDs))
+. ReplicaManager_prestageStorageFile_proc(id);
+% 
+proc ReplicaManager_getStorageFileMetadata_proc(id:Nat) = 
+	sum pfnRepIDs:List(CacheReplicas).ReplicaManager_r_getStorageFileMetadata(pfnRepIDs). 
+	(
+	ReplicaManager_s_getStorageFileMetadata_return(pfnRepIDs,[],[])
+	+
+	ReplicaManager_s_getStorageFileMetadata_return([],pfnRepIDs,[]) 
+	+
+	ReplicaManager_s_getStorageFileMetadata_return([],[],pfnRepIDs) 
+	)
+. ReplicaManager_getStorageFileMetadata_proc(id);
+% 
+proc RequestPreparationSD(id:Nat) = 
+	RequestPreparationAgent_s_execute. 
+	RequestPreparationAgent_r_execute_return
+. RequestPreparationSD(id);
+
+proc StageMonitorSD(id:Nat) = 
+	StageMonitorAgent_s_execute. 
+	StageMonitorAgent_r_execute_return
+. StageMonitorSD(id);
+
+proc RequestFinalizationSD(id:Nat) = 
+	RequestFinalizationAgent_s_execute. 
+	RequestFinalizationAgent_r_execute_return
+. RequestFinalizationSD(id);
+% 
+proc clearFailedTasks_loop2(id:Nat,failedTasks:List(Tasks))= 
+	(failedTasks!=[]) -> ( 
+	JobStateUpdateHandler_s_updateJobFromStager(SourceTaskID(head(failedTasks)),Failed). 
+	JobStateUpdateHandler_r_updateJobFromStager_return
+	 .clearFailedTasks_loop2(id,tail(failedTasks))) 
+	 <> 
+ 		 condReturn;
+% 
+proc callbackStagedTasks_loop3(id:Nat,stagedTasks:List(Tasks))= 
+	(stagedTasks!=[]) -> ( 
+	JobStateUpdateHandler_s_updateJobFromStager(SourceTaskID(head(stagedTasks)),Done). 
+	JobStateUpdateHandler_r_updateJobFromStager_return
+	 .callbackStagedTasks_loop3(id,tail(stagedTasks))) 
+	 <> 
+ 		 condReturn;
+% 
+proc setRequestSD(id:Nat) = 
+	JobScheduling_s___requestStaging. 
+	JobScheduling_r___requestStaging_return
+% . setRequestSD(id)
+;
+% 
+proc setRequest_loop4(id:Nat,lfnDict:List(LfnDict),taskID:Nat)= 
+	(lfnDict!=[]) -> ( 
+	StorageManagementDB_s__getExistingReplicas(head(lfnDict)). 
+	sum existingReplicas:List(CacheReplicas).StorageManagementDB_r__getExistingReplicas_return(existingReplicas). 
+	setRequest_loop5(id,head(lfnDict),existingReplicas).
+	StorageManagementDB_s__getExistingReplicas(head(lfnDict)). 
+	sum existingReplicas:List(CacheReplicas).StorageManagementDB_r__getExistingReplicas_return(existingReplicas). 
+	StorageManagementDB_s__insertTaskReplicaInformation(taskID,existingReplicas). 
+	StorageManagementDB_r__insertTaskReplicaInformation_return 
+	.setRequest_loop4(id,tail(lfnDict),taskID)) 
+	 <> 
+ 		 condReturn;
+
+proc setRequest_loop5(id:Nat,lfnDict:LfnDict,existingReplicas:List(CacheReplicas))= 
+	(LFNs(lfnDict)!=[]) -> ( 
+	(
+	(head(LFNs(lfnDict)) in mapGetLFNsFromCacheReplicas(existingReplicas))->(
+	StorageManagementDB_s___getTaskStateFromReplicaState(head(LFNs(lfnDict)), SE(lfnDict)). 
+	sum taskState:SortString.StorageManagementDB_r___getTaskStateFromReplicaState_return(taskState)
+	 ) <> 
+	(
+	StorageManagementDB_s__insertReplicaInformation(head(LFNs(lfnDict)), SE(lfnDict)). 
+	StorageManagementDB_r__insertReplicaInformation_return 
+	)
+	)
+	 .setRequest_loop5(id,lfnDict(tail(LFNs(lfnDict)),SE(lfnDict)), existingReplicas)
+	) 
+	 <> 
+ 		 condReturn;
+% 
+proc StageRequestSD(id:Nat) = 
+	StageRequestAgent_s_execute. 
+	StageRequestAgent_r_execute_return
+. StageRequestSD(id);
+
+%-------End process definitions-------- 
+ 
+%-------systemInitProcess-------- 
+ 
+proc systemInit = RequestPreparationSD(1) || 
+StorageManagementDB_mem(1,[], [], [], [] ) ||
+RequestPreparationAgent_execute_proc(1)  || % RequestPreparationSD
+RequestPreparationAgent_prepareNewReplicas_proc(1) || % RequestPreparationSD
+RequestPreparationAgent___getNewReplicas_proc(1)  || % RequestPreparationSD
+RequestPreparationAgent_break_proc(1) || % RequestPreparationSD
+RequestPreparationAgent___getExistingFiles_proc(1)  || % RequestPreparationSD
+RequestPreparationAgent___getFileSize_proc(1) || % RequestPreparationSD
+RequestPreparationAgent___getFileReplicas_proc(1) || % RequestPreparationSD
+FileCatalog_getActiveReplicas_proc(1) || % RequestPreparationSD
+FileCatalog_getFileSize_proc(1) || % RequestPreparationSD
+FileCatalog__exists_proc(1) || % RequestPreparationSD
+StageMonitorSD(1) || 
+StageMonitorAgent_execute_proc(1) || % StageMonitorSD
+StageMonitorAgent_monitorStageRequests_proc(1) || % StageMonitorSD
+StageMonitorAgent___getStageSubmittedReplicas_proc(1) || % StageMonitorSD
+StageMonitorAgent___monitorStorageElementStageRequests_proc(1) || % TODO: This process wasn't here in the init, check why!!!
+% StorageElement_getFileMetadata(1) || % TODO: same as above
+StageMonitorAgent___wakeupOldRequests_proc(1) || % TODO: same as above
+RequestFinalizationSD(1) || 
+RequestFinalizationAgent_execute_proc(1) || % RequestFinalizationSD
+RequestFinalizationAgent_clearFailedTasks_proc(1) || % RequestFinalizationSD
+RequestFinalizationAgent_callbackStagedTasks_proc(1) || % RequestFinalizationSD
+RequestFinalizationAgent_removeUnlinkedReplicas_proc(1) || % RequestFinalizationSD
+RequestFinalizationAgent_setOldTasksAsFailed_proc(1) || % RequestFinalizationSD
+setRequestSD(1) || 
+JobScheduling___requestStaging_proc(1) || % setRequestSD
+StorageManagementDB_setRequest_proc(1) || % setRequestSD
+JobDB_mem(1, [jobs(1,Checking)]) ||
+StageRequestSD(1) || 
+StageRequestAgent_execute_proc(1) || % StageRequestSD
+StageRequestAgent_getStorageUsage_proc(1) || % StageRequestSD
+StageRequestAgent_submitStageRequests_proc(1) || % StageRequestSD
+StageRequestAgent__getMissingReplicas_proc(1) || % StageRequestSD
+StageRequestAgent__getOnlineReplicas_proc(1) || % StageRequestSD
+StageRequestAgent___checkIntegrity_proc(1) || % StageRequestSD
+StageRequestAgent___addAssociatedReplicas_proc(1) || % StageRequestSD
+StageRequestAgent__getOfflineReplicas_proc(1) || % StageRequestSD
+StageRequestAgent___getOfflineReplicas_proc(1) || % StageRequestSD
+ReplicaManager_getStorageFileMetadata_proc(1) || % StageRequestSD
+ReplicaManager_prestageStorageFile_proc(1) || % TODO: This process wasn't here in the init, check why!!!
+StageRequestAgent___getWaitingReplicas_proc(1) || % StageRequestSD
+StageRequestAgent__issuePrestageRequests_proc(1) || %TODO: This process wasn't here in the init, check why!!!
+JobStateUpdateHandler_updateJobFromStager_proc(1) || % TODO: same as above!
+StageRequestAgent___getStagedReplicas_proc(1) ; % || % StageRequestSD
+%-------Init section-------- 
+
+init allow({
+condReturn,setExpired,StorageManagementDB_insertStageRequest_return,
+StorageManagementDB_updateReplicaInformation,StorageManagementDB__createTask,
+StageRequestAgent__getOnlineReplicas_return,
+ReplicaManager_getStorageFileMetadata,FileCatalog_getFileSize,
+StageRequestAgent___checkIntegrity_return,
+StorageManagementDB_getWaitingReplicas_return,
+StorageManagementDB_getFileMetadata_return,StageRequestAgent__getOfflineReplicas
+,StageRequestAgent___getOfflineReplicas_return,
+StageMonitorAgent___wakeupOldRequests,StorageManagementDB__getExistingReplicas,
+StorageManagementDB_getSubmittedStagePins_return,
+JobScheduling___requestStaging_return,RequestPreparationAgent___getExistingFiles
+,StorageManagementDB_getOfflineReplicas_return,
+StorageManagementDB_getStageRequests,StorageManagementDB_updateReplicaStatus,
+StageRequestAgent___getStagedReplicas_return,StageRequestAgent_getStorageUsage,
+StageMonitorAgent___wakeupOldRequests_return,
+RequestFinalizationAgent_callbackStagedTasks_return,
+StorageManagementDB_getTasksWithStatus_return,
+RequestPreparationAgent_break_return,StageRequestAgent_getStorageUsage_return,
+FileCatalog__exists_return,ReplicaManager_getStorageFileMetadata_return,
+FileCatalog__exists,StorageManagementDB__createTask_return,
+RequestFinalizationAgent_callbackStagedTasks,
+StorageManagementDB_wakeupOldRequests_return,
+StorageManagementDB__getExistingReplicas_return,
+StorageManagementDB_wakeupOldRequests,JobScheduling___requestStaging,
+RequestPreparationAgent___getNewReplicas_return,
+StageMonitorAgent___getStageSubmittedReplicas,FileCatalog_getFileSize_return,
+StorageManagementDB_insertStageRequest,
+StorageManagementDB___getTaskStateFromReplicaState,
+StorageManagementDB___getTaskStatesFromReplicaStates,
+StorageManagementDB_getStageRequests_return,
+StageRequestAgent___addAssociatedReplicas,StageRequestAgent__getOnlineReplicas,
+StageMonitorAgent___monitorStorageElementStageRequests,
+StageRequestAgent__getMissingReplicas,
+StorageManagementDB__insertReplicaInformation,JobDB_getJobStatus_return,
+StorageManagementDB_updateReplicaStatus_return,
+StageRequestAgent__issuePrestageRequests,
+RequestPreparationAgent___getFileSize_return,StorageManagementDB_setRequest,
+RequestFinalizationAgent_clearFailedTasks,
+StorageManagementDB_getCacheReplicas_return,JobDB_setJobStatus,
+StorageManagementDB_getSubmittedStagePins,
+RequestPreparationAgent_prepareNewReplicas_return,
+StorageManagementDB_removeTasks,StorageManagementDB_getTasksWithStatus,
+RequestPreparationAgent___getFileReplicas,
+StorageManagementDB___updateTaskStatus_return,
+RequestPreparationAgent_prepareNewReplicas,StorageManagementDB_getStagedReplicas
+,RequestFinalizationAgent_setOldTasksAsFailed_return,
+StorageManagementDB_setOldTasksAsFailed_return,
+RequestPreparationAgent_break,StageRequestAgent__getMissingReplicas_return,
+RequestFinalizationAgent_clearFailedTasks_return,
+ReplicaManager_prestageStorageFile_return,StorageManagementDB_setStageComplete,
+StorageManagementDB_updateReplicaFailure_return,
+StageRequestAgent__issuePrestageRequests_return,
+StageRequestAgent___getStagedReplicas,StorageManagementDB_updateReplicaFailure,
+RequestPreparationAgent___getFileSize,RequestPreparationAgent___getNewReplicas,
+StorageManagementDB_getAssociatedReplicas,
+StorageManagementDB_getAssociatedReplicas_return,
+RequestPreparationAgent_execute_return,
+StageRequestAgent_execute_return,
+StageMonitorAgent_execute_return,
+RequestFinalizationAgent_execute_return,
+StorageManagementDB___getTaskStateFromReplicaState_return,
+StorageManagementDB___getTaskStatesFromReplicaStates_return,
+JobStateUpdateHandler_updateJobFromStager_return,
+RequestPreparationAgent___getExistingFiles_return,JobDB_getJobStatus,
+StorageManagementDB_getCacheReplicas,
+StorageManagementDB__insertTaskReplicaInformation,
+StageRequestAgent_submitStageRequests_return,
+StageRequestAgent___getOfflineReplicas,
+StageRequestAgent___getWaitingReplicas_return,
+RequestFinalizationAgent_removeUnlinkedReplicas,
+StorageManagementDB_removeUnlinkedReplicas,
+RequestPreparationAgent_execute,
+StageRequestAgent_execute,
+StageMonitorAgent_execute,
+RequestFinalizationAgent_execute,
+StorageManagementDB_getStagedReplicas_return,
+StorageManagementDB__insertTaskReplicaInformation_return,
+StorageManagementDB__insertReplicaInformation_return,
+StorageManagementDB_getOfflineReplicas,
+StageRequestAgent___addAssociatedReplicas_return,
+StorageManagementDB_getFileMetadata,StorageManagementDB_setStageComplete_return,
+StageRequestAgent___checkIntegrity,StorageManagementDB_removeTasks_return,
+StageMonitorAgent_monitorStageRequests_return,
+StageMonitorAgent_monitorStageRequests,
+StageRequestAgent__getOfflineReplicas_return,
+StageRequestAgent_submitStageRequests,StorageManagementDB___updateTaskStatus,
+StorageManagementDB_updateReplicaInformation_return,
+JobStateUpdateHandler_updateJobFromStager,
+RequestFinalizationAgent_removeUnlinkedReplicas_return,
+StorageManagementDB_removeUnlinkedReplicas_return,
+StageRequestAgent___getWaitingReplicas,ReplicaManager_prestageStorageFile,
+JobDB_setJobStatus_return,StorageManagementDB_setRequest_return,
+StageMonitorAgent___getStageSubmittedReplicas_return,
+StageMonitorAgent___monitorStorageElementStageRequests_return,
+RequestPreparationAgent___getFileReplicas_return,
+StorageManagementDB_getWaitingReplicas,FileCatalog_getActiveReplicas_return,
+FileCatalog_getActiveReplicas,StorageManagementDB__updateTasksForReplica,
+StorageManagementDB__updateTasksForReplica_return,
+StorageManagementDB_setOldTasksAsFailed,
+RequestFinalizationAgent_setOldTasksAsFailed
+}, 
+comm({ 
+StorageManagementDB_s_insertStageRequest_return|StorageManagementDB_r_insertStageRequest_return->
+StorageManagementDB_insertStageRequest_return,
+StorageManagementDB_s_updateReplicaInformation|StorageManagementDB_r_updateReplicaInformation->
+StorageManagementDB_updateReplicaInformation,
+StorageManagementDB_s__createTask|StorageManagementDB_r__createTask->
+StorageManagementDB__createTask,
+StageRequestAgent_s__getOnlineReplicas_return|StageRequestAgent_r__getOnlineReplicas_return->
+StageRequestAgent__getOnlineReplicas_return,
+ReplicaManager_s_getStorageFileMetadata|ReplicaManager_r_getStorageFileMetadata->
+ReplicaManager_getStorageFileMetadata,
+FileCatalog_s_getFileSize|FileCatalog_r_getFileSize->
+FileCatalog_getFileSize,
+StageRequestAgent_s___checkIntegrity_return|StageRequestAgent_r___checkIntegrity_return->
+StageRequestAgent___checkIntegrity_return,
+StorageManagementDB_s_getWaitingReplicas_return|StorageManagementDB_r_getWaitingReplicas_return->
+StorageManagementDB_getWaitingReplicas_return,
+StorageManagementDB_s_getFileMetadata_return|StorageManagementDB_r_getFileMetadata_return->
+StorageManagementDB_getFileMetadata_return,
+StageRequestAgent_s__getOfflineReplicas|StageRequestAgent_r__getOfflineReplicas->
+StageRequestAgent__getOfflineReplicas,
+StageRequestAgent_s___getOfflineReplicas_return|StageRequestAgent_r___getOfflineReplicas_return->
+StageRequestAgent___getOfflineReplicas_return,
+StageMonitorAgent_s___wakeupOldRequests|StageMonitorAgent_r___wakeupOldRequests->
+StageMonitorAgent___wakeupOldRequests,
+StorageManagementDB_s__getExistingReplicas|StorageManagementDB_r__getExistingReplicas->
+StorageManagementDB__getExistingReplicas,
+StorageManagementDB_s_getSubmittedStagePins_return|StorageManagementDB_r_getSubmittedStagePins_return->
+StorageManagementDB_getSubmittedStagePins_return,
+JobScheduling_s___requestStaging_return|JobScheduling_r___requestStaging_return->
+JobScheduling___requestStaging_return,
+RequestPreparationAgent_s___getExistingFiles|RequestPreparationAgent_r___getExistingFiles->
+RequestPreparationAgent___getExistingFiles,
+StorageManagementDB_s_getOfflineReplicas_return|StorageManagementDB_r_getOfflineReplicas_return->
+StorageManagementDB_getOfflineReplicas_return,
+StorageManagementDB_s_getStageRequests|StorageManagementDB_r_getStageRequests->
+StorageManagementDB_getStageRequests,
+StorageManagementDB_s_updateReplicaStatus|StorageManagementDB_r_updateReplicaStatus->
+StorageManagementDB_updateReplicaStatus,
+StageRequestAgent_s___getStagedReplicas_return|StageRequestAgent_r___getStagedReplicas_return->
+StageRequestAgent___getStagedReplicas_return,
+StageRequestAgent_s_getStorageUsage|StageRequestAgent_r_getStorageUsage->
+StageRequestAgent_getStorageUsage,
+StageMonitorAgent_s___wakeupOldRequests_return|StageMonitorAgent_r___wakeupOldRequests_return->
+StageMonitorAgent___wakeupOldRequests_return,
+RequestFinalizationAgent_s_callbackStagedTasks_return|RequestFinalizationAgent_r_callbackStagedTasks_return->
+RequestFinalizationAgent_callbackStagedTasks_return,
+StorageManagementDB_s_getTasksWithStatus_return|StorageManagementDB_r_getTasksWithStatus_return->
+StorageManagementDB_getTasksWithStatus_return,
+RequestPreparationAgent_s_break_return|RequestPreparationAgent_r_break_return->
+RequestPreparationAgent_break_return,
+StageRequestAgent_s_getStorageUsage_return|StageRequestAgent_r_getStorageUsage_return->
+StageRequestAgent_getStorageUsage_return,
+FileCatalog_s__exists_return|FileCatalog_r__exists_return->
+FileCatalog__exists_return,
+ReplicaManager_s_getStorageFileMetadata_return|ReplicaManager_r_getStorageFileMetadata_return->
+ReplicaManager_getStorageFileMetadata_return,
+FileCatalog_s__exists|FileCatalog_r__exists->
+FileCatalog__exists,
+StorageManagementDB_s__createTask_return|StorageManagementDB_r__createTask_return->
+StorageManagementDB__createTask_return,
+RequestFinalizationAgent_s_callbackStagedTasks|RequestFinalizationAgent_r_callbackStagedTasks->
+RequestFinalizationAgent_callbackStagedTasks,
+StorageManagementDB_s_wakeupOldRequests_return|StorageManagementDB_r_wakeupOldRequests_return->
+StorageManagementDB_wakeupOldRequests_return,
+StorageManagementDB_s__getExistingReplicas_return|StorageManagementDB_r__getExistingReplicas_return->
+StorageManagementDB__getExistingReplicas_return,
+StorageManagementDB_s_wakeupOldRequests|StorageManagementDB_r_wakeupOldRequests->
+StorageManagementDB_wakeupOldRequests,
+JobScheduling_s___requestStaging|JobScheduling_r___requestStaging->
+JobScheduling___requestStaging,
+RequestPreparationAgent_s___getNewReplicas_return|RequestPreparationAgent_r___getNewReplicas_return->
+RequestPreparationAgent___getNewReplicas_return,
+StageMonitorAgent_s___getStageSubmittedReplicas|StageMonitorAgent_r___getStageSubmittedReplicas->
+StageMonitorAgent___getStageSubmittedReplicas,
+FileCatalog_s_getFileSize_return|FileCatalog_r_getFileSize_return->
+FileCatalog_getFileSize_return,
+StorageManagementDB_s_insertStageRequest|StorageManagementDB_r_insertStageRequest->
+StorageManagementDB_insertStageRequest,
+StorageManagementDB_s___getTaskStateFromReplicaState|StorageManagementDB_r___getTaskStateFromReplicaState->
+StorageManagementDB___getTaskStateFromReplicaState,
+StorageManagementDB_s___getTaskStatesFromReplicaStates|StorageManagementDB_r___getTaskStatesFromReplicaStates->
+StorageManagementDB___getTaskStatesFromReplicaStates,
+StorageManagementDB_s_getStageRequests_return|StorageManagementDB_r_getStageRequests_return->
+StorageManagementDB_getStageRequests_return,
+StageRequestAgent_s___addAssociatedReplicas|StageRequestAgent_r___addAssociatedReplicas->
+StageRequestAgent___addAssociatedReplicas,
+StageRequestAgent_s__getOnlineReplicas|StageRequestAgent_r__getOnlineReplicas->
+StageRequestAgent__getOnlineReplicas,
+StageMonitorAgent_s___monitorStorageElementStageRequests|StageMonitorAgent_r___monitorStorageElementStageRequests->
+StageMonitorAgent___monitorStorageElementStageRequests,
+StageRequestAgent_s__getMissingReplicas|StageRequestAgent_r__getMissingReplicas->
+StageRequestAgent__getMissingReplicas,
+StorageManagementDB_s__insertReplicaInformation|StorageManagementDB_r__insertReplicaInformation->
+StorageManagementDB__insertReplicaInformation,
+JobDB_s_getJobStatus_return|JobDB_r_getJobStatus_return->
+JobDB_getJobStatus_return,
+StorageManagementDB_s_updateReplicaStatus_return|StorageManagementDB_r_updateReplicaStatus_return->
+StorageManagementDB_updateReplicaStatus_return,
+StageRequestAgent_s__issuePrestageRequests|StageRequestAgent_r__issuePrestageRequests->
+StageRequestAgent__issuePrestageRequests,
+RequestPreparationAgent_s___getFileSize_return|RequestPreparationAgent_r___getFileSize_return->
+RequestPreparationAgent___getFileSize_return,
+StorageManagementDB_s_setRequest|StorageManagementDB_r_setRequest->
+StorageManagementDB_setRequest,
+RequestFinalizationAgent_s_clearFailedTasks|RequestFinalizationAgent_r_clearFailedTasks->
+RequestFinalizationAgent_clearFailedTasks,
+StorageManagementDB_s_getCacheReplicas_return|StorageManagementDB_r_getCacheReplicas_return->
+StorageManagementDB_getCacheReplicas_return,
+JobDB_s_setJobStatus|JobDB_r_setJobStatus->
+JobDB_setJobStatus,
+StorageManagementDB_s_getSubmittedStagePins|StorageManagementDB_r_getSubmittedStagePins->
+StorageManagementDB_getSubmittedStagePins,
+RequestPreparationAgent_s_prepareNewReplicas_return|RequestPreparationAgent_r_prepareNewReplicas_return->
+RequestPreparationAgent_prepareNewReplicas_return,
+StorageManagementDB_s_removeTasks|StorageManagementDB_r_removeTasks->
+StorageManagementDB_removeTasks,
+StorageManagementDB_s_getTasksWithStatus|StorageManagementDB_r_getTasksWithStatus->
+StorageManagementDB_getTasksWithStatus,
+RequestPreparationAgent_s___getFileReplicas|RequestPreparationAgent_r___getFileReplicas->
+RequestPreparationAgent___getFileReplicas,
+StorageManagementDB_s___updateTaskStatus_return|StorageManagementDB_r___updateTaskStatus_return->
+StorageManagementDB___updateTaskStatus_return,
+RequestPreparationAgent_s_prepareNewReplicas|RequestPreparationAgent_r_prepareNewReplicas->
+RequestPreparationAgent_prepareNewReplicas,
+StorageManagementDB_s_getStagedReplicas|StorageManagementDB_r_getStagedReplicas->
+StorageManagementDB_getStagedReplicas,
+StorageManagementDB_s_setOldTasksAsFailed_return|StorageManagementDB_r_setOldTasksAsFailed_return->
+StorageManagementDB_setOldTasksAsFailed_return,
+RequestFinalizationAgent_s_setOldTasksAsFailed_return|RequestFinalizationAgent_r_setOldTasksAsFailed_return->
+RequestFinalizationAgent_setOldTasksAsFailed_return,
+RequestPreparationAgent_s_break|RequestPreparationAgent_r_break->
+RequestPreparationAgent_break,
+StageRequestAgent_s__getMissingReplicas_return|StageRequestAgent_r__getMissingReplicas_return->
+StageRequestAgent__getMissingReplicas_return,
+RequestFinalizationAgent_s_clearFailedTasks_return|RequestFinalizationAgent_r_clearFailedTasks_return->
+RequestFinalizationAgent_clearFailedTasks_return,
+ReplicaManager_s_prestageStorageFile_return|ReplicaManager_r_prestageStorageFile_return->
+ReplicaManager_prestageStorageFile_return,
+StorageManagementDB_s_setStageComplete|StorageManagementDB_r_setStageComplete->
+StorageManagementDB_setStageComplete,
+StorageManagementDB_s_updateReplicaFailure_return|StorageManagementDB_r_updateReplicaFailure_return->
+StorageManagementDB_updateReplicaFailure_return,
+StageRequestAgent_s__issuePrestageRequests_return|StageRequestAgent_r__issuePrestageRequests_return->
+StageRequestAgent__issuePrestageRequests_return,
+StageRequestAgent_s___getStagedReplicas|StageRequestAgent_r___getStagedReplicas->
+StageRequestAgent___getStagedReplicas,
+StorageManagementDB_s_updateReplicaFailure|StorageManagementDB_r_updateReplicaFailure->
+StorageManagementDB_updateReplicaFailure,
+RequestPreparationAgent_s___getFileSize|RequestPreparationAgent_r___getFileSize->
+RequestPreparationAgent___getFileSize,
+RequestPreparationAgent_s___getNewReplicas|RequestPreparationAgent_r___getNewReplicas->
+RequestPreparationAgent___getNewReplicas,
+StorageManagementDB_s_getAssociatedReplicas|StorageManagementDB_r_getAssociatedReplicas->
+StorageManagementDB_getAssociatedReplicas,
+StorageManagementDB_s_getAssociatedReplicas_return|StorageManagementDB_r_getAssociatedReplicas_return->
+StorageManagementDB_getAssociatedReplicas_return,
+
+RequestPreparationAgent_s_execute_return|RequestPreparationAgent_r_execute_return->
+RequestPreparationAgent_execute_return,
+StageRequestAgent_s_execute_return|StageRequestAgent_r_execute_return->
+StageRequestAgent_execute_return,
+StageMonitorAgent_s_execute_return|StageMonitorAgent_r_execute_return->
+StageMonitorAgent_execute_return,
+RequestFinalizationAgent_s_execute_return|RequestFinalizationAgent_r_execute_return->
+RequestFinalizationAgent_execute_return,
+StorageManagementDB_s___getTaskStateFromReplicaState_return|StorageManagementDB_r___getTaskStateFromReplicaState_return->
+StorageManagementDB___getTaskStateFromReplicaState_return,
+StorageManagementDB_s___getTaskStatesFromReplicaStates_return|StorageManagementDB_r___getTaskStatesFromReplicaStates_return->
+StorageManagementDB___getTaskStatesFromReplicaStates_return,
+JobStateUpdateHandler_s_updateJobFromStager_return|JobStateUpdateHandler_r_updateJobFromStager_return->
+JobStateUpdateHandler_updateJobFromStager_return,
+RequestPreparationAgent_s___getExistingFiles_return|RequestPreparationAgent_r___getExistingFiles_return->
+RequestPreparationAgent___getExistingFiles_return,
+JobDB_s_getJobStatus|JobDB_r_getJobStatus->
+JobDB_getJobStatus,
+StorageManagementDB_s_getCacheReplicas|StorageManagementDB_r_getCacheReplicas->
+StorageManagementDB_getCacheReplicas,
+StorageManagementDB_s__insertTaskReplicaInformation|StorageManagementDB_r__insertTaskReplicaInformation->
+StorageManagementDB__insertTaskReplicaInformation,
+StageRequestAgent_s_submitStageRequests_return|StageRequestAgent_r_submitStageRequests_return->
+StageRequestAgent_submitStageRequests_return,
+StageRequestAgent_s___getOfflineReplicas|StageRequestAgent_r___getOfflineReplicas->
+StageRequestAgent___getOfflineReplicas,
+StageRequestAgent_s___getWaitingReplicas_return|StageRequestAgent_r___getWaitingReplicas_return->
+StageRequestAgent___getWaitingReplicas_return,
+RequestFinalizationAgent_s_removeUnlinkedReplicas|RequestFinalizationAgent_r_removeUnlinkedReplicas->
+RequestFinalizationAgent_removeUnlinkedReplicas,
+StorageManagementDB_s_removeUnlinkedReplicas|StorageManagementDB_r_removeUnlinkedReplicas->
+StorageManagementDB_removeUnlinkedReplicas,
+RequestPreparationAgent_s_execute|RequestPreparationAgent_r_execute->
+RequestPreparationAgent_execute,
+StageRequestAgent_s_execute|StageRequestAgent_r_execute->
+StageRequestAgent_execute,
+StageMonitorAgent_s_execute|StageMonitorAgent_r_execute->
+StageMonitorAgent_execute,
+RequestFinalizationAgent_s_execute|RequestFinalizationAgent_r_execute->
+RequestFinalizationAgent_execute,
+StorageManagementDB_s_getStagedReplicas_return|StorageManagementDB_r_getStagedReplicas_return->
+StorageManagementDB_getStagedReplicas_return,
+StorageManagementDB_s__insertTaskReplicaInformation_return|StorageManagementDB_r__insertTaskReplicaInformation_return->
+StorageManagementDB__insertTaskReplicaInformation_return,
+StorageManagementDB_s__insertReplicaInformation_return|StorageManagementDB_r__insertReplicaInformation_return->
+StorageManagementDB__insertReplicaInformation_return,
+StorageManagementDB_s_getOfflineReplicas|StorageManagementDB_r_getOfflineReplicas->
+StorageManagementDB_getOfflineReplicas,
+StageRequestAgent_s___addAssociatedReplicas_return|StageRequestAgent_r___addAssociatedReplicas_return->
+StageRequestAgent___addAssociatedReplicas_return,
+StorageManagementDB_s_getFileMetadata|StorageManagementDB_r_getFileMetadata->
+StorageManagementDB_getFileMetadata,
+StorageManagementDB_s_setStageComplete_return|StorageManagementDB_r_setStageComplete_return->
+StorageManagementDB_setStageComplete_return,
+StageRequestAgent_s___checkIntegrity|StageRequestAgent_r___checkIntegrity->
+StageRequestAgent___checkIntegrity,
+StorageManagementDB_s_removeTasks_return|StorageManagementDB_r_removeTasks_return->
+StorageManagementDB_removeTasks_return,
+StageMonitorAgent_s_monitorStageRequests_return|StageMonitorAgent_r_monitorStageRequests_return->
+StageMonitorAgent_monitorStageRequests_return,
+StageMonitorAgent_s_monitorStageRequests|StageMonitorAgent_r_monitorStageRequests->
+StageMonitorAgent_monitorStageRequests,
+StageRequestAgent_s__getOfflineReplicas_return|StageRequestAgent_r__getOfflineReplicas_return->
+StageRequestAgent__getOfflineReplicas_return,
+StageRequestAgent_s_submitStageRequests|StageRequestAgent_r_submitStageRequests->
+StageRequestAgent_submitStageRequests,
+StorageManagementDB_s___updateTaskStatus|StorageManagementDB_r___updateTaskStatus->
+StorageManagementDB___updateTaskStatus,
+StorageManagementDB_s_updateReplicaInformation_return|StorageManagementDB_r_updateReplicaInformation_return->
+StorageManagementDB_updateReplicaInformation_return,
+JobStateUpdateHandler_s_updateJobFromStager|JobStateUpdateHandler_r_updateJobFromStager->
+JobStateUpdateHandler_updateJobFromStager,
+StorageManagementDB_s_removeUnlinkedReplicas_return|StorageManagementDB_r_removeUnlinkedReplicas_return->
+StorageManagementDB_removeUnlinkedReplicas_return,
+RequestFinalizationAgent_s_removeUnlinkedReplicas_return|RequestFinalizationAgent_r_removeUnlinkedReplicas_return->
+RequestFinalizationAgent_removeUnlinkedReplicas_return,
+StageRequestAgent_s___getWaitingReplicas|StageRequestAgent_r___getWaitingReplicas->
+StageRequestAgent___getWaitingReplicas,
+ReplicaManager_s_prestageStorageFile|ReplicaManager_r_prestageStorageFile->
+ReplicaManager_prestageStorageFile,
+JobDB_s_setJobStatus_return|JobDB_r_setJobStatus_return->
+JobDB_setJobStatus_return,
+StorageManagementDB_s_setRequest_return|StorageManagementDB_r_setRequest_return->
+StorageManagementDB_setRequest_return,
+StageMonitorAgent_s___getStageSubmittedReplicas_return|StageMonitorAgent_r___getStageSubmittedReplicas_return->
+StageMonitorAgent___getStageSubmittedReplicas_return,
+StageMonitorAgent_s___monitorStorageElementStageRequests_return|StageMonitorAgent_r___monitorStorageElementStageRequests_return->
+StageMonitorAgent___monitorStorageElementStageRequests_return,
+RequestPreparationAgent_s___getFileReplicas_return|RequestPreparationAgent_r___getFileReplicas_return->
+RequestPreparationAgent___getFileReplicas_return,
+StorageManagementDB_s_getWaitingReplicas|StorageManagementDB_r_getWaitingReplicas->
+StorageManagementDB_getWaitingReplicas,
+FileCatalog_s_getActiveReplicas_return|FileCatalog_r_getActiveReplicas_return->
+FileCatalog_getActiveReplicas_return,
+FileCatalog_s_getActiveReplicas|FileCatalog_r_getActiveReplicas->
+FileCatalog_getActiveReplicas,
+StorageManagementDB_s__updateTasksForReplica|StorageManagementDB_r__updateTasksForReplica->
+StorageManagementDB__updateTasksForReplica,
+StorageManagementDB_s__updateTasksForReplica_return|StorageManagementDB_r__updateTasksForReplica_return->
+StorageManagementDB__updateTasksForReplica_return,
+StorageManagementDB_s_setOldTasksAsFailed|StorageManagementDB_r_setOldTasksAsFailed->
+StorageManagementDB_setOldTasksAsFailed,
+RequestFinalizationAgent_s_setOldTasksAsFailed|RequestFinalizationAgent_r_setOldTasksAsFailed->
+RequestFinalizationAgent_setOldTasksAsFailed
+},  
+				 systemInit  
+));
+
+
