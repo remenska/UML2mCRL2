@@ -217,15 +217,16 @@ eqn
     mapInsertTaskReplicaInfo(listTaskReplicas,taskID,el|>listCacheReplicas) = 
     taskReplicas(taskID,ReplicaID(el)) |> mapInsertTaskReplicaInfo(listTaskReplicas,taskID,listCacheReplicas);
 % =================================
-map taskreplicasAfterInsert:List(CacheReplicas)#List(CacheReplicas) -> List(CacheReplicas);
+map taskreplicasAfterInsert:List(CacheReplicas)#List(Nat) -> List(CacheReplicas);
 var
-    listCacheReplicas, listCacheReplicasInserted:List(CacheReplicas);
+    listCacheReplicas:List(CacheReplicas);
+    listCacheReplicasInserted:List(Nat);
     el:CacheReplicas;
 eqn
     taskreplicasAfterInsert([],listCacheReplicasInserted) = [];
-    (el in listCacheReplicasInserted) -> taskreplicasAfterInsert(el|>listCacheReplicas,listCacheReplicasInserted) =  
+    (ReplicaID(el) in listCacheReplicasInserted) -> taskreplicasAfterInsert(el|>listCacheReplicas,listCacheReplicasInserted) =  
     cacheReplicas(ReplicaID(el),Status(el), SE(el), Links(el)+1, LFN(el), Size(el))|> taskreplicasAfterInsert(listCacheReplicas, listCacheReplicasInserted);
-    !(el in listCacheReplicasInserted) -> taskreplicasAfterInsert(el|>listCacheReplicas,listCacheReplicasInserted) =  el|> taskreplicasAfterInsert(listCacheReplicas, listCacheReplicasInserted);    
+    !(ReplicaID(el) in listCacheReplicasInserted) -> taskreplicasAfterInsert(el|>listCacheReplicas,listCacheReplicasInserted) =  el|> taskreplicasAfterInsert(listCacheReplicas, listCacheReplicasInserted);    
 % =================================
 map getReplicaIDsForTaskID:Nat#List(TaskReplicas) -> List(Nat);
 var
@@ -860,7 +861,7 @@ proc StorageManagementDB_mem(id:Nat, tasks:List(Tasks),
 	+
 	sum taskID:Nat,replicaIDs:List(CacheReplicas).StorageManagementDB_r__insertTaskReplicaInformation(taskID,replicaIDs). 
 	StorageManagementDB_s__insertTaskReplicaInformation_return
-	.StorageManagementDB_mem(id, tasks, taskreplicasAfterInsert(cacheReplicas, replicaIDs), mapInsertTaskReplicaInfo(taskReplicas, taskID, replicaIDs), stageRequests)
+	.StorageManagementDB_mem(id, tasks, taskreplicasAfterInsert(cacheReplicas, mapGetCacheReplicaIDs(replicaIDs)), mapInsertTaskReplicaInfo(taskReplicas, taskID, replicaIDs), stageRequests)
 	+
 	sum taskID:Nat.StorageManagementDB_r___getTaskStatesFromReplicaStates(taskID).
 	StorageManagementDB_s___getTaskStatesFromReplicaStates_return(mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(taskID, taskReplicas),cacheReplicas))
