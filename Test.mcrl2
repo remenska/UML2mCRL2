@@ -1,6 +1,6 @@
-act P,Q,R,S,T, internal;
+act P,Q,R,S,T;
 % P must be followed by S before R happens
-proc Aman = P.internal.Q.R;
+proc Aman = P.Q.R;
 
 
 init Aman;

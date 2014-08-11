@@ -1,0 +1,55 @@
+
+%====== MONITOR PART GENERATED ==============
+% Original formula:[(! ready)*][coin]false
+% ============================
+% Modified formula:([(! ready)+][coin]false && [coin]false )
+% ============================
+act error ;
+sort Action = struct ready
+ | coin;
+
+act ready;
+act coin;
+
+sort ActionFormula = struct action(act1:Action)
+| and(phi1:ActionFormula,phi2:ActionFormula) 
+| or(phi1:ActionFormula,phi2:ActionFormula)  
+| not(ActionFormula) 
+| True 
+| False ; 
+
+map satisfy: Action # ActionFormula -> Bool;
+var c1,c2:Action;
+f,g:ActionFormula;
+eqn
+	 satisfy(c1,action(c2)) = (c1 == c2) ;	 satisfy(c1,and(f,g)) = satisfy(c1,f) && satisfy(c1,g);
+	 satisfy(c1,not(f)) = !satisfy(c1,f);
+	 satisfy(c1,or(f,g)) = satisfy(c1,f) || satisfy(c1,g);
+	 satisfy(c1,True) = true;
+	 satisfy(c1,False) = false;
+
+proc Monitor = Mon_1;
+
+proc Mon_1 = Mon_2;% just removing backets
+
+proc Mon_2 = Mon_3 + Mon_4;
+
+proc Mon_3 = Mon_5 . Mon_4;
+
+proc Mon_5 = Mon_6. Mon_5 + Mon_6;
+
+proc Mon_6 = Mon_7;% just removing backets
+
+proc Mon_7 = (satisfy(ready, not(action(ready)))) -> ready
+ + (satisfy(coin, not(action(ready)))) -> coin
+;
+
+proc Mon_4 = Mon_8 . Mon_9;
+
+proc Mon_8 = (satisfy(ready, action(coin))) -> ready
+ + (satisfy(coin, action(coin))) -> coin
+;
+
+proc Mon_9 = error;
+
+init Monitor;
