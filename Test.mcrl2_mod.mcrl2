@@ -1,8 +1,3 @@
-act P,Q,R,S,T, internal;
-% P must be followed by S before R happens
-proc Aman = P.internal.Q.R;
-
-
 
 %====== MONITOR PART GENERATED ==============
 % Original formula:[(!R )*. P . (! ( S || R ))*. R ] false
@@ -10,13 +5,17 @@ proc Aman = P.internal.Q.R;
 % Modified formula:([(! R)+][P]([(! (S||R))+][R]false && [R]false )&& [P]([(! (S||R))+][R]false && [R]false ))
 % ============================
 act error ;
-sort Action = struct internal
- | T
+sort Action = struct T
  | S
  | R
  | Q
  | P;
 
+act T;
+act S;
+act R;
+act Q;
+act P;
 
 sort ActionFormula = struct action(act1:Action)
 | and(phi1:ActionFormula,phi2:ActionFormula) 
@@ -47,22 +46,13 @@ proc Mon_5 = Mon_6. Mon_5 + Mon_6;
 
 proc Mon_6 = Mon_7;% just removing backets
 
-proc Mon_7 = (satisfy(internal, not(action(R)))) -> internal
- + (satisfy(T, not(action(R)))) -> T
- + (satisfy(S, not(action(R)))) -> S
- + (satisfy(R, not(action(R)))) -> R
- + (satisfy(Q, not(action(R)))) -> Q
- + (satisfy(P, not(action(R)))) -> P
+act not_R;
+proc Mon_7 = not_R
 ;
 
 proc Mon_4 = Mon_8 . Mon_9;
 
-proc Mon_8 = (satisfy(internal, action(P))) -> internal
- + (satisfy(T, action(P))) -> T
- + (satisfy(S, action(P))) -> S
- + (satisfy(R, action(P))) -> R
- + (satisfy(Q, action(P))) -> Q
- + (satisfy(P, action(P))) -> P
+proc Mon_8 = P
 ;
 
 proc Mon_9 = Mon_10;% just removing backets
@@ -74,26 +64,14 @@ proc Mon_11 = Mon_13 . Mon_12;
 proc Mon_13 = Mon_14. Mon_13 + Mon_14;
 
 proc Mon_14 = Mon_15;% just removing backets
-
-proc Mon_15 = (satisfy(internal, not(or(action(S) , action(R))))) -> internal
- + (satisfy(T, not(or(action(S) , action(R))))) -> T
- + (satisfy(S, not(or(action(S) , action(R))))) -> S
- + (satisfy(R, not(or(action(S) , action(R))))) -> R
- + (satisfy(Q, not(or(action(S) , action(R))))) -> Q
- + (satisfy(P, not(or(action(S) , action(R))))) -> P
-;
+act not_S_or_R;
+proc Mon_15 =  not_S_or_R;
 
 proc Mon_12 = Mon_18 . Mon_19;
 
-proc Mon_18 = (satisfy(internal, action(R))) -> internal
- + (satisfy(T, action(R))) -> T
- + (satisfy(S, action(R))) -> S
- + (satisfy(R, action(R))) -> R
- + (satisfy(Q, action(R))) -> Q
- + (satisfy(P, action(R))) -> P
+proc Mon_18 =R
 ;
 
 proc Mon_19 = error;
 
-init 
- Monitor;
+init Monitor;
