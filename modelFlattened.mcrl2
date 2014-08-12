@@ -965,7 +965,7 @@ proc RequestPreparationAgent___getFileReplicas_proc(id:Nat) =
 proc FileCatalog_getActiveReplicas_proc(id:Nat) = 
 	sum lfns:List(CacheReplicas).FileCatalog_r_getActiveReplicas(lfns).
 	( 
-	FileCatalog_s_getActiveReplicas_return([head(lfns)],tail(lfns),[])
+	FileCatalog_s_getActiveReplicas_return(lfns,[],[])
 	+
 	FileCatalog_s_getActiveReplicas_return([],lfns,[]) 
 	+
@@ -1266,7 +1266,7 @@ proc JobStateUpdateHandler_updateJobFromStager_proc(id:Nat) =
 % 
 proc JobScheduling___requestStaging_proc(id:Nat) = 
 	JobScheduling_r___requestStaging. 
-	StorageManagementDB_s_setRequest([lfnDict([LFN1], SE1), lfnDict([LFN2],SE2)],1). % TODO: change to other parameters, this is the submission; 1==jobID
+	StorageManagementDB_s_setRequest([lfnDict([LFN1], SE1)],1). % TODO: change to other parameters, this is the submission; 1==jobID
 	StorageManagementDB_r_setRequest_return. 
 	JobDB_s_setJobStatus(1,Staging). 
 	JobDB_r_setJobStatus_return.

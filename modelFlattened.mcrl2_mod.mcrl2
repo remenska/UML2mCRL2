@@ -50,7 +50,7 @@ eqn
     (el in listReplicaInformation && Status(el)==StageSubmitted && newStatus==Staged) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus, listReplicaInformation) = 
 	  cacheReplicas(ReplicaID(el), Staged, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
     (el in listReplicaInformation && Status(el)==Waiting && newStatus==Offline) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus, listReplicaInformation) = 
-	  cacheReplicas(ReplicaID(el), Staged, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
+	  cacheReplicas(ReplicaID(el), Offline, SE(el), Links(el), LFN(el), Size(el)) |> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
     !(el in listReplicaInformation) -> mapUpdateReplicaStatus(el|>listCacheReplicas, newStatus,listReplicaInformation) = el|> mapUpdateReplicaStatus(listCacheReplicas, newStatus, listReplicaInformation);
 % =================================
 map mapGetStageRequests: List(Nat)#List(StageRequests) -> List(StageRequests);

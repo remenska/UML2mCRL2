@@ -1,6 +1,6 @@
 act P,Q,R,S,T;
 % P must be followed by S before R happens
-proc Aman = P.Q.R;
+proc TestMe = P.Q.R;
 
 
-init Aman;
+init TestMe;
