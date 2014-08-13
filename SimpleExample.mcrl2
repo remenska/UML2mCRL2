@@ -1,5 +1,6 @@
-act
-  ins10, optA, acc10, putA, coin, ready ;
+%comment 
+
+act ins10, optA, acc10, putA, coin, ready ;
 proc
   User = ins10 . optA . User ;
   Mach = acc10 . putA . Mach ;
