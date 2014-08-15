@@ -248,8 +248,6 @@ eqn
     mapGetTaskStatesFromReplicaStates(replicaIDs,[]) = [];
     mapGetTaskStatesFromReplicaStates([],listCacheReplicas) = [];
     (ReplicaID(el) in replicaIDs) -> mapGetTaskStatesFromReplicaStates(replicaIDs,el|>listCacheReplicas) = Status(el) |> mapGetTaskStatesFromReplicaStates(replicaIDs, listCacheReplicas);
-    !(ReplicaID(el) in replicaIDs) -> mapGetTaskStatesFromReplicaStates(replicaIDs,el|>listCacheReplicas) = mapGetTaskStatesFromReplicaStates(replicaIDs, listCacheReplicas);
-
 % =================================
 map mapUpdateTaskStatus:List(Tasks)#Nat#SortString -> List(Tasks);
 var
@@ -379,9 +377,7 @@ eqn
 		    tasks(TaskID(el),Offline, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
 		if(StageSubmitted in mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(TaskID(el),listTaskReplicas),listCacheReplicas),
 		    tasks(TaskID(el),StageSubmitted, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
-		if(mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(TaskID(el),listTaskReplicas),listCacheReplicas)==[],
-		    tasks(TaskID(el),Failed, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
-	tasks(TaskID(el),Staged, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas))))))));
+	tasks(TaskID(el),Staged, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas)))))));
 % =================================
 map mapList2Set:List(SortString) -> Set(SortString);
 var
@@ -1417,8 +1413,6 @@ JobStateUpdateHandler_updateJobFromStager_proc(1) || % TODO: same as above!
 StageRequestAgent___getStagedReplicas_proc(1) ; % || % StageRequestSD
 %-------Init section-------- 
 
-
-% created: 2014-08-15 11:31:42.095
 
 %====== MONITOR PART GENERATED ==============
 % Original formula:[(! StorageManagementDB_removeTasks([tasks(1,Staged,1)]))*.JobDB_setJobStatus(1,Staging).(! (JobDB_setJobStatus(1,Done) || StorageManagementDB_removeTasks([tasks(1,Staged,1)])))*.StorageManagementDB_removeTasks([tasks(1,Staged,1)])]false

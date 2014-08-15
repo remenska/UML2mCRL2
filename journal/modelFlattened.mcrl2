@@ -248,8 +248,6 @@ eqn
     mapGetTaskStatesFromReplicaStates(replicaIDs,[]) = [];
     mapGetTaskStatesFromReplicaStates([],listCacheReplicas) = [];
     (ReplicaID(el) in replicaIDs) -> mapGetTaskStatesFromReplicaStates(replicaIDs,el|>listCacheReplicas) = Status(el) |> mapGetTaskStatesFromReplicaStates(replicaIDs, listCacheReplicas);
-    !(ReplicaID(el) in replicaIDs) -> mapGetTaskStatesFromReplicaStates(replicaIDs,el|>listCacheReplicas) = mapGetTaskStatesFromReplicaStates(replicaIDs, listCacheReplicas);
-
 % =================================
 map mapUpdateTaskStatus:List(Tasks)#Nat#SortString -> List(Tasks);
 var
@@ -379,9 +377,7 @@ eqn
 		    tasks(TaskID(el),Offline, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
 		if(StageSubmitted in mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(TaskID(el),listTaskReplicas),listCacheReplicas),
 		    tasks(TaskID(el),StageSubmitted, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
-		if(mapGetTaskStatesFromReplicaStates(getReplicaIDsForTaskID(TaskID(el),listTaskReplicas),listCacheReplicas)==[],
-		    tasks(TaskID(el),Failed, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas),
-	tasks(TaskID(el),Staged, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas))))))));
+	tasks(TaskID(el),Staged, SourceTaskID(el))|>mapUpdateTasksForReplica(listTasks,listTaskIDsToUpdate,listTaskReplicas,listCacheReplicas)))))));
 % =================================
 map mapList2Set:List(SortString) -> Set(SortString);
 var
