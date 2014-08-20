@@ -1,8 +1,8 @@
 
 %====== MONITOR PART GENERATED ==============
-% Original formula:[(!R )*. P . (! ( S || R ))*. R ] false
+% Original formula:[(! ready)*][coin]false
 % ============================
-% Modified formula:([(! R)+][P]([(! (S||R))+][R]false && [R]false )&& [P]([(! (S||R))+][R]false && [R]false ))
+% Modified formula:([(! ready)+][coin]false && [coin]false )
 % ============================
 act error ;
 sort Action = struct ready
@@ -40,36 +40,16 @@ proc Mon_5 = Mon_6. Mon_5 + Mon_6;
 
 proc Mon_6 = Mon_7;% just removing backets
 
-proc Mon_7 = (satisfy(ready, not(action(R)))) -> ready
- + (satisfy(coin, not(action(R)))) -> coin
+proc Mon_7 = (satisfy(ready, not(action(ready)))) -> ready
+ + (satisfy(coin, not(action(ready)))) -> coin
 ;
 
 proc Mon_4 = Mon_8 . Mon_9;
 
-proc Mon_8 = (satisfy(ready, action(P))) -> ready
- + (satisfy(coin, action(P))) -> coin
+proc Mon_8 = (satisfy(ready, action(coin))) -> ready
+ + (satisfy(coin, action(coin))) -> coin
 ;
 
-proc Mon_9 = Mon_10;% just removing backets
-
-proc Mon_10 = Mon_11 + Mon_12;
-
-proc Mon_11 = Mon_13 . Mon_12;
-
-proc Mon_13 = Mon_14. Mon_13 + Mon_14;
-
-proc Mon_14 = Mon_15;% just removing backets
-
-proc Mon_15 = (satisfy(ready, not(or(action(S) , action(R))))) -> ready
- + (satisfy(coin, not(or(action(S) , action(R))))) -> coin
-;
-
-proc Mon_12 = Mon_18 . Mon_19;
-
-proc Mon_18 = (satisfy(ready, action(R))) -> ready
- + (satisfy(coin, action(R))) -> coin
-;
-
-proc Mon_19 = error;
+proc Mon_9 = error;
 
 init Monitor;
