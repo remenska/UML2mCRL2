@@ -1,6 +1,5 @@
-act P,Q,R,S,T;
-% P must be followed by S before R happens
-proc TestMe = P.Q.R;
+act action_1, action_2, action_3;
 
+proc P = action_1.action_2.action_3;
 
-init TestMe;
+init P;
