@@ -1,18 +1,14 @@
 
 %====== MONITOR PART GENERATED ==============
-% Original formula:[(!R )*. P . (! ( S || R ))*. R ] false
+% Original formula:[true*. Q . (! ( P || R ))*. R ] false
 % ============================
-% Modified formula:([(! R)+][P]([(! (S||R))+][R]false && [R]false )&& [P]([(! (S||R))+][R]false && [R]false ))
+% Modified formula:([true+][Q]([(! (P||R))+][R]false && [R]false )&& [Q]([(! (P||R))+][R]false && [R]false ))
 % ============================
 act error ;
-sort Action = struct T
- | S
- | R
+sort Action = struct R
  | Q
  | P;
 
-act T;
-act S;
 act R;
 act Q;
 act P;
@@ -44,50 +40,40 @@ proc Mon_3 = Mon_5 . Mon_4;
 
 proc Mon_5 = Mon_6. Mon_5 + Mon_6;
 
-proc Mon_6 = Mon_7;% just removing backets
-
-proc Mon_7 = (satisfy(T, not(action(R)))) -> T
- + (satisfy(S, not(action(R)))) -> S
- + (satisfy(R, not(action(R)))) -> R
- + (satisfy(Q, not(action(R)))) -> Q
- + (satisfy(P, not(action(R)))) -> P
+proc Mon_6 = (satisfy(R, True)) -> R
+ + (satisfy(Q, True)) -> Q
+ + (satisfy(P, True)) -> P
 ;
 
-proc Mon_4 = Mon_8 . Mon_9;
+proc Mon_4 = Mon_7 . Mon_8;
 
-proc Mon_8 = (satisfy(T, action(P))) -> T
- + (satisfy(S, action(P))) -> S
- + (satisfy(R, action(P))) -> R
- + (satisfy(Q, action(P))) -> Q
- + (satisfy(P, action(P))) -> P
+proc Mon_7 = (satisfy(R, action(Q))) -> R
+ + (satisfy(Q, action(Q))) -> Q
+ + (satisfy(P, action(Q))) -> P
 ;
 
-proc Mon_9 = Mon_10;% just removing backets
+proc Mon_8 = Mon_9;% just removing backets
 
-proc Mon_10 = Mon_11 + Mon_12;
+proc Mon_9 = Mon_10 + Mon_11;
 
-proc Mon_11 = Mon_13 . Mon_12;
+proc Mon_10 = Mon_12 . Mon_11;
 
-proc Mon_13 = Mon_14. Mon_13 + Mon_14;
+proc Mon_12 = Mon_13. Mon_12 + Mon_13;
 
-proc Mon_14 = Mon_15;% just removing backets
+proc Mon_13 = Mon_14;% just removing backets
 
-proc Mon_15 = (satisfy(T, not(or(action(S) , action(R))))) -> T
- + (satisfy(S, not(or(action(S) , action(R))))) -> S
- + (satisfy(R, not(or(action(S) , action(R))))) -> R
- + (satisfy(Q, not(or(action(S) , action(R))))) -> Q
- + (satisfy(P, not(or(action(S) , action(R))))) -> P
+proc Mon_14 = (satisfy(R, not(or(action(P) , action(R))))) -> R
+ + (satisfy(Q, not(or(action(P) , action(R))))) -> Q
+ + (satisfy(P, not(or(action(P) , action(R))))) -> P
 ;
 
-proc Mon_12 = Mon_18 . Mon_19;
+proc Mon_11 = Mon_17 . Mon_18;
 
-proc Mon_18 = (satisfy(T, action(R))) -> T
- + (satisfy(S, action(R))) -> S
- + (satisfy(R, action(R))) -> R
+proc Mon_17 = (satisfy(R, action(R))) -> R
  + (satisfy(Q, action(R))) -> Q
  + (satisfy(P, action(R))) -> P
 ;
 
-proc Mon_19 = error;
+proc Mon_18 = error;
 
 init Monitor;
