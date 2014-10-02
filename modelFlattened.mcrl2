@@ -422,163 +422,6 @@ eqn
     (StageStatus(el)!=Staged) -> mapSetExpired(el|>listStageRequests) = el|>mapSetExpired(listStageRequests);
 % =================================
 %-------sorts--------- 
-% sort ClassType = struct 
-% 			RequestPreparationAgent | 
-% 			StageRequestAgent | 
-% 			StageMonitorAgent | 
-% 			StorageManagerHandler | 
-% 			StorageManagementDB | 
-% 			RequestFinalizationAgent | 
-% 			CacheReplicas | 
-% 			Tasks | 
-% 			StageRequests | 
-% 			TaskReplicas | 
-% 			FileCatalog | 
-% % 			StorageElement | 
-% 			JobStateUpdateHandler | 
-% 			JobScheduling | 
-% 			Job | 
-% 			JobDB | 
-% 			ReplicaManager ; 
-% sort Method = struct 
-% 			insertStageRequest_return | 
-% 			updateReplicaInformation(replicaInformation:List(CacheReplicas)) | 
-% 			_createTask(sourceTaskID:Nat) | 
-% 			_getOnlineReplicas_return(onlineReplicas:List(CacheReplicas)) | 
-% 			getStorageFileMetadata(pfnRepIDs:List(CacheReplicas)) | 
-% 			getFileSize(lfns:List(CacheReplicas)) | 
-% 			__checkIntegrity_return(onlineReplicas:List(CacheReplicas),offlineReplicas:List(CacheReplicas)) | 
-% 			getWaitingReplicas_return(replicas:List(CacheReplicas)) | 
-% 			getFileMetadata_return(terminalReplicas:List(CacheReplicas),stagedReplicas:List(CacheReplicas),oldRequests:List(CacheReplicas)) | 
-% 			_getOfflineReplicas | 
-% 			__getOfflineReplicas_return(offlineReplicas:List(CacheReplicas)) | 
-% 			__wakeupOldRequests(oldRequests:List(CacheReplicas)) | 
-% 			_getExistingReplicas(lfnDict:LfnDict) | 
-% 			getSubmittedStagePins_return(submittedReplicas:List(CacheReplicas)) | 
-% 			__requestStaging_return | 
-% 			__getExistingFiles(lfns:List(CacheReplicas)) | 
-% 			getOfflineReplicas_return(offlineReplicas:List(CacheReplicas)) | 
-% 			getStageRequests(replicaIDs:List(Nat)) | 
-% 			updateReplicaStatus(newReplicaStatus:SortString,replicaIDs:List(CacheReplicas)) | 
-% 			__getStagedReplicas_return(stagedReplicas:List(CacheReplicas)) | 
-% 			getStorageUsage | 
-% 			__wakeupOldRequests_return | 
-% 			callbackStagedTasks_return | 
-% 			getTasksWithStatus_return(tasks:List(Tasks)) | 
-% 			break_return | 
-% 			getStorageUsage_return | 
-% 			_exists_return(exist:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
-% 			getStorageFileMetadata_return(terminalReplicaIDs:List(CacheReplicas),onlineReplicaIDs:List(CacheReplicas),offlineReplicaIDs:List(CacheReplicas)) | 
-% 			_exists(lfns:List(CacheReplicas)) | 
-% 			_createTask_return(taskID:Nat) | 
-% 			callbackStagedTasks | 
-% 			wakeupOldRequests_return | 
-% 			_getExistingReplicas_return(existingReplicas:List(CacheReplicas)) | 
-% 			wakeupOldRequests(replicaIDs:List(CacheReplicas),retryIntervalHour:Nat) | 
-% 			__requestStaging | 
-% 			__getNewReplicas_return(replicas:List(CacheReplicas)) | 
-% 			__getStageSubmittedReplicas | 
-% 			getFileSize_return(fileSizes:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
-% 			insertStageRequest(stageRequests:List(StageRequests)) | 
-% 			__getTaskStateFromReplicaState(LFN:SortString, SE:SortString) | 
-% 			__getTaskStatesFromReplicaStates(taskID:Nat) | 			
-% 			getStageRequests_return(stageRequests:List(StageRequests)) | 
-% 			__addAssociatedReplicas(replicasToStage:List(CacheReplicas)) | 
-% 			_getOnlineReplicas | 
-% 			__monitorStorageElementStageRequests(stageRequests:List(StageRequests)) | 
-% 			_getMissingReplicas | 
-% 			_insertReplicaInformation(lfn:SortString,se:SortString) | 
-% 			getJobStatus_return(attributes:SortString) | 
-% 			updateReplicaStatus_return | 
-% 			_issuePrestageRequests(replicas:List(CacheReplicas)) | 
-% 			__getFileSize_return(fileSizes:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
-% 			setRequest(lfnDict:List(LfnDict),SourceTaskID:Nat) | 
-% 			clearFailedTasks | 
-% 			getCacheReplicas_return(replicas:List(CacheReplicas)) | 
-% 			setJobStatus(jobID:Nat,jobStatus:SortString) | 
-% 			getSubmittedStagePins | 
-% 			prepareNewReplicas_return | 
-% 			removeTasks(tasks:List(Tasks)) | 
-% 			getTasksWithStatus(status:SortString) | 
-% 			__getFileReplicas(lfns:List(CacheReplicas)) | 
-% 			__updateTaskStatus_return | 
-% 			prepareNewReplicas | 
-% 			getStagedReplicas | 
-% 			setOldTasksAsFailed_return | 
-% 			break | 
-% 			_getMissingReplicas_return(missingReplicas:List(CacheReplicas)) | 
-% 			clearFailedTasks_return | 
-% 			prestageStorageFile_return(StageRequestMetadata:List(StageRequests)) | 
-% 			setStageComplete(replicaIDs:List(CacheReplicas)) | 
-% 			updateReplicaFailure_return | 
-% 			_issuePrestageRequests_return | 
-% 			__getStagedReplicas | 
-% 			updateReplicaFailure(terminalReplicaIDs:List(CacheReplicas)) | 
-% 			__getFileSize(lfns:List(CacheReplicas)) | 
-% 			__getNewReplicas | 
-% 			getAssociatedReplicas(replicaIDs:List(CacheReplicas)) | 
-% 			getAssociatedReplicas_return(offlineReplicas:List(CacheReplicas),waitingReplicas:List(CacheReplicas)) | 
-% 			execute_return | 
-% 			__getTaskStateFromReplicaState_return(taskState:SortString) | 
-% 			__getTaskStatesFromReplicaStates_return(taskStates:List(SortString)) | 
-% 			updateJobFromStager_return | 
-% 			__getExistingFiles_return(exist:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
-% 			getJobStatus(jobID:Nat) | 
-% 			getCacheReplicas(Status:SortString) | 
-% 			_insertTaskReplicaInformation(taskID:Nat,replicaIDs:List(CacheReplicas)) | 
-% 			submitStageRequests_return | 
-% 			__getOfflineReplicas | 
-% 			__getWaitingReplicas_return(waitingReplicas:List(CacheReplicas)) | 
-% 			removeUnlinkedReplicas | 
-% 			execute | 
-% 			getStagedReplicas_return(stagedReplicas:List(CacheReplicas)) | 
-% 			_insertTaskReplicaInformation_return | 
-% 			_insertReplicaInformation_return | 
-% 			getOfflineReplicas | 
-% 			__addAssociatedReplicas_return(associatedReplicas:List(CacheReplicas)) | 
-% 			getFileMetadata(pfnRepIDs:List(StageRequests)) | 
-% 			setStageComplete_return | 
-% 			__checkIntegrity(replicas:List(CacheReplicas)) | 
-% 			removeTasks_return | 
-% 			monitorStageRequests_return | 
-% 			monitorStageRequests | 
-% 			_getOfflineReplicas_return(offlineReplicas:List(CacheReplicas)) | 
-% 			submitStageRequests | 
-% 			__updateTaskStatus(taskID:Nat,newTaskStatus:SortString) | 
-% 			updateReplicaInformation_return | 
-% 			updateJobFromStager(sourceTask:Nat,status:SortString) | 
-% 			removeUnlinkedReplicas_return | 
-% 			__getWaitingReplicas | 
-% 			prestageStorageFile(pfnRepIDs:List(CacheReplicas)) | 
-% 			setJobStatus_return | 
-% 			setRequest_return | 
-% 			__getStageSubmittedReplicas_return(stageSubmittedReplicas:List(StageRequests)) | 
-% 			__monitorStorageElementStageRequests_return | 
-% 			__getFileReplicas_return(fileReplicas:List(CacheReplicas),terminal:List(CacheReplicas),failed:List(CacheReplicas)) | 
-% 			getWaitingReplicas | 
-% 			getActiveReplicas_return(replicas:List(CacheReplicas),noReplicas:List(CacheReplicas),failed:List(CacheReplicas)) | 
-% 			getActiveReplicas(lfns:List(CacheReplicas)) | 
-% 			_updateTasksForReplica(replicas:List(CacheReplicas)) |
-% 			_updateTasksForReplica_return |
-% 			setOldTasksAsFailed(daysOld:Nat) ; 
-% 
-% sort ClassObject = struct
-% 			rpAgent | 
-% 			smDB | 
-% 			fileCatalog | 
-% 			smAgent | 
-% % 			storageElement | 
-% 			rfAgent | 
-% 			jobStateUpdateHandler | 
-% 			jobDB | 
-% 			jobScheduling | 
-% 			jobState | 
-% 			srAgent | 
-% 			replicaManager ; 
-% 
-% 
-
-
 
 sort SortString = struct 
 			 New | 
@@ -779,7 +622,7 @@ proc StorageManagementDB_mem(id:Nat, tasks:List(Tasks),
 	StorageManagementDB_s_updateReplicaFailure_return
 	.StorageManagementDB_mem(id, tasks, mapUpdateReplicaStatus(cacheReplicas, Failed,terminalReplicaIDs),taskReplicas, stageRequests)
 	+
-	sum replicaInformation:List(CacheReplicas).StorageManagementDB_r_updateReplicaInformation(replicaInformation). %TODO: Not updating size at the moment
+	sum replicaInformation:List(CacheReplicas).StorageManagementDB_r_updateReplicaInformation(replicaInformation).
 	StorageManagementDB_s_updateReplicaInformation_return 
 	.StorageManagementDB_mem(id, tasks, mapUpdateReplicaInformation(cacheReplicas, replicaInformation),taskReplicas, stageRequests)
 	+
@@ -1041,7 +884,7 @@ proc StageRequestAgent__getOfflineReplicas_proc(id:Nat) =
 	sum associatedReplicas:List(CacheReplicas).StageRequestAgent_r___addAssociatedReplicas_return(associatedReplicas). 
 	StageRequestAgent_s__getOfflineReplicas_return(associatedReplicas)
 . StageRequestAgent__getOfflineReplicas_proc(id);
-% 
+
 proc StageRequestAgent__issuePrestageRequests_proc(id:Nat) = 
 	sum replicas:List(CacheReplicas).StageRequestAgent_r__issuePrestageRequests(replicas). 
 	ReplicaManager_s_prestageStorageFile(replicas). 
@@ -1049,14 +892,14 @@ proc StageRequestAgent__issuePrestageRequests_proc(id:Nat) =
 	((stageRequestMetadata!=[])->(
 	StorageManagementDB_s_insertStageRequest(stageRequestMetadata). 
 	StorageManagementDB_r_insertStageRequest_return. 
-	StorageManagementDB_s_updateReplicaStatus(StageSubmitted,replicas).  %TODO: what if some CR are not submitted? (Was:updatedPfnIDs, now it's replicas
+	StorageManagementDB_s_updateReplicaStatus(StageSubmitted,replicas).
 	StorageManagementDB_r_updateReplicaStatus_return.
 	StorageManagementDB_s__updateTasksForReplica(replicas). 
 	StorageManagementDB_r__updateTasksForReplica_return
 	)<>condReturn). 
 	StageRequestAgent_s__issuePrestageRequests_return 
 . StageRequestAgent__issuePrestageRequests_proc(id);
-% 
+
 
 proc StageRequestAgent___getStagedReplicas_proc(id:Nat) = 
 	StageRequestAgent_r___getStagedReplicas. 
@@ -1078,7 +921,7 @@ proc StageRequestAgent___getOfflineReplicas_proc(id:Nat) =
 	sum offlineReplicas:List(CacheReplicas).StorageManagementDB_r_getOfflineReplicas_return(offlineReplicas). 
 	StageRequestAgent_s___getOfflineReplicas_return(offlineReplicas)
 . StageRequestAgent___getOfflineReplicas_proc(id);
-% 
+
 proc StageRequestAgent___addAssociatedReplicas_proc(id:Nat) = 
 	sum replicasToStage:List(CacheReplicas).StageRequestAgent_r___addAssociatedReplicas(replicasToStage). 
 	StorageManagementDB_s_getAssociatedReplicas(replicasToStage). 
@@ -1107,7 +950,7 @@ proc StageRequestAgent___checkIntegrity_proc(id:Nat) =
 	)<>condReturn). 
 	StageRequestAgent_s___checkIntegrity_return(onlineReplicaIDs,offlineReplicaIDs) 
 . StageRequestAgent___checkIntegrity_proc(id);
-%
+
 proc StageMonitorAgent_monitorStageRequests_proc(id:Nat) = 
 	StageMonitorAgent_r_monitorStageRequests. 
 	StageMonitorAgent_s___getStageSubmittedReplicas. 
@@ -1116,14 +959,14 @@ proc StageMonitorAgent_monitorStageRequests_proc(id:Nat) =
 	StageMonitorAgent_r___monitorStorageElementStageRequests_return. 
 	StageMonitorAgent_s_monitorStageRequests_return
 . StageMonitorAgent_monitorStageRequests_proc(id);
-%
+
 proc StageMonitorAgent_execute_proc(id:Nat) = 
 	StageMonitorAgent_r_execute. 
 	StageMonitorAgent_s_monitorStageRequests. 
 	StageMonitorAgent_r_monitorStageRequests_return. 
 	StageMonitorAgent_s_execute_return
 . StageMonitorAgent_execute_proc(id);
-% 
+
 proc StageMonitorAgent___monitorStorageElementStageRequests_proc(id:Nat) = 
 	sum stageRequests:List(StageRequests).StageMonitorAgent_r___monitorStorageElementStageRequests(stageRequests). 
 	StorageManagementDB_s_getFileMetadata(stageRequests). 
@@ -1148,7 +991,7 @@ proc StageMonitorAgent___monitorStorageElementStageRequests_proc(id:Nat) =
 	)<>condReturn). 
 	StageMonitorAgent_s___monitorStorageElementStageRequests_return
 . StageMonitorAgent___monitorStorageElementStageRequests_proc(id);
-% 
+
 proc StageMonitorAgent___getStageSubmittedReplicas_proc(id:Nat) = 
 	StageMonitorAgent_r___getStageSubmittedReplicas. 
 	StorageManagementDB_s_getCacheReplicas(StageSubmitted). 
@@ -1157,14 +1000,13 @@ proc StageMonitorAgent___getStageSubmittedReplicas_proc(id:Nat) =
 	sum stageRequests:List(StageRequests).StorageManagementDB_r_getStageRequests_return(stageRequests). 
 	StageMonitorAgent_s___getStageSubmittedReplicas_return(stageRequests)
 . StageMonitorAgent___getStageSubmittedReplicas_proc(id);
-% 
+
 proc StageMonitorAgent___wakeupOldRequests_proc(id:Nat) = 
 	sum oldRequests:List(CacheReplicas).StageMonitorAgent_r___wakeupOldRequests(oldRequests). 
 	StorageManagementDB_s_wakeupOldRequests(oldRequests,2). 
 	StorageManagementDB_r_wakeupOldRequests_return. 
 	StageMonitorAgent_s___wakeupOldRequests_return
 . StageMonitorAgent___wakeupOldRequests_proc(id);
-
 
 proc StorageManagementDB_setRequest_proc(id:Nat) = 
 	sum lfnDict:List(LfnDict),SourceTaskID:Nat.StorageManagementDB_r_setRequest(lfnDict,SourceTaskID). 
@@ -1182,9 +1024,7 @@ proc StorageManagementDB_setRequest_proc(id:Nat) =
 	StorageManagementDB_r___updateTaskStatus_return
 	)<>condReturn). 
 	StorageManagementDB_s_setRequest_return
-. StorageManagementDB_setRequest_proc(id)
-;
-
+. StorageManagementDB_setRequest_proc(id);
 
 proc RequestFinalizationAgent_execute_proc(id:Nat) = 
 	RequestFinalizationAgent_r_execute. 
@@ -1198,7 +1038,7 @@ proc RequestFinalizationAgent_execute_proc(id:Nat) =
 	RequestFinalizationAgent_r_setOldTasksAsFailed_return. 
 	RequestFinalizationAgent_s_execute_return
 . RequestFinalizationAgent_execute_proc(id);
-% 
+
 proc RequestFinalizationAgent_clearFailedTasks_proc(id:Nat) = 
 	RequestFinalizationAgent_r_clearFailedTasks. 
 	StorageManagementDB_s_getTasksWithStatus(Failed). 
@@ -1208,7 +1048,7 @@ proc RequestFinalizationAgent_clearFailedTasks_proc(id:Nat) =
 	StorageManagementDB_r_removeTasks_return. 
 	RequestFinalizationAgent_s_clearFailedTasks_return
 . RequestFinalizationAgent_clearFailedTasks_proc(id);
-% 
+
 proc RequestFinalizationAgent_callbackStagedTasks_proc(id:Nat) = 
 	RequestFinalizationAgent_r_callbackStagedTasks. 
 	StorageManagementDB_s_getTasksWithStatus(Staged). 
@@ -1270,7 +1110,7 @@ proc JobStateUpdateHandler_updateJobFromStager_proc(id:Nat) =
 % 
 proc JobScheduling___requestStaging_proc(id:Nat) = 
 	JobScheduling_r___requestStaging. 
-	StorageManagementDB_s_setRequest([lfnDict([LFN1], SE1)],1). % TODO: change to other parameters, this is the submission; 1==jobID
+	StorageManagementDB_s_setRequest([lfnDict([LFN1], SE1)],1).
 	StorageManagementDB_r_setRequest_return. 
 	JobDB_s_setJobStatus(1,Staging). 
 	JobDB_r_setJobStatus_return.
@@ -1386,10 +1226,9 @@ StageMonitorSD(1) ||
 StageMonitorAgent_execute_proc(1) || % StageMonitorSD
 StageMonitorAgent_monitorStageRequests_proc(1) || % StageMonitorSD
 StageMonitorAgent___getStageSubmittedReplicas_proc(1) || % StageMonitorSD
-StageMonitorAgent___monitorStorageElementStageRequests_proc(1) || % TODO: This process wasn't here in the init, check why!!!
-% StorageElement_getFileMetadata(1) || % TODO: same as above
-StageMonitorAgent___wakeupOldRequests_proc(1) || % TODO: same as above
-RequestFinalizationSD(1) || 
+StageMonitorAgent___monitorStorageElementStageRequests_proc(1) || % StageMonitorSD
+StageMonitorAgent___wakeupOldRequests_proc(1) || % StageMonitorSD
+RequestFinalizationSD(1) || % RequestFinalizationSD
 RequestFinalizationAgent_execute_proc(1) || % RequestFinalizationSD
 RequestFinalizationAgent_clearFailedTasks_proc(1) || % RequestFinalizationSD
 RequestFinalizationAgent_callbackStagedTasks_proc(1) || % RequestFinalizationSD
@@ -1410,10 +1249,10 @@ StageRequestAgent___addAssociatedReplicas_proc(1) || % StageRequestSD
 StageRequestAgent__getOfflineReplicas_proc(1) || % StageRequestSD
 StageRequestAgent___getOfflineReplicas_proc(1) || % StageRequestSD
 ReplicaManager_getStorageFileMetadata_proc(1) || % StageRequestSD
-ReplicaManager_prestageStorageFile_proc(1) || % TODO: This process wasn't here in the init, check why!!!
+ReplicaManager_prestageStorageFile_proc(1) ||  % StageRequestSD
 StageRequestAgent___getWaitingReplicas_proc(1) || % StageRequestSD
-StageRequestAgent__issuePrestageRequests_proc(1) || %TODO: This process wasn't here in the init, check why!!!
-JobStateUpdateHandler_updateJobFromStager_proc(1) || % TODO: same as above!
+StageRequestAgent__issuePrestageRequests_proc(1) ||  % StageRequestSD
+JobStateUpdateHandler_updateJobFromStager_proc(1) ||  % StageRequestSD
 StageRequestAgent___getStagedReplicas_proc(1) ; % || % StageRequestSD
 %-------Init section-------- 
 

@@ -1,5 +1,5 @@
-act action_1, action_2, action_3;
+act P, Q, R, S, T;
 
-proc P = action_1.action_2.action_3;
+proc Proc = P.Q.R;
 
-init P;
+init Proc;

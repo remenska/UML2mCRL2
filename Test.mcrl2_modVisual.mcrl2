@@ -1,17 +1,21 @@
 
 %====== MONITOR PART GENERATED ==============
-% Original formula:[true*. Q . (! ( P || R ))*. R ] false
+% Original formula:[true*. Q . (! ( P || R ))*. S . (! ( T || R ))*. T . (! R )*. R ] false
 % ============================
-% Modified formula:([true+][Q]([(! (P||R))+][R]false && [R]false )&& [Q]([(! (P||R))+][R]false && [R]false ))
+% Modified formula:([true+][Q]([(! (P||R))+][S]([(! (T||R))+][T]([(! R)+][R]false && [R]false )&& [T]([(! R)+][R]false && [R]false ))&& [S]([(! (T||R))+][T]([(! R)+][R]false && [R]false )&& [T]([(! R)+][R]false && [R]false )))&& [Q]([(! (P||R))+][S]([(! (T||R))+][T]([(! R)+][R]false && [R]false )&& [T]([(! R)+][R]false && [R]false ))&& [S]([(! (T||R))+][T]([(! R)+][R]false && [R]false )&& [T]([(! R)+][R]false && [R]false ))))
 % ============================
 act error ;
-sort Action = struct action_3
- | action_2
- | action_1;
+sort Action = struct T
+ | S
+ | R
+ | Q
+ | P;
 
-act action_3;
-act action_2;
-act action_1;
+act T;
+act S;
+act R;
+act Q;
+act P;
 
 sort ActionFormula = struct action(act1:Action)
 | and(phi1:ActionFormula,phi2:ActionFormula) 
@@ -30,50 +34,110 @@ eqn
 	 satisfy(c1,True) = true;
 	 satisfy(c1,False) = false;
 
-proc Monitor = Mon_"([true+][Q]([(!(P||R))+][R]false&&[R]false)&&[Q]([(!(P||R))+][R]false&&[R]false))"; 
+proc Monitor = Mon_1;
 
-proc Mon_"([true+][Q]([(!(P||R))+][R]false&&[R]false)&&[Q]([(!(P||R))+][R]false&&[R]false))" = Mon_"[true+][Q]([(!(P||R))+][R]false&&[R]false)&&[Q]([(!(P||R))+][R]false&&[R]false)";  % just removing backets
+proc Mon_1 = Mon_2;% just removing backets
 
-proc Mon_"[true+][Q]([(!(P||R))+][R]false&&[R]false)&&[Q]([(!(P||R))+][R]false&&[R]false)" = Mon_"[true+][Q]([(!(P||R))+][R]false&&[R]false)" + Mon_"[Q]([(!(P||R))+][R]false&&[R]false)";
+proc Mon_2 = Mon_3 + Mon_4;
 
-proc Mon_"[true+][Q]([(!(P||R))+][R]false&&[R]false)" = Mon_"true+" . Mon_"[Q]([(!(P||R))+][R]false&&[R]false)";
+proc Mon_3 = Mon_5 . Mon_4;
 
-proc Mon_"true+" = Mon_"true". Mon_"true+" + Mon_"true";
+proc Mon_5 = Mon_6. Mon_5 + Mon_6;
 
-proc Mon_"true" = (satisfy(action_3, True)) -> action_3
- + (satisfy(action_2, True)) -> action_2
- + (satisfy(action_1, True)) -> action_1
+proc Mon_6 = (satisfy(T, True)) -> T
+ + (satisfy(S, True)) -> S
+ + (satisfy(R, True)) -> R
+ + (satisfy(Q, True)) -> Q
+ + (satisfy(P, True)) -> P
 ;
 
-proc Mon_"[Q]([(!(P||R))+][R]false&&[R]false)" = Mon_"Q" . Mon_"([(!(P||R))+][R]false&&[R]false)";
+proc Mon_4 = Mon_7 . Mon_8;
 
-proc Mon_"Q" = (satisfy(action_3, action(Q))) -> action_3
- + (satisfy(action_2, action(Q))) -> action_2
- + (satisfy(action_1, action(Q))) -> action_1
+proc Mon_7 = (satisfy(T, action(Q))) -> T
+ + (satisfy(S, action(Q))) -> S
+ + (satisfy(R, action(Q))) -> R
+ + (satisfy(Q, action(Q))) -> Q
+ + (satisfy(P, action(Q))) -> P
 ;
 
-proc Mon_"([(!(P||R))+][R]false&&[R]false)" = Mon_"[(!(P||R))+][R]false&&[R]false";  % just removing backets
+proc Mon_8 = Mon_9;% just removing backets
 
-proc Mon_"[(!(P||R))+][R]false&&[R]false" = Mon_"[(!(P||R))+][R]false" + Mon_"[R]false";
+proc Mon_9 = Mon_10 + Mon_11;
 
-proc Mon_"[(!(P||R))+][R]false" = Mon_"(!(P||R))+" . Mon_"[R]false";
+proc Mon_10 = Mon_12 . Mon_11;
 
-proc Mon_"(!(P||R))+" = Mon_"(!(P||R))". Mon_"(!(P||R))+" + Mon_"(!(P||R))";
+proc Mon_12 = Mon_13. Mon_12 + Mon_13;
 
-proc Mon_"(!(P||R))" = Mon_"!(P||R)";% just removing backets
+proc Mon_13 = Mon_14;% just removing backets
 
-proc Mon_"!(P||R)" = (satisfy(action_3, not(or(action(P) , action(R))))) -> action_3
- + (satisfy(action_2, not(or(action(P) , action(R))))) -> action_2
- + (satisfy(action_1, not(or(action(P) , action(R))))) -> action_1
+proc Mon_14 = (satisfy(T, not(or(action(P) , action(R))))) -> T
+ + (satisfy(S, not(or(action(P) , action(R))))) -> S
+ + (satisfy(R, not(or(action(P) , action(R))))) -> R
+ + (satisfy(Q, not(or(action(P) , action(R))))) -> Q
+ + (satisfy(P, not(or(action(P) , action(R))))) -> P
 ;
 
-proc Mon_"[R]false" = Mon_"R" . Mon_"false";
+proc Mon_11 = Mon_17 . Mon_18;
 
-proc Mon_"R" = (satisfy(action_3, action(R))) -> action_3
- + (satisfy(action_2, action(R))) -> action_2
- + (satisfy(action_1, action(R))) -> action_1
+proc Mon_17 = (satisfy(T, action(S))) -> T
+ + (satisfy(S, action(S))) -> S
+ + (satisfy(R, action(S))) -> R
+ + (satisfy(Q, action(S))) -> Q
+ + (satisfy(P, action(S))) -> P
 ;
 
-proc Mon_"false" = error;
+proc Mon_18 = Mon_19;% just removing backets
+
+proc Mon_19 = Mon_20 + Mon_21;
+
+proc Mon_20 = Mon_22 . Mon_21;
+
+proc Mon_22 = Mon_23. Mon_22 + Mon_23;
+
+proc Mon_23 = Mon_24;% just removing backets
+
+proc Mon_24 = (satisfy(T, not(or(action(T) , action(R))))) -> T
+ + (satisfy(S, not(or(action(T) , action(R))))) -> S
+ + (satisfy(R, not(or(action(T) , action(R))))) -> R
+ + (satisfy(Q, not(or(action(T) , action(R))))) -> Q
+ + (satisfy(P, not(or(action(T) , action(R))))) -> P
+;
+
+proc Mon_21 = Mon_27 . Mon_28;
+
+proc Mon_27 = (satisfy(T, action(T))) -> T
+ + (satisfy(S, action(T))) -> S
+ + (satisfy(R, action(T))) -> R
+ + (satisfy(Q, action(T))) -> Q
+ + (satisfy(P, action(T))) -> P
+;
+
+proc Mon_28 = Mon_29;% just removing backets
+
+proc Mon_29 = Mon_30 + Mon_31;
+
+proc Mon_30 = Mon_32 . Mon_31;
+
+proc Mon_32 = Mon_33. Mon_32 + Mon_33;
+
+proc Mon_33 = Mon_34;% just removing backets
+
+proc Mon_34 = (satisfy(T, not(action(R)))) -> T
+ + (satisfy(S, not(action(R)))) -> S
+ + (satisfy(R, not(action(R)))) -> R
+ + (satisfy(Q, not(action(R)))) -> Q
+ + (satisfy(P, not(action(R)))) -> P
+;
+
+proc Mon_31 = Mon_35 . Mon_36;
+
+proc Mon_35 = (satisfy(T, action(R))) -> T
+ + (satisfy(S, action(R))) -> S
+ + (satisfy(R, action(R))) -> R
+ + (satisfy(Q, action(R))) -> Q
+ + (satisfy(P, action(R))) -> P
+;
+
+proc Mon_36 = error;
 
 init Monitor;

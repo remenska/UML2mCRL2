@@ -1,0 +1,7 @@
+act initP,evidenceP,evidenceQ,terminateP:Nat;
+act internal;
+proc Hmm(d:Nat) = (d<5) -> initP(d).evidenceQ(d).terminateP(d).Hmm(d+1) <> tau;
+proc Aman = initP(1).terminateP(1).initP(2).evidenceP(2).evidenceQ(2).terminateP(2).Hmm(3);
+
+init Aman;
+
